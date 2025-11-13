@@ -13,7 +13,7 @@
  */
 class ConsoleMenu : public IMenu {
 private:
-    std::istream& in;
+     std::istream& in;
      const std::map<std::string, ICommand*>& commandMap; 
 
 public:

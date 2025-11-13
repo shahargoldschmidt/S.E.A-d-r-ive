@@ -10,7 +10,7 @@ std::string ConsoleMenu::getInput() {
     return userInput;
 }
 
-// Separates the command from the rest of the arguments in the input string
+// Separates the command from the rest of the arguments in the users input
 std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string& userInput) {
     if (userInput.empty()) {
         return {"", ""};
