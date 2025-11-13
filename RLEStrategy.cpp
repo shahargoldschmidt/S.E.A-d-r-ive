@@ -5,38 +5,53 @@ using std::string;
 using std::ostringstream;
 
 string RLEStrategy::compress(const string& input) {
+     // Empty input returns empty output
     if (input.empty()) return "";
 
-    ostringstream out;
+    string result = "";
     int count = 1;
 
+     // Go over the string and count repeated chars
     for (size_t i = 1; i <= input.size(); ++i) {
+        // If we reached a different char OR the end of the string:
         if (i == input.size() || input[i] != input[i - 1]) {
-            out << input[i - 1] << count;
+
+            // Add the character + its count
+            result += input[i - 1];
+            result += std:: to_string(count);
+
+            //reset the counter
             count = 1;
+
         } else {
+            //same char
             count++;
         }
     }
 
-    return out.str();
+    return result;
 }
 
+
+
 string RLEStrategy::decompress(const string& input) {
-    ostringstream out;
+    string result = "";
 
     for (size_t i = 0; i < input.size(); ) {
+
+        // First read the character
         char ch = input[i++];
         int count = 0;
 
-        // לקרוא מספר שעשוי להיות יותר מ־1 ספרה
+       
         while (i < input.size() && isdigit(input[i])) {
+            // Convert char-digit to number
             count = count * 10 + (input[i] - '0');
             i++;
         }
 
-        out << string(count, ch);
+          result += string(count, ch);
     }
 
-    return out.str();
+    return result;
 }
