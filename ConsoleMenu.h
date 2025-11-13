@@ -3,13 +3,28 @@
 
 #include "IMenu.h"
 #include <string>
+#include <map>
+#include "ICommand.h"
+#include <vector>
 
+/** * This class handles user interaction through the console:
+ *  - Reads user input commands and exceute them.
+ *  - Handles invalid commands.
+ */
 class ConsoleMenu : public IMenu {
+private:
+     const std::map<std::string, ICommand*>& commandMap; 
+
 public:
+    ConsoleMenu(const std::map<std::string, ICommand*>& cmds) : commandMap(cmds) {}
     // Reads input and checks if the command is valid (ADD/GET/SEARCH)
     std::string getCommandInput() override;
     // handles invalid input, 
-    void displayError(const std::string& msg) override;
+    std::string HandleError(const std::string&) override;
+
+private:
+    // Helper to split a line into command and arguments
+    std::vector<std::string> splitLine(const std::string& line);   
 };
 
 #endif 
