@@ -12,4 +12,4 @@ public:
     void displayError(const std::string& msg) override;
 };
 
-#endif // CONSOLEMENU_H
+#endif 
