@@ -3,11 +3,19 @@
 #include <algorithm>
 #include <sstream>
 
-std::pair<std::string,std::string> ConsoleMenu::getCommandInput(const std::string& input) {
-    if (input.empty()) {
+// Reads one line of input from the configured input stream
+std::string ConsoleMenu::getInput() {
+    std::string userInput;
+    std::getline(in, userInput);
+    return userInput;
+}
+
+// Separates the command from the rest of the arguments in the input string
+std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string& userInput) {
+    if (userInput.empty()) {
         return {"", ""};
     }
-    std::istringstream iss(input);
+    std::istringstream iss(userInput);
     std::string cmd;
     iss >> cmd;
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);

@@ -13,12 +13,14 @@
  */
 class ConsoleMenu : public IMenu {
 private:
+    std::istream& in;
      const std::map<std::string, ICommand*>& commandMap; 
 
 public:
-    ConsoleMenu(const std::map<std::string, ICommand*>& cmds) : commandMap(cmds) {}
-    // Reads input and return it parsed with command ans its content
-    std::pair<std::string,std::string> getCommandInput(const std::string&) override;
+     ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
+        : in(input), commandMap(cmds) {}
+    std::string getInput(); 
+    std::pair<std::string,std::string> seperateInput(const std::string&) override;
  
 };
 

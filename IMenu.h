@@ -11,7 +11,7 @@
 class IMenu {
 public:
     virtual ~IMenu() = default;
-    virtual std::pair<std::string,std::string> getCommandInput(const std::string&) = 0; // get input from user
+    virtual std::string getInput() = 0; // gets input regardlees of the source
+    virtual std::pair<std::string,std::string> seperateInput(const std::string&) = 0; // get input from user
 };
-
 #endif 
