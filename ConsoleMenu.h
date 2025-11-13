@@ -18,10 +18,9 @@ private:
 public:
     ConsoleMenu(const std::map<std::string, ICommand*>& cmds) : commandMap(cmds) {}
     // Reads input and checks if the command is valid (ADD/GET/SEARCH)
-    std::string getCommandInput(const std::string& input) override;
-    // handles invalid input, 
-    std::string HandleError(const std::string&) override;
+    std::pair<std::string,std::string> getCommandInput(const std::string&) override;
  
 };
+
 
 #endif 

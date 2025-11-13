@@ -11,8 +11,7 @@
 class IMenu {
 public:
     virtual ~IMenu() = default;
-    virtual std::string getCommandInput(const std::string& input) = 0; // get input from user
-    virtual std::string HandleError(const std::string&) = 0; // handles error
+    virtual std::pair<std::string,std::string> getCommandInput(const std::string&) = 0; // get input from user
 };
 
 #endif 
