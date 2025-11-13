@@ -18,13 +18,10 @@ private:
 public:
     ConsoleMenu(const std::map<std::string, ICommand*>& cmds) : commandMap(cmds) {}
     // Reads input and checks if the command is valid (ADD/GET/SEARCH)
-    std::string getCommandInput() override;
+    std::string getCommandInput(const std::string& input) override;
     // handles invalid input, 
     std::string HandleError(const std::string&) override;
-
-private:
-    // Helper to split a line into command and arguments
-    std::vector<std::string> splitLine(const std::string& line);   
+ 
 };
 
 #endif 

@@ -3,22 +3,22 @@
 #include <algorithm>
 #include <sstream>
 
-std::string ConsoleMenu::getCommandInput() {
-    std::string input;
-    std::getline(std::cin, input);
+std::string ConsoleMenu::getCommandInput(const std::string& input) {
     if (input.empty()) {
-        // Call error handler, but show nothing for now
+        // does nothing
         return HandleError("");
     }
     std::istringstream iss(input);
     std::string cmd;
-    iss >> cmd;
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
+    iss >> cmd; // takes first argument and checks if the command is valid and exists
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper); // handles capital and non captial letters as equal
     if (commandMap.find(cmd) == commandMap.end()) {
-        // Call error handler, but stay silent for now
+        // does nothing
         return HandleError("");
     }
-    return input;
+    std::string args;
+    getline(iss, args);
+    return cmd , args ; //return input seperated.
 }
 
 std::string ConsoleMenu::HandleError(const std::string&) {
