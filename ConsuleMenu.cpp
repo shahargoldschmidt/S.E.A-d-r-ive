@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <sstream>
 
-// Reads one line of input from the configured input stream
+// Reads one line of input from the input stream
 std::string ConsoleMenu::getInput() {
     std::string userInput;
     std::getline(in, userInput);
