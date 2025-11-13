@@ -22,23 +22,38 @@ MockCommand add, get, search;
 // TEST 1: check that valid commands are seperated correctly and returned. 
 TEST(ConsoleMenuTests, ExecutesValidCommands) {
     // Test ADD (case-insensitive)
-    auto ci = menu.getCommandInput("add file.txt mydata");
+    auto ci = menu.seperateInput("add file.txt mydata");
     EXPECT_EQ(ci.command, "ADD");
     // Test GET
-    ci = menu.getCommandInput("GET file.txt");
+    ci = menu.seperateInput("GET file.txt");
     EXPECT_EQ(ci.command, "GET");
     // Test SEARCH
-    ci = menu.getCommandInput("SeArCh abc");
+    ci = menu.seperateInput("SeArCh abc");
     EXPECT_EQ(ci.command, "SEARCH");
 }
 
 // TEST 2: check that invalid commends dont return nothing
 TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
     // Invalid commands (wrong keyword or blank)
-    auto ci = menu.getCommandInput("REMOVE something");
+    auto ci = menu.seperateInput("REMOVE something");
     EXPECT_TRUE(ci.command.empty());
-    ci = menu.getCommandInput("");
+    ci = menu.seperateInput("");
     EXPECT_TRUE(ci.command.empty());
-    ci = menu.getCommandInput("67");
+    ci = menu.seperateInput("67");
     EXPECT_TRUE(ci.command.empty());
 }
+
+/*TEST 3: check loop continues even after unvalid commands
+TEST(ConsoleMenuTests, KeepsPromptingAfterEachInput) {
+    std::vector<std::string> inputs = {"INVALID", "GET file", "SEARCH word", "ADD x y z", "FOO", "GET y"};
+    int validCount = 0;
+    for (const auto& inp : inputs) {
+        auto ci = menu.seperateInput(inp);
+        if (!ci.command.empty() && commands.count(ci.command)) {
+            commands[ci.command]->execute(ci.args);
+            validCount++;
+        }
+        // Simulates: loop continues regardless of previous result
+    }
+    EXPECT_EQ(validCount, 4); // Only 4 valid commands among 6 inputs
+}*/  
