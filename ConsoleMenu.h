@@ -8,7 +8,7 @@
 #include <vector>
 
 /** * This class handles user interaction through the console:
- *  - Reads user input commands and exceute them.
+ *  - Reads user input commands.
  *  - Handles invalid commands.
  */
 class ConsoleMenu : public IMenu {
@@ -17,7 +17,7 @@ private:
 
 public:
     ConsoleMenu(const std::map<std::string, ICommand*>& cmds) : commandMap(cmds) {}
-    // Reads input and checks if the command is valid (ADD/GET/SEARCH)
+    // Reads input and return it parsed with command ans its content
     std::pair<std::string,std::string> getCommandInput(const std::string&) override;
  
 };
