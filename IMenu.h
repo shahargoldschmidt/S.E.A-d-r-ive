@@ -5,13 +5,11 @@
 /**
  * This interface defines how any menu in the CLI should behave.
  * The main responsibilities:
- *  - Get command input from the user.
- *  - Display error messages when necessary.
+ * Get command input from the user.
  */
 class IMenu {
 public:
     virtual ~IMenu() = default;
     virtual std::string getInput() = 0; // gets input regardlees of the source
-    virtual std::pair<std::string,std::string> seperateInput(const std::string&) = 0; // get input from user
 };
 #endif 

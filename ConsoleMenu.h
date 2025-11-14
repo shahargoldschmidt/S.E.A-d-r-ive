@@ -8,13 +8,13 @@
 #include <vector>
 
 /** * This class handles user interaction through the console:
- *  - Reads user input commands.
- *  - Handles invalid commands.
+ *  - Reads user input commands from any input stream.
+ *  - Handles invalid commands that arent known in the command map.
  */
 class ConsoleMenu : public IMenu {
 private:
-     std::istream& in;
-     const std::map<std::string, ICommand*>& commandMap; 
+     std::istream& in; // input stream
+     const std::map<std::string, ICommand*>& commandMap; // command map
 
 public:
      ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
