@@ -8,7 +8,7 @@
 #include <iostream>
 
 //sample compressor and sample FileHandle for the test 
-class TestRLECompressor : public ICompressor {
+class SampleRLECompressor : public ICompressor {
 public:
     std::string compress(const std::string& s) override {
         if (s.empty()) return "";
@@ -42,7 +42,7 @@ public:
 };
 
 
-/*class TestFileHandler : public IFileHandler{
+/*class SampleFileHandler : public IFileHandler{
     std::vector<std::string> files; // File names
     std::map<std::string, std::string> content; // file line
     std::vector<std::string> listFiles() override {
@@ -55,49 +55,50 @@ public:
 \\
 
  //test for finding multiple correct files
- TEST (SearchCommandTester, MultipleFilesFinder){
- TestCompressor TComp;
- TestFileHandler TFHandler;
- TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = rle.compress("f is for friends");
- TFHandler.content["u.txt"] = rle.compress("u is for u and me");
- TFHandler.content["n.txt"] = rle.compress("not found");
- SearchCommand cmd (&TFHandler, &TComp)
- testing::internal::CaptureStdout(); // captures anything printed to standard output
- cmd.execute({"is for"});
- std::string output = testing::internal::GetCapturedStdout(); //get the output as a string
- ASSERT_NE(output.find("f.txt"), std::string::npos);
- ASSERT_NE(output.find("u.txt"), std::string::npos);
- ASSERT_EQ(output.find("n.txt"), std::string::npos);
+ TEST(SearchCommandTester, MultipleFilesFinder) {
+    SampleRLECompressor rle;
+    SampleFileHandler fh;
+    fh.files = {"f.txt", "u.txt", "n.txt"};
+    fh.content["f.txt"] = rle.compress("f is for friends");
+    fh.content["u.txt"] = rle.compress("u is for u and me");
+    fh.content["n.txt"] = rle.compress("not found");
+    SearchCommand cmd(&fh, &rle);
+    testing::internal::CaptureStdout();
+    cmd.execute({"is for"});
+    std::string output = testing::internal::GetCapturedStdout();
+    ASSERT_NE(output.find("f.txt"), std::string::npos);
+    ASSERT_NE(output.find("u.txt"), std::string::npos);
+    ASSERT_EQ(output.find("n.txt"), std::string::npos);
+}
  }
 
  //test for no matches
  TEST (SearchCommandTester, NoMatches){
- TestCompressor TComp;
- TestFileHandler TFHandler;
- TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = rle.compress("f is for friends");
- TFHandler.content["u.txt"] = rle.compress("u is for u and me");
- TFHandler.content["n.txt"] = rle.compress("not found");
- SearchCommand cmd (&TFHandler, &TComp)
- testing::internal::CaptureStdout();
- cmd.execute({"matches"})
- auto output = testing::internal::GetCaptureStdout();
- ASSERT_TRUE(output.empty());
+    SampleRLECompressor rle;
+    SampleFileHandler fh;
+    fh.files = {"f.txt", "u.txt", "n.txt"};
+    fh.content["f.txt"] = rle.compress("f is for friends");
+    fh.content["u.txt"] = rle.compress("u is for u and me");
+    fh.content["n.txt"] = rle.compress("not found");
+    SearchCommand cmd(&fh, &rle);
+    testing::internal::CaptureStdout();
+    cmd.execute({"no such phrase"});
+    std::string output = testing::internal::GetCapturedStdout();
+    ASSERT_TRUE(output.empty());
  }
 
  //test for empty searches
- TEST (SearchCommandTester, NoMatches){
- TestCompressor TComp;
- TestFileHandler TFHandler;
- TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = rle.compress("f is for friends");
- TFHandler.content["u.txt"] = rle.compress("u is for u and me");
- TFHandler.content["n.txt"] = rle.compress("not found");
- SearchCommand cmd(&fh, &comp); 
- testing::internal::CaptureStdout();
- cmd.execute( {}); // Empty args
- auto output = testing::internal::GetCapturedStdout();
- ASSERT_TRUE(output.empty());
+ TEST(SearchCommandTester, ArgsEmptyReturnsNothing) {
+    SampleRLECompressor rle;
+    SampleFileHandler fh;
+    fh.files = {"f.txt", "u.txt", "n.txt"};
+    fh.content["f.txt"] = rle.compress("f is for friends");
+    fh.content["u.txt"] = rle.compress("u is for u and me");
+    fh.content["n.txt"] = rle.compress("not found");
+    SearchCommand cmd(&fh, &rle);
+    testing::internal::CaptureStdout();
+    cmd.execute({}); // Empty args vector
+    std::string output = testing::internal::GetCapturedStdout();
+    ASSERT_TRUE(output.empty())
 }
  
