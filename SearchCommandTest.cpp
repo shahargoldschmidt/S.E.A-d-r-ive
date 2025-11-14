@@ -8,15 +8,39 @@
 #include <iostream>
 
 //sample compressor and sample FileHandle for the test 
-class TestCompressor : public ICompressor {
+class TestRLECompressor : public ICompressor {
 public:
     std::string compress(const std::string& s) override {
-        return "C:" + s; // Simple marker for tests
+        if (s.empty()) return "";
+        std::string result;
+        char curr = s[0];
+        int count = 1;
+        for (size_t i = 1; i < s.length(); ++i) {
+            if (s[i] == curr) {
+                ++count;
+            } else {
+                result += curr;
+                result += std::to_string(count);
+                curr = s[i];
+                count = 1;
+            }
+        }
+        result += curr;
+        result += std::to_string(count);
+        return result;
     }
     std::string decompress(const std::string& s) override {
-        return "D:" + s; // Simple marker for tests
+        std::string result;
+        for (size_t i = 0; i < s.length(); ) {
+            char c = s[i++];
+            std::string num;
+            while (i < s.length() && isdigit(s[i])) num += s[i++];
+            result.append(num.empty() ? 1 : std::stoi(num), c);
+        }
+        return result;
     }
 };
+
 
 /*class TestFileHandler : public IFileHandler{
     std::vector<std::string> files; // File names
@@ -35,16 +59,16 @@ public:
  TestCompressor TComp;
  TestFileHandler TFHandler;
  TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = "C: f is for friends";
- TFHandler.content["u.txt"] = "C: u is for u and me";
- TFHandler.content["n.txt"] = "C: not found";
+ TFHandler.content["f.txt"] = rle.compress("f is for friends");
+ TFHandler.content["u.txt"] = rle.compress("u is for u and me");
+ TFHandler.content["n.txt"] = rle.compress("not found");
  SearchCommand cmd (&TFHandler, &TComp)
  testing::internal::CaptureStdout(); // captures anything printed to standard output
  cmd.execute({"is for"});
  std::string output = testing::internal::GetCapturedStdout(); //get the output as a string
- ASSERT_NE(output.find("D:f.txt"), std::string::npos);
- ASSERT_NE(output.find("D:u.txt"), std::string::npos);
- ASSERT_EQ(output.find("D:n.txt"), std::string::npos);
+ ASSERT_NE(output.find("f.txt"), std::string::npos);
+ ASSERT_NE(output.find("u.txt"), std::string::npos);
+ ASSERT_EQ(output.find("n.txt"), std::string::npos);
  }
 
  //test for no matches
@@ -52,9 +76,9 @@ public:
  TestCompressor TComp;
  TestFileHandler TFHandler;
  TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = "C: f is for friends";
- TFHandler.content["u.txt"] = "C: u is for u and me";
- TFHandler.content["n.txt"] = "C: not found";
+ TFHandler.content["f.txt"] = rle.compress("f is for friends");
+ TFHandler.content["u.txt"] = rle.compress("u is for u and me");
+ TFHandler.content["n.txt"] = rle.compress("not found");
  SearchCommand cmd (&TFHandler, &TComp)
  testing::internal::CaptureStdout();
  cmd.execute({"matches"})
@@ -67,9 +91,9 @@ public:
  TestCompressor TComp;
  TestFileHandler TFHandler;
  TFHandler.files = {"f.txt", "u.txt","n.txt"};
- TFHandler.content["f.txt"] = "C: f is for friends";
- TFHandler.content["u.txt"] = "C: u is for u and me";
- TFHandler.content["n.txt"] = "C: not found";
+ TFHandler.content["f.txt"] = rle.compress("f is for friends");
+ TFHandler.content["u.txt"] = rle.compress("u is for u and me");
+ TFHandler.content["n.txt"] = rle.compress("not found");
  SearchCommand cmd(&fh, &comp); 
  testing::internal::CaptureStdout();
  cmd.execute( {}); // Empty args
