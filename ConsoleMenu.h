@@ -20,7 +20,7 @@ public:
      ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
         : in(input), commandMap(cmds) {}
     std::string getInput(); 
-    std::pair<std::string,std::string> seperateInput(const std::string&) override;
+    std::pair<std::string,std::string> seperateInput(const std::string&) ;
  
 };
 
