@@ -30,7 +30,8 @@ TEST(ConsoleMenuTests, GetInputReadsSingleLineCommands) {
         {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
     };
     std::istringstream input("ADD file1.txt abc\nGET file1.txt\nSEARCH abc\n");
-    ConsoleMenu menu(input, commands);
+    std::ostream& output = std::cout;
+    ConsoleMenu menu(input, output, commands);
     std::string line1 = menu.getInput();
     EXPECT_EQ(line1, "ADD file1.txt abc");
     std::string line2 = menu.getInput();
@@ -43,49 +44,50 @@ TEST(ConsoleMenuTests, GetInputReadsSingleLineCommands) {
 }
 
 
-// TEST 2: check that valid commands are seperated correctly and returned. 
+// TEST 2: check that valid commands are separated correctly and returned.
 TEST(ConsoleMenuTests, ExecutesValidCommands) {
-    // the commands necessary for ths test 
     MockCommand add, get, search;
     std::map<std::string, ICommand*> commands = {
         {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
-    }
-    std::istringstream dummyInput;
-    ConsoleMenu menu(dummyInput, commands);
-    // Test ADD 
+    };
+    std::istringstream input("");
+    std::ostream& output = std::cout;
+    ConsoleMenu menu(input, output, commands);
+    // Test ADD checking sentistive letters
     auto ci = menu.seperateInput("add file.txt mydata");
-    EXPECT_EQ(ci.command, "ADD");
-    EXPECT_EQ(ci.args, " file.txt mydata");
+    EXPECT_EQ(ci.first, "ADD");
+    EXPECT_EQ(ci.second, "file.txt mydata");
     // Test GET
     ci = menu.seperateInput("GET file.txt");
-    EXPECT_EQ(ci.command, "GET");
-    EXPECT_EQ(ci.args, " file.txt");
+    EXPECT_EQ(ci.first, "GET");
+    EXPECT_EQ(ci.second, "file.txt");
     // Test SEARCH
     ci = menu.seperateInput("SeArCh abc");
-    EXPECT_EQ(ci.command, "SEARCH");
-    EXPECT_EQ(ci.args, " abc");
+    EXPECT_EQ(ci.first, "SEARCH");
+    EXPECT_EQ(ci.second, "abc");
 }
 
-// TEST 3: check that invalid commends dont return nothing
+// TEST 3: check that invalid commands don't return anything
 TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
-// the commands necessary for ths test 
     MockCommand add, get, search;
     std::map<std::string, ICommand*> commands = {
         {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
-    }
-    std::istringstream dummyInput;
-    ConsoleMenu menu(dummyInput, commands);
+    };
+    std::istringstream dummyInput("");
+    std::ostream& output = std::cout;
+    ConsoleMenu menu(dummyInput, output, commands);
     // Invalid commands (wrong keyword or blank)
     auto ci = menu.seperateInput("REMOVE something");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+    EXPECT_TRUE(ci.first.empty());
+    EXPECT_TRUE(ci.second.empty());
     ci = menu.seperateInput("");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+    EXPECT_TRUE(ci.first.empty());
+    EXPECT_TRUE(ci.second.empty());
     ci = menu.seperateInput("67");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+    EXPECT_TRUE(ci.first.empty());
+    EXPECT_TRUE(ci.second.empty());
 }
+
 
 /*TEST 4: check loop continues even after unvalid commands
 TEST(ConsoleMenuTests, KeepsPromptingAfterEachInput) {
