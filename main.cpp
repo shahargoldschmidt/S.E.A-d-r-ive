@@ -22,9 +22,9 @@ int main() {
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor, output);
 
     std::map<std::string, ICommand*> commands;
-    commands["ADD"] = addCmd;
-    commands["GET"] = getCmd;
-    commands["SEARCH"] = searchCmd;
+    commands["add"] = addCmd;
+    commands["get"] = getCmd;
+    commands["search"] = searchCmd;
 
     ConsoleMenu* menu = new ConsoleMenu(input, output, commands);
 
