@@ -33,7 +33,7 @@ public:
             }
             // If found, print the file name to output
             if (found) {
-                std::cout << fname << std::endl;
+                output << fname << std::endl;
             }
         }
     }
