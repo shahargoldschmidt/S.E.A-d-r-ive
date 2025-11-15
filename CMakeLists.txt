@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(GetCommandTests)
 set(CMAKE_CXX_STANDARD 11)
 
-# Fetch GoogleTest
+# ---- Fetch GoogleTest ----
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -11,12 +11,21 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Build test executable
+# ---- Include directories (HEADERS live here!) ----
+include_directories(
+    ${CMAKE_SOURCE_DIR}       # root folder
+    ${CMAKE_SOURCE_DIR}/src   # if src exists
+    ${CMAKE_SOURCE_DIR}/tests # if tests include headers
+)
+
+# ---- Build test executable ----
 add_executable(runTests
     GetCommandTest.cpp
     GetCommand.cpp
     RLEStrategy.cpp
+    OSFileHandler.cpp
 )
+
 
 target_link_libraries(runTests gtest_main)
 
