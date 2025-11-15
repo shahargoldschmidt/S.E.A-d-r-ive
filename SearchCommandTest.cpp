@@ -62,7 +62,7 @@ public:
     fh.content["f.txt"] = rle.compress("f is for friends");
     fh.content["u.txt"] = rle.compress("u is for u and me");
     fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle);
+    SearchCommand cmd(&fh, &rle, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute({"is for"});
     std::string output = testing::internal::GetCapturedStdout();
@@ -80,7 +80,7 @@ public:
     fh.content["f.txt"] = rle.compress("f is for friends");
     fh.content["u.txt"] = rle.compress("u is for u and me");
     fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle);
+    SearchCommand cmd(&fh, &rle, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute({"no such phrase"});
     std::string output = testing::internal::GetCapturedStdout();
@@ -95,10 +95,10 @@ public:
     fh.content["f.txt"] = rle.compress("f is for friends");
     fh.content["u.txt"] = rle.compress("u is for u and me");
     fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle);
+    SearchCommand cmd(&fh, &rle, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute({}); // Empty args vector
     std::string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty())
-}
+} */
  
