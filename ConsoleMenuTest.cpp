@@ -27,17 +27,17 @@ TEST(ConsoleMenuTests, GetInputReadsSingleLineCommands) {
     // the commands necessary for ths test 
     MockCommand add, get, search;
     std::map<std::string, ICommand*> commands = {
-        {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
+        {"add", &add}, {"get", &get}, {"search", &search}
     };
-    std::istringstream input("ADD file1.txt abc\nGET file1.txt\nSEARCH abc\n");
+    std::istringstream input("add file1.txt abc\nget file1.txt\nsearch abc\n");
     std::ostream& output = std::cout;
     ConsoleMenu menu(input, output, commands);
     std::string line1 = menu.getInput();
-    EXPECT_EQ(line1, "ADD file1.txt abc");
+    EXPECT_EQ(line1, "add file1.txt abc");
     std::string line2 = menu.getInput();
-    EXPECT_EQ(line2, "GET file1.txt");
+    EXPECT_EQ(line2, "get file1.txt");
     std::string line3 = menu.getInput();
-    EXPECT_EQ(line3, "SEARCH test");
+    EXPECT_EQ(line3, "search test");
     // Should be empty after all input is consumed
     std::string line4 = menu.getInput();
     EXPECT_EQ(line4, "");
@@ -48,22 +48,22 @@ TEST(ConsoleMenuTests, GetInputReadsSingleLineCommands) {
 TEST(ConsoleMenuTests, ExecutesValidCommands) {
     MockCommand add, get, search;
     std::map<std::string, ICommand*> commands = {
-        {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
+        {"add", &add}, {"get", &get}, {"search", &search}
     };
     std::istringstream input("");
     std::ostream& output = std::cout;
     ConsoleMenu menu(input, output, commands);
     // Test ADD checking sentistive letters
-    auto ci = menu.seperateInput("add file.txt mydata");
-    EXPECT_EQ(ci.first, "ADD");
+    auto ci = menu.seperateInput("ADD file.txt mydata");
+    EXPECT_EQ(ci.first, "add");
     EXPECT_EQ(ci.second, "file.txt mydata");
     // Test GET
-    ci = menu.seperateInput("GET file.txt");
-    EXPECT_EQ(ci.first, "GET");
+    ci = menu.seperateInput("get file.txt");
+    EXPECT_EQ(ci.first, "get");
     EXPECT_EQ(ci.second, "file.txt");
     // Test SEARCH
     ci = menu.seperateInput("SeArCh abc");
-    EXPECT_EQ(ci.first, "SEARCH");
+    EXPECT_EQ(ci.first, "search");
     EXPECT_EQ(ci.second, "abc");
 }
 
@@ -71,7 +71,7 @@ TEST(ConsoleMenuTests, ExecutesValidCommands) {
 TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
     MockCommand add, get, search;
     std::map<std::string, ICommand*> commands = {
-        {"ADD", &add}, {"GET", &get}, {"SEARCH", &search}
+        {"add", &add}, {"get", &get}, {"search", &search}
     };
     std::istringstream dummyInput("");
     std::ostream& output = std::cout;

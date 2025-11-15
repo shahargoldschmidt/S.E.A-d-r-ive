@@ -18,7 +18,7 @@ std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string&
     std::istringstream iss(userInput); // create stream to seperate input
     std::string cmd;
     iss >> cmd; // get first word ,the command, from input
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper); // make case unsensitive
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower); // make case unsensitive
     if (commandMap.find(cmd) == commandMap.end()) {
         return {"", ""};
     }
