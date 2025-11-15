@@ -7,10 +7,12 @@
 
 class SearchCommand : public ICommand {
     IFileHandler* fileHandler;      
-    ICompressor* compressor;        
+    ICompressor* compressor;  
+    std::ostream& output;
+
 public:
-    SearchCommand(IFileHandler* fh, ICompressor* comp)
-        : fileHandler(fh), compressor(comp) {}
+    SearchCommand(IFileHandler* fh, ICompressor* comp, std::ostream& out)
+        : fileHandler(fh), compressor(comp), output(out) {}
 
     //  receives the uncompressed file content
     void execute(const std::vector<std::string>& args) override {

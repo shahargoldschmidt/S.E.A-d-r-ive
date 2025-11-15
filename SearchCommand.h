@@ -8,14 +8,15 @@
 #include <string>
 
 class SearchCommand : public ICommand {
-public:
-    SearchCommand(IFileHandler* fileHandler, ICompressor* compressor);
-    // this execute returns list of file names containg content in users ouput
-    void execute(const std::vector<std::string>& args) override;
-
 private:
     IFileHandler* fileHandler;
     ICompressor* compressor;
+    std::ostream& output;
+
+public:
+    SearchCommand(IFileHandler* fileHandler, ICompressor* compressor, std::ostream& output);
+    // this execute returns list of file names containg content in users ouput
+    void execute(const std::vector<std::string>& args) override;
 };
 
 #endif 
