@@ -15,10 +15,10 @@ std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string&
     if (userInput.empty()) {
         return {"", ""};
     }
-    std::istringstream iss(userInput);
+    std::istringstream iss(userInput); // create stream to seperate input
     std::string cmd;
-    iss >> cmd;
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper);
+    iss >> cmd; // get first word ,the command, from input
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::toupper); // make case unsensitive
     if (commandMap.find(cmd) == commandMap.end()) {
         return {"", ""};
     }
