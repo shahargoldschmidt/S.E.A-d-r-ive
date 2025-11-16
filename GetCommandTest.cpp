@@ -7,156 +7,141 @@
 #include <iostream>
 
 // ------------------------------------------------------------
-// Mock Compressor
+// Mock Compressor (RLE fake)
 // ------------------------------------------------------------
-class SampleRLECompressor : public ICompressor {
+class MockRLE : public ICompressor {
 public:
     std::string compress(const std::string& s) override {
-        if (s.empty()) return "";
-        std::string result;
-        char curr = s[0];
-        int count = 1;
-        for (size_t i = 1; i < s.length(); ++i) {
-            if (s[i] == curr) {
-                ++count;
-            } else {
-                result += curr;
-                result += std::to_string(count);
-                curr = s[i];
-                count = 1;
-            }
-        }
-        result += curr;
-        result += std::to_string(count);
-        return result;
+        // Fake but invertible: wrap s with brackets
+        return "[" + s + "]";
     }
 
     std::string decompress(const std::string& s) override {
-        std::string res;
-        for (size_t i = 0; i < s.length(); ) {
-            char c = s[i++];
-            std::string num;
-            while (i < s.length() && isdigit(s[i])) {
-                num += s[i++];
-            }
-            res.append(num.empty() ? 1 : std::stoi(num), c);
-        }
-        return res;
+        if (s.size() >= 2 && s.front() == '[' && s.back() == ']')
+            return s.substr(1, s.size() - 2);
+        return s;
     }
 };
 
 // ------------------------------------------------------------
-// Mock FileHandler
+// Mock FileHandler (no filesystem!)
 // ------------------------------------------------------------
-class SampleFileHandler : public IFileHandler {
+class MockFileHandler : public IFileHandler {
 public:
-    std::map<std::string, std::string> files;   // filename → content
+    std::map<std::string, std::string> files;
+
+    std::string getBasePath() override { return ""; }
+
+    void saveFile(const std::string& name, const std::string& content) override {
+        files[name] = content;
+    }
+
+    std::string readFile(const std::string& name) override {
+        if (files.count(name) == 0) return "";
+        return files[name];
+    }
 
     std::vector<std::string> listFiles() override {
         std::vector<std::string> v;
         for (auto& p : files) v.push_back(p.first);
         return v;
     }
-
-    std::string readFile(const std::string& fname) override {
-        if (files.find(fname) == files.end()) return "";
-        return files[fname];
-    }
-
-    bool saveFile(const std::string&, const std::string&) override { return true; }
-    std::string getBasePath() override { return ""; }
-    std::string findFile(const std::string& name) override {
-        if (files.find(name) != files.end()) return name;
-        return "";
-    }
 };
 
 // ------------------------------------------------------------
-// TEST 1 — basic valid file retrieval
+// TEST 1 — Valid file
 // ------------------------------------------------------------
-TEST(GetCommandTester, ReturnsCorrectDecompressedContent) {
-    SampleRLECompressor rle;
-    SampleFileHandler fh;
+TEST(GetCommandTests, ReturnsCorrectOutput) {
+    MockRLE comp;
+    MockFileHandler fh;
 
-    fh.files["hello.txt"] = rle.compress("HELLOOO");
+    fh.files["hello.txt"] = comp.compress("HELLOOO");
 
-    GetCommand getCmd(&fh, &rle, std::cout);
+    GetCommand cmd(&fh, &comp, std::cout);
 
+    //catching the cout
     testing::internal::CaptureStdout();
-    getCmd.execute({"hello.txt"});
+    cmd.execute("hello.txt");
+    // takes what execute printed out 
     std::string output = testing::internal::GetCapturedStdout();
 
     ASSERT_EQ(output, "HELLOOO\n");
 }
 
 // ------------------------------------------------------------
-// TEST 2 — file does not exist → no output, no crash
+// TEST 2 — Missing file
 // ------------------------------------------------------------
-TEST(GetCommandTester, MissingFileProducesNoOutput) {
-    SampleRLECompressor rle;
-    SampleFileHandler fh;
+TEST(GetCommandTests, MissingFileProducesNoOutput) {
+    MockRLE comp;
+    MockFileHandler fh;
 
-    fh.files["a.txt"] = rle.compress("AAA");
+    GetCommand cmd(&fh, &comp, std::cout);
 
-    GetCommand cmd(&fh, &rle, std::cout);
-
+    //catching the cout
     testing::internal::CaptureStdout();
-    cmd.execute({"notexist.txt"});
+    cmd.execute("not_exists.txt");
+     // takes what execute printed out 
     std::string output = testing::internal::GetCapturedStdout();
 
     ASSERT_TRUE(output.empty());
 }
 
 // ------------------------------------------------------------
-// TEST 3 — args empty → do nothing
+// TEST 3 — Empty argument
 // ------------------------------------------------------------
-TEST(GetCommandTester, EmptyArgsReturnsNoOutput) {
-    SampleRLECompressor rle;
-    SampleFileHandler fh;
+TEST(GetCommandTests, EmptyArgsDoNothing) {
+    MockRLE comp;
+    MockFileHandler fh;
 
-    fh.files["x.txt"] = rle.compress("XXX");
+    fh.files["x.txt"] = comp.compress("XXX");
 
-    GetCommand cmd(&fh, &rle, std::cout);
+    GetCommand cmd(&fh, &comp, std::cout);
 
+    //catching the cout
     testing::internal::CaptureStdout();
-    cmd.execute({""});
+    cmd.execute("");
+     // takes what execute printed out 
     std::string output = testing::internal::GetCapturedStdout();
 
     ASSERT_TRUE(output.empty());
 }
 
 // ------------------------------------------------------------
-// TEST 4 — filename contains spaces → invalid → no output
+// TEST 4 — Name with space → ignored
 // ------------------------------------------------------------
-TEST(GetCommandTester, FilenameWithSpacesIgnored) {
-    SampleRLECompressor rle;
-    SampleFileHandler fh;
+TEST(GetCommandTests, FilenameWithSpacesIgnored) {
+    MockRLE comp;
+    MockFileHandler fh;
 
-    fh.files["test.txt"] = rle.compress("TEST");
+    fh.files["good.txt"] = comp.compress("DATA");
 
-    GetCommand cmd(&fh, &rle, std::cout);
+    GetCommand cmd(&fh, &comp, std::cout);
 
+    //catching the cout
     testing::internal::CaptureStdout();
-    cmd.execute({"test file"});
+    cmd.execute("bad name");
+     // takes what execute printed out 
     std::string output = testing::internal::GetCapturedStdout();
 
     ASSERT_TRUE(output.empty());
 }
 
 // ------------------------------------------------------------
-// TEST 5 — works with multiple different files
+// TEST 5 — Many files, independent
 // ------------------------------------------------------------
-TEST(GetCommandTester, MultipleFilesWorkIndependently) {
-    SampleRLECompressor rle;
-    SampleFileHandler fh;
+TEST(GetCommandTests, MultipleFilesWorkIndependently) {
+    MockRLE comp;
+    MockFileHandler fh;
 
-    fh.files["a.txt"] = rle.compress("AAAA");
-    fh.files["b.txt"] = rle.compress("BBBBBB");
+    fh.files["a.txt"] = comp.compress("AAAA");
+    fh.files["b.txt"] = comp.compress("BBBBBB");
 
-    GetCommand cmd(&fh, &rle, std::cout);
+    GetCommand cmd(&fh, &comp, std::cout);
 
+    //catching the cout
     testing::internal::CaptureStdout();
-    cmd.execute({"b.txt"});
+    cmd.execute("b.txt");
+     // takes what execute printed out 
     std::string output = testing::internal::GetCapturedStdout();
 
     ASSERT_EQ(output, "BBBBBB\n");
