@@ -1,4 +1,4 @@
-/*
+
 #include "gtest/gtest.h"
 #include "SearchCommand.h"
 #include "IFileHandler.h"
@@ -42,7 +42,7 @@ public:
 };
 
 
-/*class SampleFileHandler : public IFileHandler{
+class SampleFileHandler : public IFileHandler{
     std::vector<std::string> files; // File names
     std::map<std::string, std::string> content; // file line
     std::vector<std::string> listFiles() override {
@@ -52,7 +52,6 @@ public:
         return { content[fname] };
     }
 }
-\\
 
  //test for finding multiple correct files
  TEST(SearchCommandTester, MultipleFilesFinder) {
@@ -70,7 +69,6 @@ public:
     ASSERT_NE(output.find("u.txt"), std::string::npos);
     ASSERT_EQ(output.find("n.txt"), std::string::npos);
 }
- }
 
  //test for no matches
  TEST (SearchCommandTester, NoMatches){
@@ -100,5 +98,5 @@ public:
     cmd.execute({}); // Empty args vector
     std::string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty())
-} */
+}
  
