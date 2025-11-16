@@ -12,13 +12,12 @@ class SampleCompressor : public ICompressor {
 public:
     // add x to the beginning
     std::string compress(const std::string& s) override {
-        return "X" + s;
+        return s;
     }
 
     // remove the first letter
     std::string decompress(const std::string& s) override {
-        if (s.empty()) return s;
-        return s.substr(1);
+        return s;
     }
 };
 
@@ -39,9 +38,9 @@ public:
     SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = "f is for friends";
-    fh.content["u.txt"] = "u is for u and me";
-    fh.content["n.txt"] = "not found";
+    fh.content["f.txt"] = SampComp.compress("f is for friends");
+    fh.content["u.txt"] = SampComp.compress("u is for u and me");
+    fh.content["n.txt"] = SampComp.compress("not found");
     SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute("is for");
@@ -56,9 +55,9 @@ public:
     SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = "f is for friends";
-    fh.content["u.txt"] = "u is for u and me";
-    fh.content["n.txt"] = "not found";
+    fh.content["f.txt"] = SampComp.compress("f is for friends");
+    fh.content["u.txt"] = SampComp.compress("u is for u and me");
+    fh.content["n.txt"] = SampComp.compress("not found");
     SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute("no such phrase");
@@ -71,9 +70,9 @@ public:
     SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = "f is for friends";
-    fh.content["u.txt"] = "u is for u and me";
-    fh.content["n.txt"] = "not found";
+    fh.content["f.txt"] = SampComp.compress("f is for friends");
+    fh.content["u.txt"] = SampComp.compress("u is for u and me");
+    fh.content["n.txt"] = SampComp.compress("not found");
     SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
     cmd.execute(""); // Empty args
