@@ -30,8 +30,7 @@ TEST(ConsoleMenuTests, GetInputReadsSingleLineCommands) {
         {"add", &add}, {"get", &get}, {"search", &search}
     };
     std::istringstream input("add file1.txt abc\nget file1.txt\nsearch abc\n");
-    std::ostream& output = std::cout;
-    ConsoleMenu menu(input, output, commands);
+    ConsoleMenu menu(input, commands);
     std::string line1 = menu.getInput();
     EXPECT_EQ(line1, "add file1.txt abc");
     std::string line2 = menu.getInput();
@@ -51,8 +50,7 @@ TEST(ConsoleMenuTests, ExecutesValidCommands) {
         {"add", &add}, {"get", &get}, {"search", &search}
     };
     std::istringstream input("");
-    std::ostream& output = std::cout;
-    ConsoleMenu menu(input, output, commands);
+    ConsoleMenu menu(input, commands);
     // Test ADD checking sentistive letters
     auto ci = menu.seperateInput("ADD file.txt mydata");
     EXPECT_EQ(ci.first, "add");
@@ -74,8 +72,7 @@ TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
         {"add", &add}, {"get", &get}, {"search", &search}
     };
     std::istringstream dummyInput("");
-    std::ostream& output = std::cout;
-    ConsoleMenu menu(dummyInput, output, commands);
+    ConsoleMenu menu(dummyInput, commands);
     // Invalid commands (wrong keyword or blank)
     auto ci = menu.seperateInput("REMOVE something");
     EXPECT_TRUE(ci.first.empty());
@@ -88,18 +85,3 @@ TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
     EXPECT_TRUE(ci.second.empty());
 }
 
-
-/*TEST 4: check loop continues even after unvalid commands
-TEST(ConsoleMenuTests, KeepsPromptingAfterEachInput) {
-    std::vector<std::string> inputs = {"INVALID", "GET file", "SEARCH word", "ADD x y z", "FOO", "GET y"};
-    int validCount = 0;
-    for (const auto& inp : inputs) {
-        auto ci = menu.seperateInput(inp);
-        if (!ci.command.empty() && commands.count(ci.command)) {
-            commands[ci.command]->execute(ci.args);
-            validCount++;
-        }
-        // Simulates: loop continues regardless of previous result
-    }
-    EXPECT_EQ(validCount, 4); // Only 4 valid commands among 6 inputs
-}*/  

@@ -20,7 +20,7 @@ std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string&
     iss >> cmd; // get first word ,the command, from input
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower); // make case unsensitive
     if (commandMap.find(cmd) == commandMap.end()) {
-        return {"", ""};
+        return {"",""};
     }
     std::string args;
     getline(iss, args);
