@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 project(SearchCommandTests)
 set(CMAKE_CXX_STANDARD 11)
 
-# --- Fetch GoogleTest ---
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -11,9 +10,6 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# ----------------------------
-# Build ONLY what the test needs
-# ----------------------------
 add_executable(runTests
     SearchCommandTest.cpp   
     SearchCommand.cpp       

@@ -36,15 +36,15 @@ class SampleFileHandler : public IFileHandler{
 
  //test for finding multiple correct files
  TEST(SearchCommandTester, MultipleFilesFinder) {
-    SampleRLECompressor rle;
+    SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = rle.compress("f is for friends");
-    fh.content["u.txt"] = rle.compress("u is for u and me");
-    fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle, std::cout);
+    fh.content["f.txt"] = "f is for friends";
+    fh.content["u.txt"] = "u is for u and me";
+    fh.content["n.txt"] = "not found";
+    SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
-    cmd.execute({"is for"});
+    cmd.execute("is for");
     std::string output = testing::internal::GetCapturedStdout();
     ASSERT_NE(output.find("f.txt"), std::string::npos);
     ASSERT_NE(output.find("u.txt"), std::string::npos);
@@ -53,30 +53,30 @@ class SampleFileHandler : public IFileHandler{
 
  //test for no matches
  TEST (SearchCommandTester, NoMatches){
-    SampleRLECompressor rle;
+    SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = rle.compress("f is for friends");
-    fh.content["u.txt"] = rle.compress("u is for u and me");
-    fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle, std::cout);
+    fh.content["f.txt"] = "f is for friends";
+    fh.content["u.txt"] = "u is for u and me";
+    fh.content["n.txt"] = "not found";
+    SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
-    cmd.execute({"no such phrase"});
+    cmd.execute("no such phrase");
     std::string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty());
  }
 
  //test for empty searches
  TEST(SearchCommandTester, ArgsEmptyReturnsNothing) {
-    SampleRLECompressor rle;
+    SampleCompressor SampComp;
     SampleFileHandler fh;
     fh.files = {"f.txt", "u.txt", "n.txt"};
-    fh.content["f.txt"] = rle.compress("f is for friends");
-    fh.content["u.txt"] = rle.compress("u is for u and me");
-    fh.content["n.txt"] = rle.compress("not found");
-    SearchCommand cmd(&fh, &rle, std::cout);
+    fh.content["f.txt"] = "f is for friends";
+    fh.content["u.txt"] = "u is for u and me";
+    fh.content["n.txt"] = "not found";
+    SearchCommand cmd(&fh, &SampComp, std::cout);
     testing::internal::CaptureStdout();
-    cmd.execute({}); // Empty args vector
+    cmd.execute(""); // Empty args
     std::string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty())
 }
