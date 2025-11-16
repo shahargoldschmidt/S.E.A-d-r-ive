@@ -15,7 +15,7 @@ int main() {
     IFileHandler* fileHandler = new OSFileHandler();
     ICompressor* compressor = new RLEStrategy();
     std::ostream& output = std::cout;
-    std::istream input = std :: cin;
+    std::istream& input = std :: cin;
 
     ICommand* addCmd = new AddCommand(fileHandler, compressor);
     ICommand* getCmd = new GetCommand(fileHandler, compressor, output);
