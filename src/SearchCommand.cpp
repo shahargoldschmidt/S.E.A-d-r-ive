@@ -18,7 +18,7 @@ class SearchCommand : public ICommand {
         void execute(const std::string& args) override {
          // If no search term provided, do nothing
             if (args.empty()) return;
-            std::string compContent = compressor->compress(args[0]); // Compress the input
+            std::string compContent = compressor->compress(args); // Compress the input
             // Iterate over all files
             for (const std::string& fname : fileHandler->listFiles()) {
                 std::string line = fileHandler->readFile(fname);
