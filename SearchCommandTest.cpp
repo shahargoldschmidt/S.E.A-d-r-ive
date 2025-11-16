@@ -23,16 +23,15 @@ public:
 };
 
 
-class SampleFileHandler : public IFileHandler{
-    std::vector<std::string> files; // File names
-    std::map<std::string, std::string> content; // file line
-    std::vector<std::string> listFiles() override {
-        return files;
-    }
-    std::vector<std::string> readFile(const std::string& fname) override {
-        return { content[fname] };
-    }
-}
+class SampleFileHandler : public IFileHandler {
+    std::vector<std::string> files;
+    std::map<std::string, std::string> content;
+    std::string getBasePath() override { return ""; }
+    void saveFile(const std::string& fname, const std::string& data) override { content[fname] = data; }
+    std::string readFile(const std::string& fname) override { return content[fname]; }
+    std::vector<std::string> listFiles() override { return files; }
+};
+
 
  //test for finding multiple correct files
  TEST(SearchCommandTester, MultipleFilesFinder) {
