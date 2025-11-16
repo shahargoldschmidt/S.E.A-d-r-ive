@@ -8,39 +8,17 @@
 #include <iostream>
 
 //sample compressor and sample FileHandle for the test 
-class SampleRLECompressor : public ICompressor {
+class SampleCompressor : public ICompressor {
 public:
+    // No compression: just return the input as-is
     std::string compress(const std::string& s) override {
-        if (s.empty()) return "";
-        std::string result;
-        char curr = s[0];
-        int count = 1;
-        for (size_t i = 1; i < s.length(); ++i) {
-            if (s[i] == curr) {
-                ++count;
-            } else {
-                result += curr;
-                result += std::to_string(count);
-                curr = s[i];
-                count = 1;
-            }
-        }
-        result += curr;
-        result += std::to_string(count);
-        return result;
+        return s;
     }
+    // No decompression: just return the input as-is
     std::string decompress(const std::string& s) override {
-        std::string result;
-        for (size_t i = 0; i < s.length(); ) {
-            char c = s[i++];
-            std::string num;
-            while (i < s.length() && isdigit(s[i])) num += s[i++];
-            result.append(num.empty() ? 1 : std::stoi(num), c);
-        }
-        return result;
+        return s;
     }
 };
-
 
 class SampleFileHandler : public IFileHandler{
     std::vector<std::string> files; // File names
