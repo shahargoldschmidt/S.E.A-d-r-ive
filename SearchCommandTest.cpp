@@ -24,6 +24,7 @@ public:
 
 
 class SampleFileHandler : public IFileHandler {
+public: 
     std::vector<std::string> files;
     std::map<std::string, std::string> content;
     std::string getBasePath() override { return ""; }
@@ -77,6 +78,6 @@ class SampleFileHandler : public IFileHandler {
     testing::internal::CaptureStdout();
     cmd.execute(""); // Empty args
     std::string output = testing::internal::GetCapturedStdout();
-    ASSERT_TRUE(output.empty())
-}
+    ASSERT_TRUE(output.empty());
+};
  
