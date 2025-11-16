@@ -1,3 +1,6 @@
+#ifndef OSFILEHANDLER_H
+#define OSFILEHANDLER_H
+
 #include "IFileHandler.h"
 #include <string>
 #include <vector>
@@ -13,3 +16,5 @@ public:
     std::vector<std::string> listFiles() override; 
 
 };
+
+#endif

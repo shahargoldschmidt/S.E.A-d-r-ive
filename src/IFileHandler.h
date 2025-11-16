@@ -1,3 +1,5 @@
+#ifndef IFILEHANDLER_H
+#define IFILEHANDLER_H
 #include <string>
 #include <vector>
 
@@ -14,3 +16,5 @@ public:
     virtual std::vector<std::string> listFiles() = 0; 
 
 };
+
+#endif
