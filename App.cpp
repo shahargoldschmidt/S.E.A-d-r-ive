@@ -1,12 +1,6 @@
 #include "App.h"
 #include "IMenu.h"
-#include "ConsoleMenu.h"
 #include "ICommand.h"
-#include "AddCommand.h"
-#include "GetCommand.h"
-#include "SearchCommand.h"
-#include "IFileHandler.h"
-#include "ICompressor.h"
 #include <map>
 #include <string>
 #include <iostream>
