@@ -33,6 +33,4 @@ class SearchCommand : public ICommand {
             }
         } output << std::endl;
     }
-}
-
-
+};
