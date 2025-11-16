@@ -13,5 +13,4 @@ public:
     
     virtual std::vector<std::string> listFiles() = 0; 
 
-    virtual std::vector<std::string> findFiles(const std::string& fileContent) = 0;
 };
