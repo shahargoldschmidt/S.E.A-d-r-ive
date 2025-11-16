@@ -10,15 +10,18 @@
 //sample compressor and sample FileHandle for the test 
 class SampleCompressor : public ICompressor {
 public:
-    // No compression: just return the input as-is
+    // add x to the beginning
     std::string compress(const std::string& s) override {
-        return s;
+        return "X" + s;
     }
-    // No decompression: just return the input as-is
+
+    // remove the first letter
     std::string decompress(const std::string& s) override {
-        return s;
+        if (s.empty()) return s;
+        return s.substr(1);
     }
 };
+
 
 class SampleFileHandler : public IFileHandler{
     std::vector<std::string> files; // File names
