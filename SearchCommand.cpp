@@ -5,7 +5,13 @@
 #include <string>
 #include <iostream>
 
-public: SearchCommand(IFileHandler* fh, ICompressor* comp, std::ostream& out)
+class SearchCommand : public ICommand {
+    IFileHandler* fileHandler;      
+    ICompressor* compressor;  
+    std::ostream& output;
+
+    public:
+        SearchCommand(IFileHandler* fh, ICompressor* comp, std::ostream& out)
             : fileHandler(fh), compressor(comp), output(out) {}
 
         //  receives the uncompressed file content
@@ -13,6 +19,7 @@ public: SearchCommand(IFileHandler* fh, ICompressor* comp, std::ostream& out)
          // If no search term provided, do nothing
             if (args.empty()) return;
             std::string compContent = compressor->compress(args); // Compress the input
+            int count = 0;
             // Iterate over all files
             for (const std::string& fname : fileHandler->listFiles()) {
                 std::string line = fileHandler->readFile(fname);
@@ -23,8 +30,9 @@ public: SearchCommand(IFileHandler* fh, ICompressor* comp, std::ostream& out)
                 // If found, print the file name to output
                 if (found) {
                     output << fname << " ";
+                    count++;
                 }
             }
-        } output << std::endl;
-    };
-
+        } if(count>0) output << std::endl;
+    }
+};
