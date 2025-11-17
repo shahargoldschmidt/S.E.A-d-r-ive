@@ -63,11 +63,11 @@ TEST(AddFileTests, AllowSpacesContent) {
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("empty     "); // 5 רווחים אחרי שם הקובץ
+    add.execute("empty     "); 
 
     ASSERT_TRUE(fh.saveCalled);
     EXPECT_EQ(fh.savedName, "empty");
-    EXPECT_EQ(fh.savedContent, "    "); // עכשיו נשמרים כל הרווחים
+    EXPECT_EQ(fh.savedContent, "    "); 
 }
 
 TEST(AddFileTests, RejectEmptyFileName) {
@@ -77,7 +77,7 @@ TEST(AddFileTests, RejectEmptyFileName) {
     AddFileCommand add(&fh, &comp);
     add.execute("   ");
 
-    ASSERT_FALSE(fh.saveCalled);  // לא אמור לשמור
+    ASSERT_FALSE(fh.saveCalled);  
 }
 
 TEST(AddFileTests, CompressionIsCalled) {
