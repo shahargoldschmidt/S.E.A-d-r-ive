@@ -9,32 +9,26 @@
 #include "ICommand.h"
 
 //
-// ---------- Fake Menu ----------
+// ---------- Fake Menu (updated for new IMenu) ----------
+//   IMenu now returns:  pair<string,string>
+//   so FakeMenu must match that.
 //
 class FakeMenu : public IMenu {
 public:
-    std::vector<std::string> inputs;         // מה להחזיר בכל getInput()
+    std::vector<std::pair<std::string,std::string>> inputs;  // {command, args}
     int index = 0;
 
-    // מה להחזיר מ-separateInput()
-    std::pair<std::string,std::string> output;
-
-    std::string getInput() override {
+    std::pair<std::string,std::string> getInput() override {
         if (index >= inputs.size()) {
-            // עצירת הלולאה של App
+            // Stop the infinite loop inside App::run
             throw std::runtime_error("stop");
         }
         return inputs[index++];
     }
-
-    std::pair<std::string,std::string>
-    seperateInput(const std::string& s) override {
-        return output;
-    }
 };
 
 //
-// ---------- Fake Command (Records calls) ----------
+// ---------- Fake Command (records calls) ----------
 //
 class FakeCommand : public ICommand {
 public:
@@ -60,7 +54,6 @@ public:
     }
 };
 
-
 //
 // =================================================
 //                  TESTS FOR APP
@@ -68,7 +61,7 @@ public:
 //
 
 //
-// --- TEST 1: execute() called with correct arguments ---
+// --- TEST 1: App calls the correct ICommand with correct arguments ---
 //
 TEST(AppTests, ExecutesValidCommand)
 {
@@ -79,20 +72,18 @@ TEST(AppTests, ExecutesValidCommand)
         {"add", &cmd}
     };
 
-    menu.inputs = {"add file1.txt"};
-    menu.output = {"add", " file1.txt"};
+    menu.inputs = { {"add", " file1.txt"} };
 
     App app(&menu, commands);
 
-    // צפוי ש- run יזרוק stop אחרי שהקלט נגמר
-    EXPECT_THROW(app.run(), std::runtime_error);
+    EXPECT_THROW(app.run(), std::runtime_error);  // Stop after inputs end
 
     EXPECT_EQ(cmd.callCount, 1);
     EXPECT_EQ(cmd.lastArg, " file1.txt");
 }
 
 //
-// --- TEST 2: skip empty command ---
+// --- TEST 2: App must SKIP an empty command ---
 //
 TEST(AppTests, SkipsEmptyCommand)
 {
@@ -103,18 +94,17 @@ TEST(AppTests, SkipsEmptyCommand)
         {"add", &cmd}
     };
 
-    menu.inputs = {"add file1.txt"};
-    menu.output = {"", ""};     // פארסר מחזיר פקודה ריקה
+    menu.inputs = { {"", ""} };  // Parser failed → should be ignored
 
     App app(&menu, commands);
 
     EXPECT_THROW(app.run(), std::runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 0); // אף פקודה לא קראה execute
+    EXPECT_EQ(cmd.callCount, 0); // skip – execute must NOT run
 }
 
 //
-// --- TEST 3: command throws but App continues ---
+// --- TEST 3: Command throws but App continues ---
 //
 TEST(AppTests, CommandThrowsButAppContinues)
 {
@@ -125,18 +115,17 @@ TEST(AppTests, CommandThrowsButAppContinues)
         {"add", &cmd}
     };
 
-    menu.inputs = {"add X"}; 
-    menu.output = {"add", " X"};
+    menu.inputs = { {"add", " X"} };
 
     App app(&menu, commands);
 
     EXPECT_THROW(app.run(), std::runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 1); // למרות חריגה - הפקודה קראה פעם אחת
+    EXPECT_EQ(cmd.callCount, 1); // execute ran once even though it threw
 }
 
 //
-// --- TEST 4: multiple inputs sequence ---
+// --- TEST 4: Multiple inputs in sequence ---
 //
 TEST(AppTests, MultipleInputs)
 {
@@ -147,29 +136,14 @@ TEST(AppTests, MultipleInputs)
         {"add", &cmd}
     };
 
-    menu.inputs = {"add A", "add B"};
-
-    // שיטה: נשנה את התוצאה של separateInput לפי הקריאה
-    // הקריאה הראשונה
-    menu.output = {"add", " A"};
+    menu.inputs = {
+        {"add", " A"},
+        {"add", " B"}
+    };
 
     App app(&menu, commands);
 
-    // אחרי הקריאה הראשונה, לפני שהלולאה תבצע getInput שוב,
-    // אנחנו נחליף ל-output אחר בקריאה הבאה.
-    try {
-        app.run();
-    } catch (std::runtime_error&) {
-        // עכשיו הקריאה השנייה:
-        menu.output = {"add", " B"};
+    EXPECT_THROW(app.run(), std::runtime_error);
 
-        // ננסה להמשיך שוב:
-        try {
-            app.run();
-        } catch (std::runtime_error&) {}
-    }
-
-    // **שתי** הפעמים הפקודה הייתה אמורה לרוץ פעם אחת בכל run()
-    // אבל כי כל run נקרא ידנית — יהיו פה 2 קריאות
-    EXPECT_GE(cmd.callCount, 1);
+    EXPECT_EQ(cmd.callCount, 2); // two valid executions
 }
