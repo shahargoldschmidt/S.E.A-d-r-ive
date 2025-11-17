@@ -2,17 +2,18 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include "CommandInput.h"
 
 // Reads one line of input from the input stream
 CommandInput ConsoleMenu::getInput() {
     std::string userInput;
     std::getline(in, userInput);
     auto seperatedInput= seperateInput(userInput);
-    return { seperatedInput.first, seperatedInput.second };
+    return { seperatedInput.command, seperatedInput.args };
 }
 
 // Separates the command from the rest of the arguments in the users input
-std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string& userInput) {
+CommandInput ConsoleMenu::seperateInput(const std::string& userInput) {
     if (userInput.empty()) {
         return {"", ""};
     }

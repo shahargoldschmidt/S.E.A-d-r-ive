@@ -20,8 +20,9 @@ private:
 public:
     ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
         : in(input) , commandMap(cmds) {};
-    CommandInput ConsoleMenu::getInput();
-    std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string& args);
+    CommandInput getInput();
+    CommandInput seperateInput(const std::string& args);
+
 };
 
 

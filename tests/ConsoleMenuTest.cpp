@@ -3,6 +3,8 @@
 #include "ICommand.h"
 #include <map>
 #include <string>
+#include "CommandInput.h"
+
 
 // command examples to use in tests
 class MockCommand : public ICommand {
