@@ -16,9 +16,11 @@ void SearchCommand::execute(const std::string& args) {
     int count = 0; //counter to knof if to end line or do nothing
     // Iterate over all files
     for (const std::string& fname : fileHandler->listFiles()) {
-        std::string line = fileHandler->readFile(fname);
+        std::string compressed = fileHandler->readFile(fname);
+        //decompress the file content to search the users content
+        std::string decompressed = compressor->decompress(compressed); 
         // If compContent is not found, it returns "not found" as std::string::npos
-        if (line.find(compContent) != std::string::npos) {
+        if (decompressed.find(args) != std::string::npos) {
             output << fname << " ";
             count++;
         }
