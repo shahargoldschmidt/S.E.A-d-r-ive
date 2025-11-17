@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include "ICommand.h"
+#include "CommandInput.h"
 #include <vector>
 
 /** * This class handles user interaction through the console:
@@ -19,9 +20,8 @@ private:
 public:
     ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
         : in(input) , commandMap(cmds) {};
-    std::string getInput(); 
-    std::pair<std::string,std::string> seperateInput(const std::string&) ;
- 
+    CommandInput ConsoleMenu::getInput();
+    std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string& args);
 };
 
 
