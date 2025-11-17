@@ -1,59 +1,118 @@
 #include "gtest/gtest.h"
 #include "RLEStrategy.h"
 
+// Helper to build expected binary string easily
+std::string bin(uint8_t count, char c)
+{
+    return std::string(1, static_cast<char>(count)) + c;
+}
+
 // ---------- TEST 1: basic compression ----------
-TEST(RLETests, CompressBasic) {
+TEST(RLETests, CompressBasic)
+{
     RLEStrategy rle;
     std::string input = "aaabbc";
-    std::string expected = "a3b2c1";
+
+    std::string expected =
+        bin(3, 'a') +
+        bin(2, 'b') +
+        bin(1, 'c');
 
     EXPECT_EQ(rle.compress(input), expected);
 }
 
 // ---------- TEST 2: empty string ----------
-TEST(RLETests, CompressEmptyString) {
+TEST(RLETests, CompressEmptyString)
+{
     RLEStrategy rle;
-    std::string input = "";
-    std::string expected = "";
-
-    EXPECT_EQ(rle.compress(input), expected);
+    EXPECT_EQ(rle.compress(""), "");
 }
 
 // ---------- TEST 3: single char ----------
-TEST(RLETests, CompressSingleChar) {
+TEST(RLETests, CompressSingleChar)
+{
     RLEStrategy rle;
-    EXPECT_EQ(rle.compress("a"), "a1");
+    std::string expected = bin(1, 'a');
+
+    EXPECT_EQ(rle.compress("a"), expected);
 }
 
 // ---------- TEST 4: decompress basic ----------
-TEST(RLETests, DecompressBasic) {
+TEST(RLETests, DecompressBasic)
+{
     RLEStrategy rle;
-    std::string input = "a3b2c1";
-    std::string expected = "aaabbc";
 
-    EXPECT_EQ(rle.decompress(input), expected);
+    std::string compressed =
+        bin(3, 'a') +
+        bin(2, 'b') +
+        bin(1, 'c');
+
+    EXPECT_EQ(rle.decompress(compressed), "aaabbc");
 }
 
-// ---------- TEST 5: decompress multi-digit numbers ----------
-TEST(RLETests, DecompressMultiDigit) {
+// ---------- TEST 5: decompress long run ----------
+TEST(RLETests, DecompressLongRun)
+{
     RLEStrategy rle;
-    std::string input = "a12";
-    std::string expected = "aaaaaaaaaaaa";
 
-    EXPECT_EQ(rle.decompress(input), expected);
+    std::string compressed = bin(255, 'a');
+    std::string expected(255, 'a');
+
+    EXPECT_EQ(rle.decompress(compressed), expected);
 }
 
-// ---------- TEST 6: compress → decompress cycle ----------
-TEST(RLETests, RoundTrip) {
+// ---------- TEST 6: round trip ----------
+TEST(RLETests, RoundTrip)
+{
     RLEStrategy rle;
-    std::string input = "bbbbccccccccaaa";
+    std::string input = "bbbbccccccccaaa11####xx";
+
     std::string compressed = rle.compress(input);
-
     EXPECT_EQ(rle.decompress(compressed), input);
 }
 
 // ---------- TEST 7: decompress empty ----------
-TEST(RLETests, DecompressEmptyString) {
+TEST(RLETests, DecompressEmptyString)
+{
     RLEStrategy rle;
     EXPECT_EQ(rle.decompress(""), "");
+}
+
+// ---------- TEST 8: different characters ----------
+TEST(RLETests, MixedCharacters)
+{
+    RLEStrategy rle;
+    std::string input = "aa11bb##cc";
+
+    std::string compressed = rle.compress(input);
+    EXPECT_EQ(rle.decompress(compressed), input);
+}
+
+// ---------- TEST 9: complex mixed input compression ----------
+TEST(RLETests, CompressComplexMixedInput)
+{
+    RLEStrategy rle;
+
+    // Input contains letters, digits, symbols, spaces, and repeated chars
+    std::string input = "AA!!###  1233\n\t$$%%%%word";
+
+    // Manually build expected compressed binary form
+    std::string expected =
+        bin(2, 'A') +  // "AA"
+        bin(2, '!') +  // "!!"
+        bin(3, '#') +  // "###"
+        bin(2, ' ') +  // "  "
+        bin(1, '1') +  // "1"
+        bin(1, '2') +  // "2"
+        bin(2, '3') +  // "33"
+        bin(1, '\n') + // newline
+        bin(1, '\t') + // tab
+        bin(2, '$') +  // "$$"
+        bin(4, '%') +  // "%%%%"
+        bin(1, 'w') +
+        bin(1, 'o') +
+        bin(1, 'r') +
+        bin(1, 'd');
+
+    EXPECT_EQ(rle.compress(input), expected);
 }

@@ -1,58 +1,69 @@
 #include "RLEStrategy.h"
-#include <sstream>
+#include <cstdint> 
 
-using std::string;
-using std::ostringstream;
+// ---------------------------------------------------------
+// compress
+// Takes a plain text string and returns a compressed string
+// encoded in binary format using RLE (Run-Length Encoding).
+//
+// Format:
+//   [count][char][count][char]...
+//
+// - 'count' is stored as a single byte (uint8_t), range 1–255.
+// - 'char' is the original character that is repeated.
+// ---------------------------------------------------------
+std::string RLEStrategy::compress(const std::string& input) {
+    std::string output;
 
-string RLEStrategy::compress(const string& input) {
-     // Empty input returns empty output
-    if (input.empty()) return "";
+    // Pre-allocate memory to reduce re-allocations during push_back
+    output.reserve(input.size());
 
-    string result = "";
-    int count = 1;
+    size_t i = 0;
 
-     // Go over the string and count repeated chars
-    for (size_t i = 1; i <= input.size(); ++i) {
-        // If we reached a different char OR the end of the string:
-        if (i == input.size() || input[i] != input[i - 1]) {
+    while (i < input.size()) {
+        //saving the char
+        char currentChar = input[i];
+        // number of consecutive occurrences
+        uint8_t count = 1;  
+        //cheking the next char 
+        i++;
 
-            // Add the character + its count
-            result += input[i - 1];
-            result += std:: to_string(count);
-
-            //reset the counter
-            count = 1;
-
-        } else {
-            //same char
+        // Count repeated characters up to 255 (limit of uint8_t)
+        while (i < input.size() && input[i] == currentChar && count < 255) {
             count++;
+            i++;
         }
+
+        // Store count as a single byte
+        output.push_back(static_cast<char>(count));
+
+        // Store the character itself
+        output.push_back(currentChar);
     }
 
-    return result;
+    return output;
 }
 
 
 
-string RLEStrategy::decompress(const string& input) {
-    string result = "";
+// ---------------------------------------------------------
+// decompress
+// The function expects pairs of bytes:
+//   [count][char]
+// The result is returned as a normal printable string.
+// ---------------------------------------------------------
+std::string RLEStrategy::decompress(const std::string& input) {
+    std::string output;
 
-    for (size_t i = 0; i < input.size(); ) {
+    // Iterate in steps of 2 bytes: (count, char)
+    for (size_t i = 0; i + 1 < input.size(); i += 2) {
+        // Read the raw byte and saves it as a number.
+        uint8_t count = static_cast<uint8_t>(input[i]);
+        char character = input[i + 1];
 
-        // First read the character and move to the number
-        char ch = input[i++];
-        int count = 0;
-
-       // counting the number of the char
-        while (i < input.size() && isdigit(input[i])) {
-            // Convert char-digit to number
-            count = count * 10 + (input[i] - '0');
-            i++;
-        }
-
-        // Repeat character count times
-          result += string(count, ch);
+        // Append the character 'count' times
+        output.append(count, character);
     }
 
-    return result;
+    return output;
 }
