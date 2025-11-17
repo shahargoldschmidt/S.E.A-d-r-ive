@@ -10,12 +10,9 @@
 //sample compressor and sample FileHandle for the test 
 class SampleCompressor : public ICompressor {
 public:
-    // add x to the beginning
     std::string compress(const std::string& s) override {
         return s;
     }
-
-    // remove the first letter
     std::string decompress(const std::string& s) override {
         return s;
     }
