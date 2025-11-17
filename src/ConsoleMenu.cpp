@@ -26,6 +26,6 @@ CommandInput ConsoleMenu::seperateInput(const std::string& userInput) {
     }
     std::string args;
     getline(iss, args);
-    args.erase(0, args.find_first_not_of(" \t")); // erase space before sending
+     args.erase(0, 1); // erase space before sending
     return {cmd, args};
 }
