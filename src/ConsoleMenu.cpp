@@ -4,7 +4,7 @@
 #include <sstream>
 #include "CommandInput.h"
 
-// Reads one line of input from the input stream
+// gets users input and seperates it to the command and its content
 CommandInput ConsoleMenu::getInput() {
     std::string userInput;
     std::getline(in, userInput);
@@ -25,7 +25,7 @@ CommandInput ConsoleMenu::seperateInput(const std::string& userInput) {
         return {"",""};
     }
     std::string args;
-    getline(iss, args);
-     args.erase(0, 1); // erase space before sending
+    getline(iss, args); //get rest of the input
+    args.erase(0, 1); // erase space before sending
     return {cmd, args};
 }
