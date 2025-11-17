@@ -2,6 +2,8 @@
 #define IMENU_H
 
 #include <string>
+#include "CommandInput.h"
+
 /**
  * This interface defines how any menu in the CLI should behave.
  * The main responsibilities:
@@ -10,8 +12,6 @@
 class IMenu {
 public:
     virtual ~IMenu() = default;
-    // gets input regardlees of the source
-    virtual std::pair<std::string,std::string> getInput() = 0;
- 
+    virtual CommandInput getInput() = 0; // gets input regardlees of the source
 };
 #endif 

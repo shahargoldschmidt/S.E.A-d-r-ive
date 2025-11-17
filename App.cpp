@@ -12,15 +12,14 @@ void App::run()
 {
     while (true)
     {
-        // get the users input
-        // std::string input = menu->getInput();
-        // seperate the command and its content
+        // Get the next command (already split into command + args)
         auto userCom = menu->getInput();
-        if (userCom.first.empty())
+        // no command
+        if (userCom.command.empty())
             continue;
         try
         {
-            commands[userCom.first]->execute(userCom.second);
+            commands[userCom.command]->execute(userCom.args);
         }
         catch (...)
         {

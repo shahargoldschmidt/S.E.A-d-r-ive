@@ -9,18 +9,15 @@
 #include "ICommand.h"
 
 //
-// ---------- Fake Menu (updated for new IMenu) ----------
-//   IMenu now returns:  pair<string,string>
-//   so FakeMenu must match that.
+// ---------- Fake Menu (updated for CommandInput struct) ----------
 //
 class FakeMenu : public IMenu {
 public:
-    std::vector<std::pair<std::string,std::string>> inputs;  // {command, args}
+    std::vector<CommandInput> inputs;  
     int index = 0;
 
-    std::pair<std::string,std::string> getInput() override {
+    CommandInput getInput() override {
         if (index >= inputs.size()) {
-            // Stop the infinite loop inside App::run
             throw std::runtime_error("stop");
         }
         return inputs[index++];
@@ -42,7 +39,7 @@ public:
 };
 
 //
-// ---------- Fake Command that throws ----------
+// ---------- Command that throws ----------
 //
 class ThrowingCommand : public ICommand {
 public:
@@ -61,7 +58,7 @@ public:
 //
 
 //
-// --- TEST 1: App calls the correct ICommand with correct arguments ---
+// --- TEST 1: App executes a valid command correctly ---
 //
 TEST(AppTests, ExecutesValidCommand)
 {
@@ -76,14 +73,14 @@ TEST(AppTests, ExecutesValidCommand)
 
     App app(&menu, commands);
 
-    EXPECT_THROW(app.run(), std::runtime_error);  // Stop after inputs end
+    EXPECT_THROW(app.run(), std::runtime_error);
 
     EXPECT_EQ(cmd.callCount, 1);
     EXPECT_EQ(cmd.lastArg, " file1.txt");
 }
 
 //
-// --- TEST 2: App must SKIP an empty command ---
+// --- TEST 2: App skips an empty command ---
 //
 TEST(AppTests, SkipsEmptyCommand)
 {
@@ -94,22 +91,23 @@ TEST(AppTests, SkipsEmptyCommand)
         {"add", &cmd}
     };
 
-    menu.inputs = { {"", ""} };  // Parser failed → should be ignored
+    menu.inputs = { {"", ""} };  // should be skipped
 
     App app(&menu, commands);
 
     EXPECT_THROW(app.run(), std::runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 0); // skip – execute must NOT run
+    //no execute function at all.
+    EXPECT_EQ(cmd.callCount, 0); 
 }
 
 //
-// --- TEST 3: Command throws but App continues ---
+// --- TEST 3: Command throws but App continues running ---
 //
 TEST(AppTests, CommandThrowsButAppContinues)
 {
     FakeMenu menu;
-    ThrowingCommand cmd;
+    ThrowingCommand cmd;//going to throw an erreo
 
     std::map<std::string, ICommand*> commands = {
         {"add", &cmd}
@@ -121,11 +119,12 @@ TEST(AppTests, CommandThrowsButAppContinues)
 
     EXPECT_THROW(app.run(), std::runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 1); // execute ran once even though it threw
+    //went into execute function
+    EXPECT_EQ(cmd.callCount, 1);
 }
 
 //
-// --- TEST 4: Multiple inputs in sequence ---
+// --- TEST 4: Two valid commands in sequence ---
 //
 TEST(AppTests, MultipleInputs)
 {
@@ -145,5 +144,6 @@ TEST(AppTests, MultipleInputs)
 
     EXPECT_THROW(app.run(), std::runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 2); // two valid executions
+    //called 2 time to the execute function
+    EXPECT_EQ(cmd.callCount, 2);
 }
