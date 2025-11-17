@@ -19,12 +19,12 @@ void SearchCommand::execute(const std::string &args)
     // Iterate over all files
     for (const std::string &fname : fileHandler->listFiles())
     {
-        if (fname == args)
-        {
-            output << fname << " ";
-            count++;
-            continue;
-        }
+       // if (fname.find(args) != std::string::npos)
+       // {
+       //     output << fname << " ";
+       //     count++;
+        //    continue;
+        //}
 
         std::string compressed = fileHandler->readFile(fname);
         // decompress the file content to search the users content
