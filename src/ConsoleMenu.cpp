@@ -25,5 +25,6 @@ std::pair<std::string,std::string> ConsoleMenu::seperateInput(const std::string&
     }
     std::string args;
     getline(iss, args);
+    args.erase(0, args.find_first_not_of(" \t")); // erase space before sending
     return {cmd, args};
 }
