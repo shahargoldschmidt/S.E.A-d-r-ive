@@ -10,6 +10,8 @@
 class IMenu {
 public:
     virtual ~IMenu() = default;
-    virtual std::string getInput() = 0; // gets input regardlees of the source
+    // gets input regardlees of the source
+    virtual std::pair<std::string,std::string> getInput() = 0;
+ 
 };
 #endif 

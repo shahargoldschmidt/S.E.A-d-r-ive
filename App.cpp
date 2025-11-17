@@ -17,9 +17,9 @@ public:
     void run() {
         while (true) {
             //get the users input
-            std::string input = menu->getInput();
+            //std::string input = menu->getInput();
             //seperate the command and its content
-            auto userCom = menu->seperateInput(input); 
+            auto userCom = menu->getInput(); 
             if (userCom.first.empty())
                 continue;
             try {

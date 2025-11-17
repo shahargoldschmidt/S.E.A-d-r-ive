@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(GetCommandTests)
+project(AppTests)
 set(CMAKE_CXX_STANDARD 11)
 
 # --- Fetch GoogleTest ---
@@ -15,8 +15,8 @@ FetchContent_MakeAvailable(googletest)
 # Build ONLY what the test needs
 # ----------------------------
 add_executable(runTests
-    GetCommandTest.cpp   # הטסט שלך
-    GetCommand.cpp       # קובץ ההפקודה
+    TestApp.cpp   # הטסט שלך
+    App.cpp       # קובץ ההפקודה
 )
 
 # קבצי header — לא חובה אבל מוסיף סדר
