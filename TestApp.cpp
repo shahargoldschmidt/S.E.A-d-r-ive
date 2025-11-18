@@ -51,13 +51,7 @@ public:
     }
 };
 
-//
-// =================================================
-//                  TESTS FOR APP
-// =================================================
-//
 
-//
 // --- TEST 1: App executes a valid command correctly ---
 //
 TEST(AppTests, ExecutesValidCommand)
@@ -73,6 +67,7 @@ TEST(AppTests, ExecutesValidCommand)
 
     App app(&menu, commands);
 
+    // Stop App::run() after inputs finish (FakeMenu throws to exit infinite loop)
     EXPECT_THROW(app.run(), std::runtime_error);
 
     EXPECT_EQ(cmd.callCount, 1);
@@ -95,6 +90,7 @@ TEST(AppTests, SkipsEmptyCommand)
 
     App app(&menu, commands);
 
+    // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), std::runtime_error);
 
     //no execute function at all.
@@ -117,6 +113,7 @@ TEST(AppTests, CommandThrowsButAppContinues)
 
     App app(&menu, commands);
 
+    // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), std::runtime_error);
 
     //went into execute function
@@ -142,6 +139,7 @@ TEST(AppTests, MultipleInputs)
 
     App app(&menu, commands);
 
+    // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), std::runtime_error);
 
     //called 2 time to the execute function
