@@ -9,11 +9,10 @@
 #include <vector>
 
 
-/* This class handles user interaction through the console:
- *  Reads user input commands from a specified stream.
- *  parsing the input into a command and arguments,
- *  and validating the command against the provided map of known commands
- */
+// handles user interaction through the console:
+// Reads user input commands from a specified stream.
+// parsing the input into a command and arguments,
+// and validating the command against the provided map of known commands
 class ConsoleMenu : public IMenu {
 private:
      std::istream& in; // Source of raw user input
