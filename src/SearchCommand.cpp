@@ -36,7 +36,7 @@ void SearchCommand::execute(const std::string &args)
             count++;
         }
     }
-    if (count > 0)
+    if (count > 0) // if something was printed then end line
         output << std::endl;
     return;
 }

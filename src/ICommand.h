@@ -3,10 +3,11 @@
 #include <string>
 #include "CommandInput.h"
 
+// Base interface for all command types
 class ICommand {
 public:
     virtual ~ICommand() = default;
-    // Execute the command, passing user arguments as a string
+    // Execute the command
     virtual void execute(const std::string& args) = 0;
 };
 

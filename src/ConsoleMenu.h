@@ -8,14 +8,16 @@
 #include "CommandInput.h"
 #include <vector>
 
-/** * This class handles user interaction through the console:
- *  - Reads user input commands from any input stream.
- *  - Handles invalid commands that arent known in the command map.
+
+/* This class handles user interaction through the console:
+ *  Reads user input commands from a specified stream.
+ *  parsing the input into a command and arguments,
+ *  and validating the command against the provided map of known commands
  */
 class ConsoleMenu : public IMenu {
 private:
-    std::istream& in;
-    const std::map<std::string, ICommand*>& commandMap;
+     std::istream& in; // Source of raw user input
+    const std::map<std::string, ICommand*>& commandMap; // Valid commands and their handlers
 
 public:
     ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)

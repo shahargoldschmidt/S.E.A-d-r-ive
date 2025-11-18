@@ -7,15 +7,16 @@
 #include <vector>
 #include <string>
 
+// Command that searches stored files for matches
 class SearchCommand : public ICommand {
 private:
-    IFileHandler* fileHandler;
-    ICompressor* compressor;
-    std::ostream& output;
+    IFileHandler* fileHandler;   // Access to stored files
+    ICompressor* compressor;     // Used to decompress file contents
+    std::ostream& output;        // Output stream for search results
 
 public:
     SearchCommand(IFileHandler* fileHandler, ICompressor* compressor, std::ostream& output);
-    // this execute returns list of file names containg content in users ouput
+    // Returns a list of file names that contain the user-provided text
     void execute(const std::string& args) override;
 };
 

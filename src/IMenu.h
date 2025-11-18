@@ -4,11 +4,7 @@
 #include <string>
 #include "CommandInput.h"
 
-/**
- * This interface defines how any menu in the CLI should behave.
- * The main responsibilities:
- * Get command input from the user.
- */
+// Interface for any menu that gathers user commands
 class IMenu {
 public:
     virtual ~IMenu() = default;
