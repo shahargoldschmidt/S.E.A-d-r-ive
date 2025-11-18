@@ -27,7 +27,6 @@ std::string OSFileHandler::getBasePath() {
     return std::string(path); // Convert C-string to std::string
 }
 
-
 // Save content to a file in the base path
 void OSFileHandler::saveFile(const std::string& fileName, const std::string& content) {
     std::string basePath = getBasePath();
@@ -36,8 +35,12 @@ void OSFileHandler::saveFile(const std::string& fileName, const std::string& con
     if (fullPath.empty()) {
         return; // Do nothing if full path is invalid
     }
+    // If the file exists
+    if (fs::exists(fullPath)) {
+        return; // Do nothing and exit
+    }
     
-    std::ofstream file(fullPath, std::ios::binary);  // Open file in binary mode
+    std::ofstream file(fullPath, std::ios::binary); // Open file in binary mode
     
     if (file.is_open()) {
         file << content; // Write content to file
