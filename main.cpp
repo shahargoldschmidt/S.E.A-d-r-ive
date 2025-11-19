@@ -26,7 +26,7 @@ int main() {
     commands["get"] = getCmd;
     commands["search"] = searchCmd;
 
-    ConsoleMenu* menu = new ConsoleMenu(input, commands);
+    IMenu* menu = new ConsoleMenu(input, commands);
 
     App app(menu, commands);
     app.run();
