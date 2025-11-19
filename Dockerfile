@@ -1,6 +1,6 @@
 FROM gcc:11
 
-RUN apt-get update && apt-get install -y cmake unzip
+RUN apt-get update && apt-get install -y cmake
 
 COPY . /app
 WORKDIR /app
@@ -11,8 +11,6 @@ RUN mkdir -p ${MY_FILE_PATH}
 RUN mkdir build
 WORKDIR /app/build
 
-# Run CMake + Build
 RUN cmake .. && make
 
-# Default test runner
 CMD ["./tests_runner"]
