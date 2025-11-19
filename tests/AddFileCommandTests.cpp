@@ -16,8 +16,7 @@ public:
     string getBasePath() override { return ""; }
     string readFile(const string& fileName) override { return ""; }
     vector<string> listFiles()  override { return {}; }
-    vector<string> findFiles(const string& fileContent) override { return {}; }
-
+   
     void saveFile(const string& fileName, const string& content) override {
         saveCalled = true;
         savedName = fileName;
