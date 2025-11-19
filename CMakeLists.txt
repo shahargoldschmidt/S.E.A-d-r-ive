@@ -18,12 +18,18 @@ FetchContent_MakeAvailable(googletest)
 include_directories(src)
 
 file(GLOB APP_IMPLEMENTATIONS "src/*.cpp")
+
+list(REMOVE_ITEM APP_IMPLEMENTATIONS "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+
+
 file(GLOB TEST_SOURCES "tests/*.cpp")
 
-# === אפליקציה ראשית ===
+# === אפליקציה ראשית – מכילה רק את main + שאר האימפלמנטציות ===
 add_executable(app_runner
+    src/main.cpp
     ${APP_IMPLEMENTATIONS}
 )
+
 
 # === טסטים ===
 add_executable(tests_runner
