@@ -2,7 +2,7 @@
 #include "IMenu.h"
 #include "ConsoleMenu.h"
 #include "ICommand.h"
-#include "AddCommand.h"
+#include "AddFileCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
 #include "IFileHandler.h"
@@ -10,6 +10,8 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include "OSFileHandler.h"
+#include "RLEStrategy.h"
 
 int main() {
     IFileHandler* fileHandler = new OSFileHandler();
