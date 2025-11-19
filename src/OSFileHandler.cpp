@@ -51,7 +51,11 @@ void OSFileHandler::saveFile(const string& fileName, const string& content) {
 string OSFileHandler::readFile(const string& fileName) {
     string basePath = getBasePath();
     fs::path fullPath = get_full_path(fileName, basePath);
-    
+
+    if (fileName.empty()) {
+        return ""; // Return empty string 
+    }
+
     if (fullPath.empty() || !fs::exists(fullPath)) {
         return ""; // Return empty string if file does not exist
     }
