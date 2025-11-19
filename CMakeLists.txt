@@ -19,15 +19,20 @@ include_directories(src)
 
 # === Source files (your implementation files) ===
 set(APP_IMPLEMENTATIONS
-    src/AddFileCommand.cpp
+    src/*.cpp
 )
 
 # === Tests ===
 set(TEST_SOURCES
-    tests/AddFileCommandTests.cpp
+    tests/*.cpp
 )
 
-# === Build test runner ===
+# === אפליקציה ראשית ===
+add_executable(app_runner
+    ${APP_IMPLEMENTATIONS}
+)
+
+# === טסטים ===
 add_executable(tests_runner
     ${APP_IMPLEMENTATIONS}
     ${TEST_SOURCES}
