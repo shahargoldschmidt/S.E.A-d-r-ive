@@ -2,7 +2,7 @@
 #include <cstdlib>      
 #include <fstream>
 #include <string>
-#include <vector> // Required for std::vector
+#include <vector> // Required for vector
 #include <filesystem>
 using namespace std;
 namespace fs = std::filesystem;
@@ -27,7 +27,6 @@ string OSFileHandler::getBasePath() {
     return string(path); // Convert C-string to string
 }
 
-
 // Save content to a file in the base path
 void OSFileHandler::saveFile(const string& fileName, const string& content) {
     string basePath = getBasePath();
@@ -36,9 +35,12 @@ void OSFileHandler::saveFile(const string& fileName, const string& content) {
     if (fullPath.empty()) {
         return; // Do nothing if full path is invalid
     }
+    // If the file exists
+    if (fs::exists(fullPath)) {
+        return; // Do nothing and exit
+    }
     
-    ofstream file(fullPath, ios::binary);  // Open file in binary mode
-    
+    ofstream file(fullPath, ios::binary);  // Open file in binary mode    
     if (file.is_open()) {
         file << content; // Write content to file
         file.close(); // Close file 
