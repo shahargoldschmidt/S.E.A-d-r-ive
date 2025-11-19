@@ -11,38 +11,34 @@ FetchContent_Declare(
   URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
 )
 
-# For Windows: Prevents common linking errors (CRT mismatch)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Source Files Definition (Focusing on File Handling)
-# Define the source directory for headers
-target_include_directories(gtest_main BEFORE PUBLIC src)
+# === Include project headers ===
+include_directories(src)
 
-# Implementation files needed
+# === Source files (your implementation files) ===
 set(APP_IMPLEMENTATIONS
-    src/OSFileHandler.cpp 
+    src/AddFileCommand.cpp
 )
 
-# Test files (FileHandlerTests only)
+# === Tests ===
 set(TEST_SOURCES
-    tests/FileHandlerTests.cpp
+    tests/AddFileCommandTests.cpp
 )
 
-# Building the Test Runner Executable
-# Create the executable that combines implementation and test sources
-add_executable(tests_runner ${APP_IMPLEMENTATIONS} ${TEST_SOURCES})
+# === Build test runner ===
+add_executable(tests_runner
+    ${APP_IMPLEMENTATIONS}
+    ${TEST_SOURCES}
+)
 
-# Link the necessary libraries
-target_link_libraries(tests_runner 
-    # gtest_main provides the main() function for the tests
-    PRIVATE gtest_main 
-    
+# === Link libraries ===
+target_link_libraries(tests_runner
+    PRIVATE gtest_main
     PRIVATE stdc++fs
-    
-    PRIVATE stdc++
 )
 
-# Enable automatic GTest discovery and run tests with CTest
+# === GTest auto-discovery ===
 include(GoogleTest)
 gtest_discover_tests(tests_runner)
