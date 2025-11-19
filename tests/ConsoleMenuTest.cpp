@@ -4,15 +4,16 @@
 #include <map>
 #include <string>
 #include "CommandInput.h"
+using namespace std;
 
 
 // command examples to use in tests
 class MockCommand : public ICommand {
 public:
     int called = 0;
-    std::string lastArgs;
+    string lastArgs;
 
-    void execute(const std::string& args) override {
+    void execute(const string& args) override {
         called++;
         lastArgs = args;
     }
@@ -22,11 +23,11 @@ public:
 // TEST 1: check that valid commands are separated correctly and returned.
 TEST(ConsoleMenuTests, ExecutesValidCommands) {
     MockCommand add, get, search;
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &add}, {"get", &get}, {"search", &search}
     };
 
-    std::istringstream input("");
+    istringstream input("");
     ConsoleMenu menu(input, commands);
 
     // Test ADD checking sentistive letters
@@ -48,11 +49,11 @@ TEST(ConsoleMenuTests, ExecutesValidCommands) {
 // TEST 2: check that invalid commands don't return anything
 TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
     MockCommand add, get, search;
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &add}, {"get", &get}, {"search", &search}
     };
 
-    std::istringstream dummyInput("");
+    istringstream dummyInput("");
     ConsoleMenu menu(dummyInput, commands);
 
     // Invalid commands (wrong keyword or blank)
