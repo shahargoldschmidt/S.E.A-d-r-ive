@@ -8,17 +8,18 @@
 #include "IMenu.h"
 #include "ICommand.h"
 
+using namespace std;
 //
 // ---------- Fake Menu (updated for CommandInput struct) ----------
 //
 class FakeMenu : public IMenu {
 public:
-    std::vector<CommandInput> inputs;  
+    vector<CommandInput> inputs;  
     int index = 0;
 
     CommandInput getInput() override {
         if (index >= inputs.size()) {
-            throw std::runtime_error("stop");
+            throw runtime_error("stop");
         }
         return inputs[index++];
     }
@@ -30,9 +31,9 @@ public:
 class FakeCommand : public ICommand {
 public:
     int callCount = 0;
-    std::string lastArg;
+    string lastArg;
 
-    void execute(const std::string& arg) override {
+    void execute(const string& arg) override {
         callCount++;
         lastArg = arg;
     }
@@ -45,9 +46,9 @@ class ThrowingCommand : public ICommand {
 public:
     int callCount = 0;
 
-    void execute(const std::string&) override {
+    void execute(const string&) override {
         callCount++;
-        throw std::runtime_error("command failed");
+        throw runtime_error("command failed");
     }
 };
 
@@ -59,7 +60,7 @@ TEST(AppTests, ExecutesValidCommand)
     FakeMenu menu;
     FakeCommand cmd;
 
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &cmd}
     };
 
@@ -68,7 +69,7 @@ TEST(AppTests, ExecutesValidCommand)
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish (FakeMenu throws to exit infinite loop)
-    EXPECT_THROW(app.run(), std::runtime_error);
+    EXPECT_THROW(app.run(), runtime_error);
 
     EXPECT_EQ(cmd.callCount, 1);
     EXPECT_EQ(cmd.lastArg, " file1.txt");
@@ -82,7 +83,7 @@ TEST(AppTests, SkipsEmptyCommand)
     FakeMenu menu;
     FakeCommand cmd;
 
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &cmd}
     };
 
@@ -91,7 +92,7 @@ TEST(AppTests, SkipsEmptyCommand)
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish 
-    EXPECT_THROW(app.run(), std::runtime_error);
+    EXPECT_THROW(app.run(), runtime_error);
 
     //no execute function at all.
     EXPECT_EQ(cmd.callCount, 0); 
@@ -105,7 +106,7 @@ TEST(AppTests, CommandThrowsButAppContinues)
     FakeMenu menu;
     ThrowingCommand cmd;//going to throw an erreo
 
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &cmd}
     };
 
@@ -114,7 +115,7 @@ TEST(AppTests, CommandThrowsButAppContinues)
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish 
-    EXPECT_THROW(app.run(), std::runtime_error);
+    EXPECT_THROW(app.run(), runtime_error);
 
     //went into execute function
     EXPECT_EQ(cmd.callCount, 1);
@@ -128,7 +129,7 @@ TEST(AppTests, MultipleInputs)
     FakeMenu menu;
     FakeCommand cmd;
 
-    std::map<std::string, ICommand*> commands = {
+    map<string, ICommand*> commands = {
         {"add", &cmd}
     };
 
@@ -140,7 +141,7 @@ TEST(AppTests, MultipleInputs)
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish 
-    EXPECT_THROW(app.run(), std::runtime_error);
+    EXPECT_THROW(app.run(), runtime_error);
 
     //called 2 time to the execute function
     EXPECT_EQ(cmd.callCount, 2);

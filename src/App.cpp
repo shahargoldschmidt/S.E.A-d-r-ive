@@ -4,8 +4,9 @@
 #include <map>
 #include <string>
 #include <iostream>
+using namespace std;
 
-App::App(IMenu *menu, const std::map<std::string, ICommand *> &commands)
+App::App(IMenu *menu, const map<string, ICommand *> &commands)
     : menu(menu), commands(commands) {}
 
 void App::run()

@@ -1,15 +1,17 @@
 #include "GetCommand.h"
 #include <sstream>
 
-void GetCommand::execute(const std::string& args) {
+using namespace std;
+
+void GetCommand::execute(const string& args) {
     // If the user typed nothing → ignore the command silently
     if (args.empty()) {
         return;
     }
 
-    std::istringstream iss(args);
-    std::string fileName;
-    std::string extra;
+    istringstream iss(args);
+    string fileName;
+    string extra;
 
     // Extract the first token (expected to be the filename)
     iss >> fileName;
@@ -22,7 +24,7 @@ void GetCommand::execute(const std::string& args) {
     }
 
     // Read compressed content from file
-    std::string compressedContent = fileHandler->readFile(fileName);
+    string compressedContent = fileHandler->readFile(fileName);
 
     // If file not found → silently ignore (as required by assignment)
     if (compressedContent.empty()) {
@@ -30,7 +32,7 @@ void GetCommand::execute(const std::string& args) {
     }
 
     // Decompress content using the strategy (RLE)
-    std::string decompressed = compressor->decompress(compressedContent);
+    string decompressed = compressor->decompress(compressedContent);
 
     // Print decompressed content to the output stream
     out << decompressed << "\n";

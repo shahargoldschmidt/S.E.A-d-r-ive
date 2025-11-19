@@ -3,21 +3,22 @@
 #include "../src/IFileHandler.h"
 #include "../src/ICompressor.h"
 
+using namespace std;
 // =========================
 //      MOCK FILE HANDLER
 // =========================
 class MockFileHandler : public IFileHandler {
 public:
     bool saveCalled = false;
-    std::string savedName = "";
-    std::string savedContent = "";
+    string savedName = "";
+    string savedContent = "";
 
-    std::string getBasePath() const override { return ""; }
-    std::string readFile(const std::string& fileName) const override { return ""; }
-    std::vector<std::string> listFiles() const override { return {}; }
-    std::vector<std::string> findFiles(const std::string& fileContent) const override { return {}; }
+    string getBasePath() const override { return ""; }
+    string readFile(const string& fileName) const override { return ""; }
+    vector<string> listFiles() const override { return {}; }
+    vector<string> findFiles(const string& fileContent) const override { return {}; }
 
-    void saveFile(const std::string& fileName, const std::string& content) override {
+    void saveFile(const string& fileName, const string& content) override {
         saveCalled = true;
         savedName = fileName;
         savedContent = content;
@@ -30,14 +31,14 @@ public:
 class MockCompressor : public ICompressor {
 public:
     bool compressCalled = false;
-    std::string out = "";
+    string out = "";
 
-    std::string compress(const std::string& input) override {
+    string compress(const string& input) override {
         compressCalled = true;
         return out.empty() ? input : out;
     }
 
-    std::string decompress(const std::string& input) override {
+    string decompress(const string& input) override {
         return input;
     }
 };

@@ -16,7 +16,7 @@ CommandInput ConsoleMenu::getInput() {
 }
 
 // Separates the command from the rest of the arguments in the users input
-CommandInput ConsoleMenu::seperateInput(const std::string& userInput) {
+CommandInput ConsoleMenu::seperateInput(const string& userInput) {
     if (userInput.empty()) {
         return {"", ""};
     }

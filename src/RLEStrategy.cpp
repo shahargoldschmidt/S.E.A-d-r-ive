@@ -1,5 +1,6 @@
 #include "RLEStrategy.h"
 #include <cstdint> 
+using namespace std;
 
 // ---------------------------------------------------------
 // compress
@@ -12,8 +13,8 @@
 // - 'count' is stored as a single byte (uint8_t), range 1–255.
 // - 'char' is the original character that is repeated.
 // ---------------------------------------------------------
-std::string RLEStrategy::compress(const std::string& input) {
-    std::string output;
+string RLEStrategy::compress(const string& input) {
+    string output;
 
     // Pre-allocate memory to reduce re-allocations during push_back
     output.reserve(input.size());
@@ -52,8 +53,8 @@ std::string RLEStrategy::compress(const std::string& input) {
 //   [count][char]
 // The result is returned as a normal printable string.
 // ---------------------------------------------------------
-std::string RLEStrategy::decompress(const std::string& input) {
-    std::string output;
+string RLEStrategy::decompress(const string& input) {
+    string output;
 
     // Iterate in steps of 2 bytes: (count, char)
     for (size_t i = 0; i + 1 < input.size(); i += 2) {

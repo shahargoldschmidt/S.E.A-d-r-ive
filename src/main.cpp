@@ -12,18 +12,19 @@
 #include <iostream>
 #include "OSFileHandler.h"
 #include "RLEStrategy.h"
+using namespace std;
 
 int main() {
     IFileHandler* fileHandler = new OSFileHandler();
     ICompressor* compressor = new RLEStrategy();
-    std::ostream& output = std::cout;
-    std::istream& input = std :: cin;
+    ostream& output = cout;
+    istream& input = cin;
 
     ICommand* addCmd = new AddFileCommand(fileHandler, compressor);
     ICommand* getCmd = new GetCommand(fileHandler, compressor, output);
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor, output);
 
-    std::map<std::string, ICommand*> commands;
+    map<string, ICommand*> commands;
     commands["add"] = addCmd;
     commands["get"] = getCmd;
     commands["search"] = searchCmd;
