@@ -6,14 +6,15 @@
 #include <vector>
 #include <string>
 #include <iostream>
+using namespace std;
 
 //sample compressor and sample FileHandle for the test 
 class SampleCompressor : public ICompressor {
 public:
-    std::string compress(const std::string& s) override {
+    string compress(const string& s) override {
         return s;
     }
-    std::string decompress(const std::string& s) override {
+    string decompress(const string& s) override {
         return s;
     }
 };
@@ -21,12 +22,12 @@ public:
 
 class SampleFileHandler : public IFileHandler {
 public: 
-    std::vector<std::string> files;
-    std::map<std::string, std::string> content;
-    std::string getBasePath() override { return ""; }
-    void saveFile(const std::string& fname, const std::string& data) override { content[fname] = data; }
-    std::string readFile(const std::string& fname) override { return content[fname]; }
-    std::vector<std::string> listFiles() override { return files; }
+    vector<string> files;
+    map<string, string> content;
+    string getBasePath() override { return ""; }
+    void saveFile(const string& fname, const string& data) override { content[fname] = data; }
+    string readFile(const string& fname) override { return content[fname]; }
+    vector<string> listFiles() override { return files; }
 };
 
 
@@ -38,13 +39,13 @@ public:
     fh.content["f.txt"] = SampComp.compress("f is for friends");
     fh.content["u.txt"] = SampComp.compress("u is for u and me");
     fh.content["n.txt"] = SampComp.compress("not found");
-    SearchCommand cmd(&fh, &SampComp, std::cout);
+    SearchCommand cmd(&fh, &SampComp, cout);
     testing::internal::CaptureStdout();
     cmd.execute("is for");
-    std::string output = testing::internal::GetCapturedStdout();
-    ASSERT_NE(output.find("f.txt"), std::string::npos);
-    ASSERT_NE(output.find("u.txt"), std::string::npos);
-    ASSERT_EQ(output.find("n.txt"), std::string::npos);
+    string output = testing::internal::GetCapturedStdout();
+    ASSERT_NE(output.find("f.txt"), string::npos);
+    ASSERT_NE(output.find("u.txt"), string::npos);
+    ASSERT_EQ(output.find("n.txt"), string::npos);
 }
 
  //test for no matches
@@ -55,10 +56,10 @@ public:
     fh.content["f.txt"] = SampComp.compress("f is for friends");
     fh.content["u.txt"] = SampComp.compress("u is for u and me");
     fh.content["n.txt"] = SampComp.compress("not found");
-    SearchCommand cmd(&fh, &SampComp, std::cout);
+    SearchCommand cmd(&fh, &SampComp, cout);
     testing::internal::CaptureStdout();
     cmd.execute("no such phrase");
-    std::string output = testing::internal::GetCapturedStdout();
+    string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty());
  }
 
@@ -70,10 +71,10 @@ public:
     fh.content["f.txt"] = SampComp.compress("f is for friends");
     fh.content["u.txt"] = SampComp.compress("u is for u and me");
     fh.content["n.txt"] = SampComp.compress("not found");
-    SearchCommand cmd(&fh, &SampComp, std::cout);
+    SearchCommand cmd(&fh, &SampComp, cout);
     testing::internal::CaptureStdout();
     cmd.execute(""); // Empty args
-    std::string output = testing::internal::GetCapturedStdout();
+    string output = testing::internal::GetCapturedStdout();
     ASSERT_TRUE(output.empty());
 };
  
