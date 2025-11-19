@@ -9,6 +9,16 @@ using namespace std;
 App::App(IMenu *menu, const map<string, ICommand *> &commands)
     : menu(menu), commands(commands) {}
 
+App::~App() {
+    // Delete the IMenu object, whose ownership was transferred to App.
+    delete menu;
+
+    // Iterate through the map and delete each ICommand object to prevent memory leaks.
+    for (auto const& pair : commands) {
+        delete pair.second;
+    }
+}
+
 void App::run()
 {
     while (true)
