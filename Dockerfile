@@ -1,6 +1,6 @@
 FROM gcc:11
 
-RUN apt-get update && apt-get install -y cmake
+RUN apt-get update && apt-get install -y cmake git
 
 COPY . /app
 WORKDIR /app
@@ -13,4 +13,4 @@ WORKDIR /app/build
 
 RUN cmake .. && make
 
-CMD ["./tests_runner"]
+CMD ["./app_runner"]

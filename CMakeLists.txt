@@ -17,15 +17,8 @@ FetchContent_MakeAvailable(googletest)
 # === Include project headers ===
 include_directories(src)
 
-# === Source files (your implementation files) ===
-set(APP_IMPLEMENTATIONS
-    src/*.cpp
-)
-
-# === Tests ===
-set(TEST_SOURCES
-    tests/*.cpp
-)
+file(GLOB APP_IMPLEMENTATIONS "src/*.cpp")
+file(GLOB TEST_SOURCES "tests/*.cpp")
 
 # === אפליקציה ראשית ===
 add_executable(app_runner
@@ -39,10 +32,8 @@ add_executable(tests_runner
 )
 
 # === Link libraries ===
-target_link_libraries(tests_runner
-    PRIVATE gtest_main
-    PRIVATE stdc++fs
-)
+target_link_libraries(app_runner PRIVATE stdc++fs)
+target_link_libraries(tests_runner PRIVATE gtest_main stdc++fs)
 
 # === GTest auto-discovery ===
 include(GoogleTest)
