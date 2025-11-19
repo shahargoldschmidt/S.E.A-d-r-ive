@@ -17,7 +17,7 @@ int main() {
     std::ostream& output = std::cout;
     std::istream& input = std :: cin;
 
-    ICommand* addCmd = new AddCommand(fileHandler, compressor);
+    ICommand* addCmd = new AddFileCommand(fileHandler, compressor);
     ICommand* getCmd = new GetCommand(fileHandler, compressor, output);
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor, output);
 
