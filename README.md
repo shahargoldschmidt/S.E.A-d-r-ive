@@ -3,7 +3,7 @@
 2. Make sure the Docker software is running
 3. Enter the command to build an image: docker build -t my_project_final .
 4. Image to demonstrate construction: <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ddde73be-7286-42b3-9094-71d3fd87afd0" />
-5.Enter the command to run the tests: docker run --rm -v "$(pwd)/results:/app/data_files" my_project_final /app/build/tests_runner
+5.Enter the command to run the tests: docker run --rm my_project_final /app/build/tests_runner
 6. <img width="1920" height="1080" alt="צילום מסך 2025-11-20 215455" src="https://github.com/user-attachments/assets/cf1b3647-909f-4e33-b09e-c43c03382656" />
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 215508" src="https://github.com/user-attachments/assets/b3eda815-3f9e-4521-b9d1-d6e83c104a34" />
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 215533" src="https://github.com/user-attachments/assets/a7210eb0-2ca4-4796-9ae7-f12ee64dcd11" />
