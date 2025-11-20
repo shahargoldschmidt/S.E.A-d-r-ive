@@ -3,6 +3,9 @@
 
 using namespace std;
 
+GetCommand::GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output)
+    : fileHandler(fh), compressor(comp), out(output) {}
+    
 void GetCommand::execute(const string& args) {
     // If the user typed nothing → ignore the command silently
     if (args.empty()) {

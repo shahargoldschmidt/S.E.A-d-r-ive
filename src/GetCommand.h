@@ -15,8 +15,7 @@ private:
 
 public:
     // Constructor
-    GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output)
-        : fileHandler(fh), compressor(comp), out(output) {}
+    GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output);
 
     void execute(const std::string& args) override;
 };

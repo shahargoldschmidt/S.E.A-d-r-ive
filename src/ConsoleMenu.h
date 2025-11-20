@@ -19,8 +19,7 @@ private:
     const std::map<std::string, ICommand*>& commandMap; // Valid commands and their handlers
 
 public:
-    ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
-        : in(input) , commandMap(cmds) {};
+    ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds);
     CommandInput getInput();
     CommandInput seperateInput(const std::string& args);
 
