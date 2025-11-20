@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ADDFILECOMMAND_H
+#define ADDFILECOMMAND_H
 
 #include "ICommand.h"
 #include "IFileHandler.h"
@@ -15,3 +16,5 @@ private:
     IFileHandler* fileHandler;
     ICompressor* compressor;
 };
+
+#endif
