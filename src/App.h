@@ -15,7 +15,7 @@ public:
     App(IMenu* menu, const std::map<std::string, ICommand*>& commands);
 
     // Explicitly declares the destructor. Required for manual memory cleanup (delete).
-    ~App(); 
+    ~App() = default;
     
     // Prevents object copying (Copy Constructor).
     App(const App&) = delete; 
