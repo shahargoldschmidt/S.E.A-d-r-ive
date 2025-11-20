@@ -8,7 +8,7 @@
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 221511" src="https://github.com/user-attachments/assets/228375be-5c42-4123-9799-95bd3747ac5e" />
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 221604" src="https://github.com/user-attachments/assets/326b0bfe-0ed6-42d8-ab5d-3c24b289cf8a" />
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 221612" src="https://github.com/user-attachments/assets/6159d34f-9315-4bc2-b9b1-52c543a7078c" />
-8. Enter the command to run and open the folder where the files will be saved (outside the image from the From the path of the environment variable): docker run -it --rm -v "$(pwd)/results:/app/data_files" my_project_final /app/build/app_runner 
+8. Enter the command to run and open the folder where the files will be saved (outside the image and from the path of the environment variable): docker run -it --rm -v "$(pwd)/results:/app/data_files" my_project_final /app/build/app_runner 
 9. Make sure the folder has been created and the fill was created too after the adde command before searching (it coulde take few secounds)
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 215159" src="https://github.com/user-attachments/assets/faf53cf0-7a8a-49cd-8989-1460aae3100a" />
    <img width="1920" height="1080" alt="צילום מסך 2025-11-20 220536" src="https://github.com/user-attachments/assets/db3179b2-42d5-4ab4-8a67-4c4eae0354fb" />
