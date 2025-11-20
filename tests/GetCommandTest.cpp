@@ -2,149 +2,102 @@
 #include "GetCommand.h"
 #include "IFileHandler.h"
 #include "ICompressor.h"
-#include <map>
 #include <string>
 #include <iostream>
-
+#include <map>
+#include <vector>
+#include <sstream>
 using namespace std;
 
-// ------------------------------------------------------------
-// Mock Compressor (RLE fake)
-// ------------------------------------------------------------
-class MockRLE : public ICompressor {
+// Sample compressor
+class SCompressor : public ICompressor {
 public:
-    string compress(const string& s) override {
-        // Fake but invertible: wrap s with brackets
-        return "[" + s + "]";
-    }
-
-    string decompress(const string& s) override {
-        if (s.size() >= 2 && s.front() == '[' && s.back() == ']')
-            return s.substr(1, s.size() - 2);
-        return s;
-    }
+    string compress(const string& s) override { return s; }
+    string decompress(const string& s) override { return s; }
 };
 
-// ------------------------------------------------------------
-// Mock FileHandler (no filesystem!)
-// ------------------------------------------------------------
-class MockFileHandler : public IFileHandler {
+// Sample file handler
+class SFileHandler : public IFileHandler {
 public:
-    map<string, string> files;
-
+    map<string, string> content;
     string getBasePath() override { return ""; }
-
-    void saveFile(const string& name, const string& content) override {
-        files[name] = content;
+    void saveFile(const string& fname, const string& data) override { content[fname] = data; }
+    string readFile(const string& fname) override {
+        auto it = content.find(fname);
+        if (it != content.end()) return it->second;
+        return ""; // simulate "not found"
     }
-
-    string readFile(const string& name) override {
-        if (files.count(name) == 0) return "";
-        return files[name];
-    }
-
     vector<string> listFiles() override {
-        vector<string> v;
-        for (auto& p : files) v.push_back(p.first);
-        return v;
+        vector<string> res;
+        for (const auto& p : content) res.push_back(p.first);
+        return res;
     }
 };
 
-// ------------------------------------------------------------
-// TEST 1 — Valid file
-// ------------------------------------------------------------
-TEST(GetCommandTests, ReturnsCorrectOutput) {
-    MockRLE comp;
-    MockFileHandler fh;
+// ================== TESTS ==================
 
-    fh.files["hello.txt"] = comp.compress("HELLOOO");
+// test to see right output
+TEST(GetCommandTester, ReturnsCorrectOutput) {
+    SCompressor comp;
+    SFileHandler fh;
+    stringstream out;
 
-    GetCommand cmd(&fh, &comp, cout);
+    fh.content["hello.txt"] = comp.compress("HELLOOO");
+    GetCommand cmd(&fh, &comp, out);
 
-    //catching the cout
-    testing::internal::CaptureStdout();
     cmd.execute("hello.txt");
-    // takes what execute printed out 
-    string output = testing::internal::GetCapturedStdout();
 
-    ASSERT_EQ(output, "HELLOOO\n");
+    EXPECT_EQ(out.str(), "HELLOOO\n"); // בהתאם ל־GetCommand שלך אולי גם בלי \n
 }
 
-// ------------------------------------------------------------
-// TEST 2 — Missing file
-// ------------------------------------------------------------
-TEST(GetCommandTests, MissingFileProducesNoOutput) {
-    MockRLE comp;
-    MockFileHandler fh;
+// tests for non existing files
+TEST(GetCommandTester, MissingFileProducesNoOutput) {
+    SCompressor comp;
+    SFileHandler fh;
+    stringstream out;
+    GetCommand cmd(&fh, &comp, out);
 
-    GetCommand cmd(&fh, &comp, cout);
-
-    //catching the cout
-    testing::internal::CaptureStdout();
     cmd.execute("not_exists.txt");
-     // takes what execute printed out 
-    string output = testing::internal::GetCapturedStdout();
 
-    ASSERT_TRUE(output.empty());
+    EXPECT_TRUE(out.str().empty());
 }
 
-// ------------------------------------------------------------
-// TEST 3 — Empty argument
-// ------------------------------------------------------------
-TEST(GetCommandTests, EmptyArgsDoNothing) {
-    MockRLE comp;
-    MockFileHandler fh;
+// test for no arguments
+TEST(GetCommandTester, EmptyArgsDoNothing) {
+    SCompressor comp;
+    SFileHandler fh;
+    stringstream out;
+    fh.content["x.txt"] = comp.compress("XXX");
+    GetCommand cmd(&fh, &comp, out);
 
-    fh.files["x.txt"] = comp.compress("XXX");
-
-    GetCommand cmd(&fh, &comp, cout);
-
-    //catching the cout
-    testing::internal::CaptureStdout();
     cmd.execute("");
-     // takes what execute printed out 
-    string output = testing::internal::GetCapturedStdout();
 
-    ASSERT_TRUE(output.empty());
+    EXPECT_TRUE(out.str().empty());
 }
 
-// ------------------------------------------------------------
-// TEST 4 — Name with space → ignored
-// ------------------------------------------------------------
-TEST(GetCommandTests, FilenameWithSpacesIgnored) {
-    MockRLE comp;
-    MockFileHandler fh;
+// test with invalid file name
+TEST(GetCommandTester, FilenameWithSpacesIgnored) {
+    SCompressor comp;
+    SFileHandler fh;
+    stringstream out;
+    fh.content["good.txt"] = comp.compress("DATA");
+    GetCommand cmd(&fh, &comp, out);
 
-    fh.files["good.txt"] = comp.compress("DATA");
-
-    GetCommand cmd(&fh, &comp, cout);
-
-    //catching the cout
-    testing::internal::CaptureStdout();
     cmd.execute("bad name");
-     // takes what execute printed out 
-    string output = testing::internal::GetCapturedStdout();
 
-    ASSERT_TRUE(output.empty());
+    EXPECT_TRUE(out.str().empty());
 }
 
-// ------------------------------------------------------------
-// TEST 5 — Many files, independent
-// ------------------------------------------------------------
-TEST(GetCommandTests, MultipleFilesWorkIndependently) {
-    MockRLE comp;
-    MockFileHandler fh;
+// test with multiple files 
+TEST(GetCommandTester, MultipleFilesWorkIndependently) {
+    SCompressor comp;
+    SFileHandler fh;
+    stringstream out;
+    fh.content["a.txt"] = comp.compress("AAAA");
+    fh.content["b.txt"] = comp.compress("BBBBBB");
+    GetCommand cmd(&fh, &comp, out);
 
-    fh.files["a.txt"] = comp.compress("AAAA");
-    fh.files["b.txt"] = comp.compress("BBBBBB");
-
-    GetCommand cmd(&fh, &comp, cout);
-
-    //catching the cout
-    testing::internal::CaptureStdout();
     cmd.execute("b.txt");
-     // takes what execute printed out 
-    string output = testing::internal::GetCapturedStdout();
 
-    ASSERT_EQ(output, "BBBBBB\n");
+    EXPECT_EQ(out.str(), "BBBBBB\n"); 
 }
