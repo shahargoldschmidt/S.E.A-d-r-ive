@@ -5,19 +5,19 @@
 #include <string>
 #include <vector>
 
-// File handler that works with the local operating system's filesystem
+// File handler that works with the local operating system filesystem
 class OSFileHandler : public IFileHandler {
 public:
-    // Returns the base directory used for file operations
+    // Return the base directory for file operations
     std::string getBasePath() override;
 
-    // Writes the given content to a file in the base directory
+    // Write the given content to a file in the base directory
     void saveFile(const std::string& fileName, const std::string& content) override;
 
-    // Reads and returns the contents of the specified file
+    // Returns the contents of the specified file
     std::string readFile(const std::string& fileName) override;
 
-    // Lists all files found in the base directory
+    // List all files in the directory
     std::vector<std::string> listFiles() override;
 
 };

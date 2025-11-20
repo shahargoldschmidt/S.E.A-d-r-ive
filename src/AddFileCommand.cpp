@@ -3,6 +3,7 @@
 #include <string>
 using namespace std;
 
+// The constructor for add command
 AddFileCommand::AddFileCommand(IFileHandler* fh, ICompressor* comp)
     : fileHandler(fh), compressor(comp) {}
 
@@ -31,10 +32,9 @@ void AddFileCommand::execute(const string& input) {
     if (!content.empty() && content[0] == ' ')
         content.erase(0, 1);
 
-    // Do NOT trim trailing spaces, leave them as-is
-    // This way, content like "    " is preserved
+    // Do not trim trailing spaces, leave them as-is this way, content like "    " is preserved
 
-    string compressed = compressor->compress(content);
+    string compressed = compressor->compress(content); //Commpres the content
 
-    fileHandler->saveFile(fileName, compressed);
+    fileHandler->saveFile(fileName, compressed); // save the file
 }

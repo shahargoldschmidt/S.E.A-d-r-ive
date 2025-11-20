@@ -6,13 +6,14 @@
 #include <map>
 #include <string>
 
+// This class runs commands from a menu
 class App {
 private:
-    IMenu* menu;  
-    std::map<std::string, ICommand*> commands;  
+    IMenu* menu;  // Interface for getting input
+    std::map<std::string, ICommand*> commands; // Map of command strings 
 
 public:
-    App(IMenu* menu, const std::map<std::string, ICommand*>& commands);
+    App(IMenu* menu, const std::map<std::string, ICommand*>& commands); // The constructor
 
     // Explicitly declares the destructor. Required for manual memory cleanup (delete).
     ~App() = default;

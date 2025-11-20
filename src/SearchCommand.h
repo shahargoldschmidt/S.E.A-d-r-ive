@@ -11,8 +11,8 @@
 class SearchCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Access to stored files
-    ICompressor* compressor;     // Used to decompress file contents
-    std::ostream& output;        // Output stream for search results
+    ICompressor* compressor; // Used to decompress file contents
+    std::ostream& output;  // Output stream for search results
 
 public:
     SearchCommand(IFileHandler* fileHandler, ICompressor* compressor, std::ostream& output);

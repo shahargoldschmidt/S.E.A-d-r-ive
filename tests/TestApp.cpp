@@ -9,9 +9,8 @@
 #include "ICommand.h"
 
 using namespace std;
-//
-// ---------- Fake Menu (updated for CommandInput struct) ----------
-//
+
+// Fake Menu
 class FakeMenu : public IMenu {
 public:
     vector<CommandInput> inputs;  
@@ -25,9 +24,7 @@ public:
     }
 };
 
-//
-// ---------- Fake Command (records calls) ----------
-//
+// Fake Command 
 class FakeCommand : public ICommand {
 public:
     int callCount = 0;
@@ -39,9 +36,7 @@ public:
     }
 };
 
-//
-// ---------- Command that throws ----------
-//
+// Command that throws 
 class ThrowingCommand : public ICommand {
 public:
     int callCount = 0;
@@ -53,8 +48,7 @@ public:
 };
 
 
-// --- TEST 1: App executes a valid command correctly ---
-//
+//  App executes a valid command correctly tets
 TEST(AppTests, ExecutesValidCommand)
 {
     FakeMenu menu;
@@ -75,9 +69,7 @@ TEST(AppTests, ExecutesValidCommand)
     EXPECT_EQ(cmd.lastArg, " file1.txt");
 }
 
-//
-// --- TEST 2: App skips an empty command ---
-//
+// App skips an empty command 
 TEST(AppTests, SkipsEmptyCommand)
 {
     FakeMenu menu;
@@ -98,9 +90,7 @@ TEST(AppTests, SkipsEmptyCommand)
     EXPECT_EQ(cmd.callCount, 0); 
 }
 
-//
-// --- TEST 3: Command throws but App continues running ---
-//
+// Command throws but App continues running 
 TEST(AppTests, CommandThrowsButAppContinues)
 {
     FakeMenu menu;
@@ -121,9 +111,7 @@ TEST(AppTests, CommandThrowsButAppContinues)
     EXPECT_EQ(cmd.callCount, 1);
 }
 
-//
-// --- TEST 4: Two valid commands in sequence ---
-//
+// Two valid commands in sequence
 TEST(AppTests, MultipleInputs)
 {
     FakeMenu menu;

@@ -2,11 +2,9 @@
 #include "../src/AddFileCommand.h"
 #include "../src/IFileHandler.h"
 #include "../src/ICompressor.h"
-
 using namespace std;
-// =========================
-//      MOCK FILE HANDLER
-// =========================
+
+// MOCK FILE HANDLER
 class MockFileHandler : public IFileHandler {
 public:
     bool saveCalled = false;
@@ -24,9 +22,7 @@ public:
     }
 };
 
-// =========================
-//      MOCK COMPRESSOR
-// =========================
+// MOCK COMPRESSOR
 class MockCompressor : public ICompressor {
 public:
     bool compressCalled = false;
@@ -42,52 +38,52 @@ public:
     }
 };
 
-// =========================
-//         TESTS
-// =========================
-
+// Test adding a normal file
 TEST(AddFileTests, NormalAddFile) {
     MockFileHandler fh;
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("notes hello world");
+    add.execute("notes hello world"); // add file with name and content
 
-    ASSERT_TRUE(fh.saveCalled);
-    EXPECT_EQ(fh.savedName, "notes");
-    EXPECT_EQ(fh.savedContent, "hello world");
+    ASSERT_TRUE(fh.saveCalled); // check save was called
+    EXPECT_EQ(fh.savedName, "notes"); // check file name
+    EXPECT_EQ(fh.savedContent, "hello world"); // check content
 }
 
+// Test adding file with spaces in content
 TEST(AddFileTests, AllowSpacesContent) {
     MockFileHandler fh;
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("empty     "); 
+    add.execute("empty     "); // spaces should be preserved
 
     ASSERT_TRUE(fh.saveCalled);
     EXPECT_EQ(fh.savedName, "empty");
-    EXPECT_EQ(fh.savedContent, "    "); 
+    EXPECT_EQ(fh.savedContent, "    "); // content is spaces
 }
 
+// Test that empty file name rejected
 TEST(AddFileTests, RejectEmptyFileName) {
     MockFileHandler fh;
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("   ");
+    add.execute("   "); // no name
 
-    ASSERT_FALSE(fh.saveCalled);  
+    ASSERT_FALSE(fh.saveCalled); // should not save
 }
 
+// Test that compression is actually called
 TEST(AddFileTests, CompressionIsCalled) {
     MockFileHandler fh;
     MockCompressor comp;
-    comp.out = "COMPRESSED!";
+    comp.out = "COMPRESSED!"; // fake compressed output
 
     AddFileCommand add(&fh, &comp);
     add.execute("data abc");
 
-    ASSERT_TRUE(comp.compressCalled);
-    EXPECT_EQ(fh.savedContent, "COMPRESSED!");
+    ASSERT_TRUE(comp.compressCalled); // check compress called
+    EXPECT_EQ(fh.savedContent, "COMPRESSED!"); // content is compressed
 }

@@ -7,7 +7,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-// Helper function to construct the full path of a file given a base path
+// Helpe function to construct the full path of a file given a base path
 fs::path get_full_path(const string& fileName, const string& basePath) {
     if (basePath.empty()) { 
         return {}; // Return empty path if basePath is not set

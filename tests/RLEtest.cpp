@@ -9,7 +9,7 @@ string bin(uint8_t count, char c)
     return string(1, static_cast<char>(count)) + c;
 }
 
-// ---------- TEST 1: basic compression ----------
+// basic compression test
 TEST(RLETests, CompressBasic)
 {
     RLEStrategy rle;
@@ -23,14 +23,14 @@ TEST(RLETests, CompressBasic)
     EXPECT_EQ(rle.compress(input), expected);
 }
 
-// ---------- TEST 2: empty string ----------
+// empty string test
 TEST(RLETests, CompressEmptyString)
 {
     RLEStrategy rle;
     EXPECT_EQ(rle.compress(""), "");
 }
 
-// ---------- TEST 3: single char ----------
+// single char test
 TEST(RLETests, CompressSingleChar)
 {
     RLEStrategy rle;
@@ -39,7 +39,7 @@ TEST(RLETests, CompressSingleChar)
     EXPECT_EQ(rle.compress("a"), expected);
 }
 
-// ---------- TEST 4: decompress basic ----------
+// decompress basic 
 TEST(RLETests, DecompressBasic)
 {
     RLEStrategy rle;
@@ -52,7 +52,7 @@ TEST(RLETests, DecompressBasic)
     EXPECT_EQ(rle.decompress(compressed), "aaabbc");
 }
 
-// ---------- TEST 5: decompress long run ----------
+// decompress long run
 TEST(RLETests, DecompressLongRun)
 {
     RLEStrategy rle;
@@ -63,7 +63,7 @@ TEST(RLETests, DecompressLongRun)
     EXPECT_EQ(rle.decompress(compressed), expected);
 }
 
-// ---------- TEST 6: round trip ----------
+// round trip
 TEST(RLETests, RoundTrip)
 {
     RLEStrategy rle;
@@ -73,14 +73,14 @@ TEST(RLETests, RoundTrip)
     EXPECT_EQ(rle.decompress(compressed), input);
 }
 
-// ---------- TEST 7: decompress empty ----------
+// decompress empty
 TEST(RLETests, DecompressEmptyString)
 {
     RLEStrategy rle;
     EXPECT_EQ(rle.decompress(""), "");
 }
 
-// ---------- TEST 8: different characters ----------
+// different characters test
 TEST(RLETests, MixedCharacters)
 {
     RLEStrategy rle;
@@ -90,7 +90,7 @@ TEST(RLETests, MixedCharacters)
     EXPECT_EQ(rle.decompress(compressed), input);
 }
 
-// ---------- TEST 9: complex mixed input compression ----------
+// complex mixed input compression
 TEST(RLETests, CompressComplexMixedInput)
 {
     RLEStrategy rle;

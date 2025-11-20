@@ -3,7 +3,7 @@
 
 #include <string>
 
-// Interface for classes that provide compression and decompression
+// Interface for classes that provide compression and decompression of text
 class ICompressor {
 public:
     // Compresses the given data and returns the encoded form

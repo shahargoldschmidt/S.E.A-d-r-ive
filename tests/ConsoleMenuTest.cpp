@@ -20,7 +20,7 @@ public:
 };
 
 
-// TEST 1: check that valid commands are separated correctly and returned.
+//  check that valid commands are separated correctly and returned.
 TEST(ConsoleMenuTests, ExecutesValidCommands) {
     MockCommand add, get, search;
     map<string, ICommand*> commands = {
@@ -46,7 +46,7 @@ TEST(ConsoleMenuTests, ExecutesValidCommands) {
     EXPECT_EQ(ci.args, "abc");
 }
 
-// TEST 2: check that invalid commands don't return anything
+// check that invalid commands don't return anything
 TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
     MockCommand add, get, search;
     map<string, ICommand*> commands = {

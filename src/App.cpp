@@ -6,26 +6,28 @@
 #include <iostream>
 using namespace std;
 
+// The constructor for the app running
 App::App(IMenu *menu, const map<string, ICommand *> &commands)
     : menu(menu), commands(commands) {}
 
-
+// Main loop of the application
 void App::run()
 {
     while (true)
     {
         // Get the next command (already split into command + args)
         auto userCom = menu->getInput();
-        // no command
+        
+        // Skip if no command was entered
         if (userCom.command.empty())
             continue;
         try
         {
-            commands[userCom.command]->execute(userCom.args);
+            commands[userCom.command]->execute(userCom.args); // Execute the command
         }
         catch (...)
         {
-            continue;
+            continue; // Ignore exceptions and continue the loop
         }
     }
 };

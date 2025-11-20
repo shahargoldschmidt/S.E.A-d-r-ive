@@ -8,6 +8,6 @@
 class IMenu {
 public:
     virtual ~IMenu() = default;
-    virtual CommandInput getInput() = 0; // gets input regardlees of the source
+    virtual CommandInput getInput() = 0; // gets input regardlees of the source 
 };
 #endif 

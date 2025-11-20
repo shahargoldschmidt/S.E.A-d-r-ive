@@ -34,8 +34,7 @@ public:
     }
 };
 
-// ================== TESTS ==================
-
+// TESTS
 // test to see right output
 TEST(GetCommandTester, ReturnsCorrectOutput) {
     SCompressor comp;
@@ -47,7 +46,7 @@ TEST(GetCommandTester, ReturnsCorrectOutput) {
 
     cmd.execute("hello.txt");
 
-    EXPECT_EQ(out.str(), "HELLOOO\n"); // בהתאם ל־GetCommand שלך אולי גם בלי \n
+    EXPECT_EQ(out.str(), "HELLOOO\n");
 }
 
 // tests for non existing files

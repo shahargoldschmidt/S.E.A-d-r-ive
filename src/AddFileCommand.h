@@ -6,15 +6,19 @@
 #include "ICompressor.h"
 #include <string>
 
-class AddFileCommand: public ICommand {
+// This class handles the "add" command in the system
+
+class AddFileCommand: public ICommand { // Inherits from ICommand
 public:
+    // Constructor - with a file handler and a compressor
     AddFileCommand(IFileHandler* fileHandler, ICompressor* compressor);
 
+    // Executing an add command with the given input
     void execute(const std::string& input) override;
 
 private:
-    IFileHandler* fileHandler;
-    ICompressor* compressor;
+    IFileHandler* fileHandler; // file handeling interface
+    ICompressor* compressor;   // compressing interface
 };
 
 #endif

@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 
+// Handles the get command - read  file name, decompresses, and outputs the result
 class GetCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Handles reading files from the base path
@@ -14,7 +15,7 @@ private:
     std::ostream& out;           // Output stream (usually std::cout)
 
 public:
-    // Constructor
+    // Constructor with filehandler' compressor and output
     GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output);
 
     void execute(const std::string& args) override;

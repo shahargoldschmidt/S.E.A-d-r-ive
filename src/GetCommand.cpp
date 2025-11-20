@@ -3,6 +3,7 @@
 
 using namespace std;
 
+// Constructor for the get command
 GetCommand::GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output)
     : fileHandler(fh), compressor(comp), out(output) {}
     

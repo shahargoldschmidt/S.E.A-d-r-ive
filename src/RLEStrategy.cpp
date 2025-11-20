@@ -2,17 +2,7 @@
 #include <cstdint> 
 using namespace std;
 
-// ---------------------------------------------------------
-// compress
 // Takes a plain text string and returns a compressed string
-// encoded in binary format using RLE (Run-Length Encoding).
-//
-// Format:
-//   [count][char][count][char]...
-//
-// - 'count' is stored as a single byte (uint8_t), range 1–255.
-// - 'char' is the original character that is repeated.
-// ---------------------------------------------------------
 string RLEStrategy::compress(const string& input) {
     string output;
 
@@ -47,12 +37,7 @@ string RLEStrategy::compress(const string& input) {
 
 
 
-// ---------------------------------------------------------
-// decompress
-// The function expects pairs of bytes:
-//   [count][char]
-// The result is returned as a normal printable string.
-// ---------------------------------------------------------
+// The function expects pairs of [count][char]  The result is returned as a normal printable string.
 string RLEStrategy::decompress(const string& input) {
     string output;
 

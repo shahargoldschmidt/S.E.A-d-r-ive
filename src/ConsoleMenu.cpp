@@ -6,9 +6,10 @@
 
 using namespace std;
 
-
+// Implements console-based menu for user input (like in class)
 ConsoleMenu::ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
     : in(input), commandMap(cmds) {}
+
 // gets users input and returns the splitted input to command and its content
 CommandInput ConsoleMenu::getInput() {
     string userInput;
