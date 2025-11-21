@@ -20,7 +20,7 @@ CommandInput ConsoleMenu::getInput() {
 
 // Separates the command from the rest of the arguments in the users input
 CommandInput ConsoleMenu::seperateInput(const string& userInput) {
-    if (userInput.empty()) {
+    if (userInput.empty() || isspace(userInput[0])) {
         return {"", ""};
     }
     istringstream iss(userInput); // create stream to seperate input

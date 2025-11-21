@@ -10,7 +10,7 @@ AddFileCommand::AddFileCommand(IFileHandler* fh, ICompressor* comp)
 void AddFileCommand::execute(const string& input) {
 
     // if there is nothing after the command keep going without save file and warning
-    if (input.empty())
+    if (input.empty() || isspace(input[0]))
         return;
 
     // separate the input

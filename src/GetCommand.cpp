@@ -9,9 +9,9 @@ GetCommand::GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output
     
 void GetCommand::execute(const string& args) {
     // If the user typed nothing → ignore the command silently
-    if (args.empty()) {
-        return;
-    }
+   if (args.empty() || isspace(args[0])) {
+    return;
+}
 
     istringstream iss(args);
     string fileName;
