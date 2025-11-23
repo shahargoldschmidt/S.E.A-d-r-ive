@@ -7,12 +7,12 @@
 #include <string>
 #include <iostream>
 
-// Handles the get command - read  file name, decompresses, and outputs the result
+// Handles the get command, read  file name, decompresses, and outputs the result
 class GetCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Handles reading files from the base path
     ICompressor* compressor;     // Responsible for RLE decompression
-    std::ostream& out;           // Output stream (usually std::cout)
+    std::ostream& out;           // Output stream
 
 public:
     // Constructor with filehandler' compressor and output

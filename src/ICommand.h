@@ -3,7 +3,7 @@
 #include <string>
 #include "CommandInput.h"
 
-// Base interface for all command types (add, get, search)
+// Base interface for all command types
 class ICommand {
 public:
     virtual ~ICommand() = default;

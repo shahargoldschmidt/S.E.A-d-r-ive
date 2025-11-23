@@ -28,11 +28,11 @@ void AddFileCommand::execute(const string& input) {
     // Reads the rest of the line, including leading whitespace after the file name
     getline(ss, content);
 
-    // Remove only the **single leading space** left by getline
+    // Remove only the single leading space left by getline
     if (!content.empty() && content[0] == ' ')
         content.erase(0, 1);
 
-    // Do not trim trailing spaces, leave them as-is this way, content like "    " is preserved
+    // Do not trim trailing spaces, leave them as is this way, content like "    " is preserved
 
     string compressed = compressor->compress(content); //Commpres the content
 

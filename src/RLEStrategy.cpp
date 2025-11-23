@@ -6,7 +6,7 @@ using namespace std;
 string RLEStrategy::compress(const string& input) {
     string output;
 
-    // Pre-allocate memory to reduce re-allocations during push_back
+    // Pre allocate memory to reduce re allocations during push_back
     output.reserve(input.size());
 
     size_t i = 0;
@@ -19,7 +19,7 @@ string RLEStrategy::compress(const string& input) {
         //cheking the next char 
         i++;
 
-        // Count repeated characters up to 255 (limit of uint8_t)
+        // Count repeated characters up to 255
         while (i < input.size() && input[i] == currentChar && count < 255) {
             count++;
             i++;
@@ -37,11 +37,11 @@ string RLEStrategy::compress(const string& input) {
 
 
 
-// The function expects pairs of [count][char]  The result is returned as a normal printable string.
+// The function expects pairs of [count][char] The result is returned as a normal printable string.
 string RLEStrategy::decompress(const string& input) {
     string output;
 
-    // Iterate in steps of 2 bytes: (count, char)
+    // Iterate in steps of 2 bytes: count, char
     for (size_t i = 0; i + 1 < input.size(); i += 2) {
         // Read the raw byte and saves it as a number.
         uint8_t count = static_cast<uint8_t>(input[i]);

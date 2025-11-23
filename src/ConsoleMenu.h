@@ -9,12 +9,11 @@
 #include <vector>
 
 
-// Handles console input - read commands, splits into command + arguments, and validates them
+// Handles console input. read commands, splits into command,arguments, and validates them
 class ConsoleMenu : public IMenu {
 private:
      std::istream& in; // Source of raw user input
-    const std::map<std::string, ICommand*>& commandMap; // Valid commands and their handlers
-
+    const std::map<std::string, ICommand*>& commandMap; // the command maps
 public:
     // Constructor with input stream and command map
     ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds);

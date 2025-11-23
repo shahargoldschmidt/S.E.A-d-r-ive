@@ -9,7 +9,7 @@ GetCommand::GetCommand(IFileHandler *fh, ICompressor *comp, std::ostream &output
 
 void GetCommand::execute(const string &args)
 {
-    // If the user typed nothing → ignore the command silently
+    // If the user typed nothing, ignore the command silently
     if (args.empty() || isspace(args[0]))
     {
         return;
@@ -19,10 +19,10 @@ void GetCommand::execute(const string &args)
     string fileName;
     string rest;
 
-    // Extract the first token (expected to be the filename)
+    // Extract the first token, expected to be the filename
     iss >> fileName;
 
-    // what's after first token
+    // get what is after first token
     getline(iss, rest); 
 
     if (!rest.empty())
@@ -32,13 +32,13 @@ void GetCommand::execute(const string &args)
     // Read compressed content from file
     string compressedContent = fileHandler->readFile(fileName);
 
-    // If file not found → silently ignore (as required by assignment)
+    // If file not found silently ignore 
     if (compressedContent.empty())
     {
         return;
     }
 
-    // Decompress content using the strategy (RLE)
+    // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
 
     // Print decompressed content to the output stream

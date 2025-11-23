@@ -4,7 +4,7 @@
 #include "ICompressor.h"
 #include <string>
 
-// Implements simple Encoding (RLE) compression and decompression
+// Implements RLE compression and decompression
 class RLEStrategy : public ICompressor {
 public:
     // Compresses the input string using RLE

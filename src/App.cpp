@@ -15,7 +15,7 @@ void App::run()
 {
     while (true)
     {
-        // Get the next command (already split into command + args)
+        // Get the next command splitted into command + args)
         auto userCom = menu->getInput();
         
         // Skip if no command was entered

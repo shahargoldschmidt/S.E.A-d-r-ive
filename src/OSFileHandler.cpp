@@ -12,7 +12,7 @@ fs::path get_full_path(const string& fileName, const string& basePath) {
     if (basePath.empty()) { 
         return {}; // Return empty path if basePath is not set
     }
-    return fs::path(basePath) / fileName; // Concatenate basePath and fileName
+    return fs::path(basePath) / fileName; // Conect basePath and fileName
 }
 
 // Retrieve base path from environment variable "MY_FILE_PATH"
@@ -24,7 +24,7 @@ string OSFileHandler::getBasePath() {
         return ""; 
     }
     
-    return string(path); // Convert C-string to string
+    return string(path); // Convert C string to string
 }
 
 // Save content to a file in the base path
@@ -35,7 +35,7 @@ void OSFileHandler::saveFile(const string& fileName, const string& content) {
     if (fullPath.empty()) {
         return; // Do nothing if full path is invalid
     }
-    // If the file exists
+    // If the file already exists
     if (fs::exists(fullPath)) {
         return; // Do nothing and exit
     }

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// Implements console-based menu for user input (like in class)
+// Implements console based menu for user input
 ConsoleMenu::ConsoleMenu(std::istream& input, const std::map<std::string, ICommand*>& cmds)
     : in(input), commandMap(cmds) {}
 

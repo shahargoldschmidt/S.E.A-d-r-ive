@@ -15,12 +15,12 @@ private:
 public:
     App(IMenu* menu, const std::map<std::string, ICommand*>& commands); // The constructor
 
-    // Explicitly declares the destructor. Required for manual memory cleanup (delete).
+    // Explicitly declares the destructor.
     ~App() = default;
     
-    // Prevents object copying (Copy Constructor).
+    // Copy Constructor.
     App(const App&) = delete; 
-    // Prevents object assignment (Copy Assignment Operator).
+    // Copy Assignment Operator.
     App& operator=(const App&) = delete;
 
     void run();  // infinite loop
