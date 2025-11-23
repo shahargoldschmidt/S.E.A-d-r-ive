@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)    # Require the standard
 
 # Fetch GoogleTest library 
 include(FetchContent)  # Include module for downloading external content
+
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
@@ -19,17 +20,33 @@ FetchContent_MakeAvailable(googletest)  # Download and prepare GoogleTest if not
 include_directories(src)  # Add 'src' folder to the include path
 
 # Gather all implementation source files
-file(GLOB APP_IMPLEMENTATIONS "src/*.cpp")
-list(REMOVE_ITEM APP_IMPLEMENTATIONS "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")  # Exclude main.cpp
-
-# Gather all test source files
-file(GLOB TEST_SOURCES "tests/*.cpp")
+set(APP_IMPLEMENTATIONS
+    src/AddFileCommand.cpp
+    src/App.cpp
+    src/ConsoleMenu.cpp
+    src/GetCommand.cpp
+    src/OSFileHandler.cpp
+    src/RLEStrategy.cpp
+    src/SearchCommand.cpp
+)
 
 # Main application executable
 add_executable(app_runner
     src/main.cpp
     ${APP_IMPLEMENTATIONS}
 )
+
+# Gather all test source files
+set(TEST_SOURCES
+    tests/AddFileCommandTests.cpp
+    tests/ConsoleMenuTest.cpp
+    tests/FileHandlerTests.cpp
+    tests/GetCommandTest.cpp
+    tests/RLEtest.cpp
+    tests/SearchCommandTest.cpp
+    tests/TestApp.cpp
+)
+
 
 # Test executable
 add_executable(tests_runner
