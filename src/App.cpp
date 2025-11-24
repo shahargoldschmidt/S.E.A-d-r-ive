@@ -10,6 +10,16 @@ using namespace std;
 App::App(IMenu *menu, const map<string, ICommand *> &commands)
     : menu(menu), commands(commands) {}
 
+// Destructor: App assumes ownership and deletes the ICommand
+App::~App()
+{
+    // Iterate over the map and delete each ICommand pointer
+    for (auto const& [key, val] : commands)
+    {
+        delete val; 
+    }
+}
+
 // Main loop of the application
 void App::run()
 {

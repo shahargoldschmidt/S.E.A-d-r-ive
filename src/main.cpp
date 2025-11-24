@@ -23,7 +23,7 @@ int main() {
     ostream& output = cout;
     istream& input = cin;
 
-    // create commands
+    // create commands (will be deleted by App)
     ICommand* addCmd = new AddFileCommand(fileHandler, compressor);
     ICommand* getCmd = new GetCommand(fileHandler, compressor, output);
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor, output);
@@ -39,10 +39,17 @@ int main() {
 
     // create app and run it
     App app(menu, commands);
-    app.run();
 
+    try {
+        app.run();
+    } catch (...) {
+        // Handle stopping the infinite loop gracefully
+    }
+    
+    // delete what main own
+    delete menu; 
+    delete fileHandler;
+    delete compressor;
+    
     return 0;
 }
-
-
-

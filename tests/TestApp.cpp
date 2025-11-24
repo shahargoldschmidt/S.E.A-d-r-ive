@@ -47,36 +47,36 @@ public:
     }
 };
 
-
 //  App executes a valid command correctly tets
 TEST(AppTests, ExecutesValidCommand)
 {
     FakeMenu menu;
-    FakeCommand cmd;
+    FakeCommand* cmd = new FakeCommand(); 
 
     map<string, ICommand*> commands = {
-        {"add", &cmd}
+        {"add", cmd}
     };
 
     menu.inputs = { {"add", " file1.txt"} };
 
     App app(&menu, commands);
 
-    // Stop App::run() after inputs finish (FakeMenu throws to exit infinite loop)
+    // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), runtime_error);
 
-    EXPECT_EQ(cmd.callCount, 1);
-    EXPECT_EQ(cmd.lastArg, " file1.txt");
+    
+    EXPECT_EQ(cmd->callCount, 1); 
+    EXPECT_EQ(cmd->lastArg, " file1.txt");
 }
 
 // App skips an empty command 
 TEST(AppTests, SkipsEmptyCommand)
 {
     FakeMenu menu;
-    FakeCommand cmd;
+    FakeCommand* cmd = new FakeCommand(); 
 
     map<string, ICommand*> commands = {
-        {"add", &cmd}
+        {"add", cmd}
     };
 
     menu.inputs = { {"", ""} };  // should be skipped
@@ -87,17 +87,17 @@ TEST(AppTests, SkipsEmptyCommand)
     EXPECT_THROW(app.run(), runtime_error);
 
     //no execute function at all.
-    EXPECT_EQ(cmd.callCount, 0); 
+    EXPECT_EQ(cmd->callCount, 0); 
 }
 
 // Command throws but App continues running 
 TEST(AppTests, CommandThrowsButAppContinues)
 {
     FakeMenu menu;
-    ThrowingCommand cmd;//going to throw an erreo
+    ThrowingCommand* cmd = new ThrowingCommand(); 
 
     map<string, ICommand*> commands = {
-        {"add", &cmd}
+        {"add", cmd}
     };
 
     menu.inputs = { {"add", " X"} };
@@ -108,29 +108,31 @@ TEST(AppTests, CommandThrowsButAppContinues)
     EXPECT_THROW(app.run(), runtime_error);
 
     //went into execute function
-    EXPECT_EQ(cmd.callCount, 1);
+    EXPECT_EQ(cmd->callCount, 1);
 }
 
 // Two valid commands in sequence
-TEST(AppTests, MultipleInputs)
+TEST(AppTests, TwoValidCommands)
 {
     FakeMenu menu;
-    FakeCommand cmd;
+    FakeCommand* cmd1 = new FakeCommand(); 
+    FakeCommand* cmd2 = new FakeCommand(); 
 
     map<string, ICommand*> commands = {
-        {"add", &cmd}
+        {"add", cmd1},
+        {"get", cmd2}
     };
 
-    menu.inputs = {
-        {"add", " A"},
-        {"add", " B"}
-    };
+    menu.inputs = { {"add", " file1.txt"}, {"get", " file2.txt"} };
 
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), runtime_error);
 
-    //called 2 time to the execute function
-    EXPECT_EQ(cmd.callCount, 2);
+    EXPECT_EQ(cmd1->callCount, 1);
+    EXPECT_EQ(cmd1->lastArg, " file1.txt");
+
+    EXPECT_EQ(cmd2->callCount, 1);
+    EXPECT_EQ(cmd2->lastArg, " file2.txt");
 }
