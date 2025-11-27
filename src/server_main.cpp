@@ -11,6 +11,8 @@
 #include "AddFileCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
+#include "OSFileHandler.h"
+#include "RLEStrategy.h"
 
 #include "IFileHandler.h" 
 #include "ICompressor.h" 
@@ -26,7 +28,7 @@ void clientHandler(int clientSock, map<string, ICommand*>* CommandsMap) {
     //Create a Menu for this client with the socket
     IMenu* menu = new TCPMenu(clientSock);
     //Create the App for this client
-    App myApp(menu, CommandsMap);
+    App myApp(menu, *CommandsMap);
     myApp.run();
     //Cleanup resources for this specific client
     close(clientSock); // Close the network connection
@@ -37,10 +39,10 @@ void clientHandler(int clientSock, map<string, ICommand*>* CommandsMap) {
 int main(int argc, char* argv[]) {
     
     // Parse the port number from the command line argument
-    int serverPort = atoi(argv[1]);
+    int serverPort = atoi(argv[2]);
 
     // Initialize Shared Resources 
-    IFileHandler* fileHandler = new OsFileHandler(); // Uncomment when you have this class
+    IFileHandler* fileHandler = new OSFileHandler(); // Uncomment when you have this class
     ICompressor* compressor = new RLEStrategy();
 
     // create commands
@@ -50,7 +52,7 @@ int main(int argc, char* argv[]) {
 
     // put commands in a map
     map<string, ICommand*>* commands = new map<string, ICommand*>();
-    (*commands)["POST"] = addCmd;
+    (*commands)["post"] = addCmd;
     (*commands)["get"] = getCmd;
     (*commands)["search"] = searchCmd;
 
@@ -78,12 +80,14 @@ int main(int argc, char* argv[]) {
         perror("Error listening");
         return 1;
     }
-
+    cout << "🚀 Server started successfully. Listening on port " << serverPort << "..." << endl;
     // Accept Loop
     while (true) {
+        cout << "⌛ Waiting for client connection..." << endl;
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);
         
+       
         // The server blocks here until a client connects
         int clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, &clientAddrLen);
         

@@ -40,13 +40,13 @@ void App::run()
         
         // Skip if no command was entered
         if (userCom.command.empty()){
-            menu->respond("400 Bad Request");
+            menu->respond("400 Bad Request1");
             continue;
         }
         string response = "";
         try
         {
-            string response=commands[userCom.command]->execute(userCom.args); // Execute the command
+            response=commands[userCom.command]->execute(userCom.args); // Execute the command
         }
         catch (...)
         {

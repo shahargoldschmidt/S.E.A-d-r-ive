@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include "CommandInput.h"
+using std::string;
 
 // This class runs commands from a menu
 class App {
