@@ -7,14 +7,14 @@
 
 using namespace std;
 
-// Fake handler to test logic without real files
+// Fake handler
 class FakeFileHandler : public IFileHandler {
 public:
-    vector<string> filesInStorage; // list of files in memory
+    vector<string> filesInStorage; // list of files
     bool wasRemoveCalled = false;  // did we call remove?
     string lastRemovedFile = "";   // name of file we tried to delete
 
-    // Empty implementation for unused methods
+    // Empty implementation for methods we are using
     string getBasePath() override { return ""; }
     void saveFile(const string& name, const string& content) override {}
     string readFile(const string& name) override { return ""; }
@@ -51,8 +51,6 @@ protected:
     }
 };
 
-// --- Validation Tests ---
-
 TEST_F(DeleteCommandTest, Execute_Returns400_WhenArgsEmpty) {
     // empty input -> 400
     EXPECT_EQ(command->execute(""), "400 Bad Request");
@@ -68,17 +66,15 @@ TEST_F(DeleteCommandTest, Execute_Returns400_WhenMultipleArgs) {
     EXPECT_EQ(command->execute("file1 file2"), "400 Bad Request");
 }
 
-// --- Logic Tests ---
-
 TEST_F(DeleteCommandTest, Execute_Returns404_WhenFileNotInList) {
-    // Setup: file missing from list
+    // file missing from list
     fakeHandler.filesInStorage = {"other.txt", "data.dat"};
     fakeHandler.wasRemoveCalled = false;
 
-    // Act: try to delete missing file
+    // try to delete missing file
     string result = command->execute("missing.txt");
 
-    // Assert: should be 404 and no delete call
+    // should be 404 and no delete call
     EXPECT_EQ(result, "404 Not Found");
     EXPECT_FALSE(fakeHandler.wasRemoveCalled);
 }
@@ -86,14 +82,14 @@ TEST_F(DeleteCommandTest, Execute_Returns404_WhenFileNotInList) {
 TEST_F(DeleteCommandTest, Execute_Returns204_AndRemovesFile_WhenFileExists) {
     string filename = "target.txt";
 
-    // Setup: add file to our list
+    // add file to our list
     fakeHandler.filesInStorage = {"a.txt", filename, "b.txt"};
     fakeHandler.wasRemoveCalled = false;
 
-    // Act: delete it
+    // delete it
     string result = command->execute(filename);
 
-    // Assert: success 204
+    //  success 204
     EXPECT_EQ(result, "204 No Content");
     
     // Check if remove was actually called
