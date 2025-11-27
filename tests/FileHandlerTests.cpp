@@ -119,3 +119,36 @@ TEST_F(OSFileHandlerTest, ListFiles_ReturnsCorrectFileNames) {
     EXPECT_NE(find(files.begin(), files.end(), "fileB.dat"), files.end()); // fileB exists
 }
 
+// removeFile tests
+TEST_F(OSFileHandlerTest, RemoveFile_RemovesExistingFile) {
+    setenv(ENV_NAME.c_str(), basePath.string().c_str(), 1);
+
+    string filename = "delete_me.dat";
+    fs::path fullPath = basePath / filename;
+
+    // Create a file manually
+    ofstream(fullPath) << "temporary content";
+    ASSERT_TRUE(fs::exists(fullPath)); // Verify it was created
+
+    // Call removeFile
+    handler.removeFile(filename);
+
+    // Check file is gone
+    EXPECT_FALSE(fs::exists(fullPath)); 
+}
+
+TEST_F(OSFileHandlerTest, RemoveFile_DoesNotCrash_WhenFileMissing) {
+    setenv(ENV_NAME.c_str(), basePath.string().c_str(), 1);
+
+    string filename = "ghost_file.dat";
+    fs::path fullPath = basePath / filename;
+
+    // Verify file surely doesn't exist
+    if(fs::exists(fullPath)) fs::remove(fullPath);
+
+    // Try to remove non-existent file - return without error/crash
+    handler.removeFile(filename); 
+
+    // Assert
+    EXPECT_FALSE(fs::exists(fullPath));
+}ה

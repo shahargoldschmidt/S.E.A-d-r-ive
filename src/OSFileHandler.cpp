@@ -29,14 +29,17 @@ string OSFileHandler::getBasePath() {
 
 // Save content to a file in the base path
 void OSFileHandler::saveFile(const string& fileName, const string& content) {
+    _mutex.lock(); // lock
     string basePath = getBasePath();
     
     fs::path fullPath = get_full_path(fileName, basePath);
     if (fullPath.empty()) {
+        _mutex.unlock(); // must unlock before the return
         return; // Do nothing if full path is invalid
     }
     // If the file already exists
     if (fs::exists(fullPath)) {
+        _mutex.unlock(); // must unlock before the return
         return; // Do nothing and exit
     }
     
@@ -45,37 +48,47 @@ void OSFileHandler::saveFile(const string& fileName, const string& content) {
         file << content; // Write content to file
         file.close(); // Close file 
     }
+
+    _mutex.unlock(); // Unlock at the end of function
 }
 
 // Read content from a file in the base path
 string OSFileHandler::readFile(const string& fileName) {
+    _mutex.lock(); // lock
     string basePath = getBasePath();
     fs::path fullPath = get_full_path(fileName, basePath);
 
     if (fileName.empty()) {
+        _mutex.unlock(); // must unlock before the return
         return ""; // Return empty string 
     }
 
     if (fullPath.empty() || !fs::exists(fullPath)) {
+         _mutex.unlock(); // must unlock before the return
         return ""; // Return empty string if file does not exist
     }
     
     ifstream file(fullPath, ios::binary); 
     if (!file.is_open()) {
+        _mutex.unlock(); // must unlock before the return
         return ""; // Return empty string if unable to open file
     }
+    string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>()); // Read entire file into string
     
-    return string((istreambuf_iterator<char>(file)),
-                         istreambuf_iterator<char>()); // Read entire file into string
+    _mutex.unlock(); // Unlock at the end of function
+    return content;
+ 
 }
 
 // List all regular files in the base path
 vector<string> OSFileHandler::listFiles() {
+    _mutex.lock(); // lock
     vector<string> fileNames;
     string basePath = getBasePath();
     
     
     if (basePath.empty() || !fs::exists(basePath)) {
+        _mutex.unlock(); // must unlock before the return
         return fileNames;  // Return empty vector if base path is invalid
     }
     
@@ -86,6 +99,30 @@ vector<string> OSFileHandler::listFiles() {
             fileNames.push_back(entry.path().filename().string());  // Add filename only
         }
     }
-    
+    _mutex.unlock(); // Unlock at the end of function
     return fileNames;
+}
+
+// New function: Remove file
+void OSFileHandler::removeFile(const string& fileName) {
+    _mutex.lock(); // lock
+
+    string basePath = getBasePath();
+    fs::path fullPath = get_full_path(fileName, basePath);
+
+    if (fileName.empty() || fullPath.empty()) {
+        _mutex.unlock(); // must unlock before return
+        return;
+    }
+
+    // Checking if a file exists before delete
+    if (fs::exists(fullPath)) {
+        try {
+            fs::remove(fullPath);
+        } catch (const fs::filesystem_error& e) {
+    
+        }
+    }
+
+    _mutex.unlock(); // Unlock at the end of function
 }

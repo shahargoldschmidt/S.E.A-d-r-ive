@@ -20,6 +20,9 @@ public:
     // Lists all files available under the base path
     virtual std::vector<std::string> listFiles() = 0;
 
+    // Removes the specified file from the storage
+    virtual void removeFile(const std::string& fileName) = 0;
+
 };
 
 #endif
