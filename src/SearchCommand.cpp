@@ -8,8 +8,8 @@
 
 using namespace std;
 // The contructor foe search command
-SearchCommand::SearchCommand(IFileHandler *fh, ICompressor *comp, ostream &out)
-    : fileHandler(fh), compressor(comp), output(out) {}
+SearchCommand::SearchCommand(IFileHandler *fh)
+    : fileHandler(fh), compressor(comp) {}
 
 string SearchCommand::execute(const string &args)
 {

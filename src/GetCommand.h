@@ -12,11 +12,10 @@ class GetCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Handles reading files from the base path
     ICompressor* compressor;     // Responsible for RLE decompression
-    std::ostream& out;           // Output stream
 
 public:
     // Constructor with filehandler' compressor and output
-    GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output);
+    GetCommand(IFileHandler* fh, ICompressor* comp);
 
     std::string execute(const std::string& args) override;
 };

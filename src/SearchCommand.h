@@ -12,10 +12,9 @@ class SearchCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Access to stored files
     ICompressor* compressor; // Used to decompress file contents
-    std::ostream& output;  // Output stream for search results
 
 public:
-    SearchCommand(IFileHandler* fileHandler, ICompressor* compressor, std::ostream& output);
+    SearchCommand(IFileHandler* fileHandler, ICompressor* compressor);
     // Returns a list of file names that contain the user-provided text
     std::string execute(const std::string& args) override;
 };
