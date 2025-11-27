@@ -14,7 +14,7 @@ public:
     AddFileCommand(IFileHandler* fileHandler, ICompressor* compressor);
 
     // Executing an add command with the given input
-    void execute(const std::string& input) override;
+    std::string execute(const std::string& input) override;
 
 private:
     IFileHandler* fileHandler; // file handeling interface

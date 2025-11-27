@@ -18,7 +18,7 @@ public:
     // Constructor with filehandler' compressor and output
     GetCommand(IFileHandler* fh, ICompressor* comp, std::ostream& output);
 
-    void execute(const std::string& args) override;
+    std::string execute(const std::string& args) override;
 };
 
 #endif

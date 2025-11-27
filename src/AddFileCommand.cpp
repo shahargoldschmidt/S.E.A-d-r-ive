@@ -1,17 +1,18 @@
 #include "AddFileCommand.h"
 #include <sstream>
 #include <string>
+
 using namespace std;
 
 // The constructor for add command
 AddFileCommand::AddFileCommand(IFileHandler* fh, ICompressor* comp)
     : fileHandler(fh), compressor(comp) {}
 
-void AddFileCommand::execute(const string& input) {
+string AddFileCommand::execute(const string& input) {
 
     // if there is nothing after the command keep going without save file and warning
     if (input.empty() || isspace(input[0]))
-        return;
+        return "400 Bad Request\n";
 
     // separate the input
     stringstream ss(input);
@@ -22,7 +23,7 @@ void AddFileCommand::execute(const string& input) {
 
     // Reject empty file name
     if (fileName.empty())
-        return;
+        return "400 Bad Request\n";
 
     string content;
     // Reads the rest of the line, including leading whitespace after the file name
@@ -37,4 +38,5 @@ void AddFileCommand::execute(const string& input) {
     string compressed = compressor->compress(content); //Commpres the content
 
     fileHandler->saveFile(fileName, compressed); // save the file
+    return "201 Created\n";
 }

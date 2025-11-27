@@ -7,12 +7,12 @@ using namespace std;
 GetCommand::GetCommand(IFileHandler *fh, ICompressor *comp, std::ostream &output)
     : fileHandler(fh), compressor(comp), out(output) {}
 
-void GetCommand::execute(const string &args)
+string GetCommand::execute(const string &args)
 {
     // If the user typed nothing, ignore the command silently
     if (args.empty() || isspace(args[0]))
     {
-        return;
+        return "400 Bad Request\n";
     }
 
     istringstream iss(args);
@@ -27,7 +27,7 @@ void GetCommand::execute(const string &args)
 
     if (!rest.empty())
     {
-        return;
+        return "400 Bad Request\n";
     }
     // Read compressed content from file
     string compressedContent = fileHandler->readFile(fileName);
@@ -35,12 +35,12 @@ void GetCommand::execute(const string &args)
     // If file not found silently ignore 
     if (compressedContent.empty())
     {
-        return;
+        return "404 Not Found\n";
     }
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
 
     // Print decompressed content to the output stream
-    out << decompressed << "\n";
+    return "200 Ok\n\n" + decompressed + "\n";
 }

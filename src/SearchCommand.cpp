@@ -11,16 +11,24 @@ using namespace std;
 SearchCommand::SearchCommand(IFileHandler *fh, ICompressor *comp, ostream &out)
     : fileHandler(fh), compressor(comp), output(out) {}
 
-void SearchCommand::execute(const string &args)
+string SearchCommand::execute(const string &args)
 {
     // If no search term provided, do nothing
     if (args.empty())
-        return;
-    string compContent = compressor->compress(args);
+        return "400 Bad Request\n";
+
+    string result;    
     int count = 0; // counter to know if to end line or do nothing
     // Iterate over all files
+    
     for (const string &fname : fileHandler->listFiles())
     {
+        // 1. First check filename (not compressed)
+        if (fname.find(args) != string::npos)
+        {
+            result += fname + " ";
+            count++;
+        }
        
         string compressed = fileHandler->readFile(fname);
         // decompress the file content to search the users content
@@ -28,11 +36,12 @@ void SearchCommand::execute(const string &args)
         // If compContent is not found, it returns "not found" as string::npos
         if (decompressed.find(args) != string::npos)
         {
-            output << fname << " ";
+            result += fname + " ";
             count++;
         }
     }
-    if (count > 0)
-        output << endl;
-    return;
+    if (count == 0)
+        return "404 Not Found\n";
+
+    return "200 Ok\n\n" + result + "\n";
 }

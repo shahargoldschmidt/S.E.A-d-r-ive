@@ -17,7 +17,7 @@ private:
 public:
     SearchCommand(IFileHandler* fileHandler, ICompressor* compressor, std::ostream& output);
     // Returns a list of file names that contain the user-provided text
-    void execute(const std::string& args) override;
+    std::string execute(const std::string& args) override;
 };
 
 #endif 
