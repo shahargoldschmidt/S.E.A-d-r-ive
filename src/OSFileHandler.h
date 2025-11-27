@@ -4,9 +4,12 @@
 #include "IFileHandler.h"
 #include <string>
 #include <vector>
+#include <mutex>
 
 // File handler that works with the local operating system filesystem
 class OSFileHandler : public IFileHandler {
+private:
+    std::mutex _mutex; // Our lock
 public:
     // Return the base directory for file operations
     std::string getBasePath() override;
@@ -19,6 +22,9 @@ public:
 
     // List all files in the directory
     std::vector<std::string> listFiles() override;
+
+    // Removes the specified file
+    void removeFile(const std::string& fileName) override;
 
 };
 
