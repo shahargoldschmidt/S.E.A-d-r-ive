@@ -8,13 +8,12 @@
 #include "App.h"
 #include "TCPMenu.h"
 #include "ICommand.h"
+#include "AddFileCommand.h"
+#include "GetCommand.h"
+#include "SearchCommand.h"
 
-// Command implementations
-//#include "Commands/PostCommand.h"
-//#include "Commands/DeleteCommand.h"
-
-// File Handler implementation
-// #include "IO/OsFileHandler.h" 
+#include "IFileHandler.h" 
+#include "ICompressor.h" 
 
 using namespace std;
 
@@ -42,44 +41,45 @@ int main(int argc, char* argv[]) {
 
     // Initialize Shared Resources 
     IFileHandler* fileHandler = new OsFileHandler(); // Uncomment when you have this class
+    ICompressor* compressor = new RLEStrategy();
 
-    map<string, ICommand*>* globalCommandMap = new map<string, ICommand*>();
+    // create commands
+    ICommand* addCmd = new AddFileCommand(fileHandler, compressor);
+    ICommand* getCmd = new GetCommand(fileHandler, compressor);
+    ICommand* searchCmd = new SearchCommand(fileHandler, compressor);
 
+    // put commands in a map
+    map<string, ICommand*>* commands = new map<string, ICommand*>();
+    (*commands)["add"] = addCmd;
+    (*commands)["get"] = getCmd;
+    (*commands)["search"] = searchCmd;
 
-    // =============================================================
-    // Step B: Network Setup (TCP Layer)
-    // =============================================================
-
-    // 1. Create the Server Socket (IPv4, TCP)
+    //Create the Server Socket (IPv4, TCP)
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSock < 0) {
         perror("Error creating socket");
         return 1;
     }
 
-    // 2. Configure Server Address Struct
+    // Configure Server Address Struct
     struct sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY; // Listen on all network interfaces
     serverAddr.sin_port = htons(serverPort); // Convert port to network byte order
 
-    // 3. Bind the socket to the IP and Port
+    // Bind the socket to the IP and Port
     if (bind(serverSock, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
         perror("Error binding");
         return 1;
     }
 
-    // 4. Start Listening (Queue size = 10)
+    // Start Listening
     if (listen(serverSock, 10) < 0) {
         perror("Error listening");
         return 1;
     }
 
-    cout << "Server is listening on port " << serverPort << "..." << endl;
-
-    // =============================================================
-    // Step C: Main Accept Loop (Infinite)
-    // =============================================================
+    // Accept Loop
     while (true) {
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);
@@ -92,28 +92,20 @@ int main(int argc, char* argv[]) {
             continue; // Try to accept the next client
         }
 
-        cout << "Client connected!" << endl;
-
-        [cite_start]// Requirement: "The server handles each client using a separate thread" [cite: 43]
-        // We pass the new client socket and the shared command map.
-        thread clientThread(clientHandler, clientSock, globalCommandMap);
-        
-        [cite_start]// Requirement: "The server creates a new thread for each client" (No thread pool) [cite: 85]
-        // We detach the thread so it runs independently and releases resources when done.
+        thread clientThread(clientHandler, clientSock, commands); // client handler and its arguments
         clientThread.detach();
     }
 
-    // =============================================================
-    // Step D: Server Cleanup (Only reached if loop breaks)
-    // =============================================================
+    //Server Cleanup
     close(serverSock);
     
     // Clean up command memory
-    for (auto const& [key, val] : *globalCommandMap) {
+    for (auto const& [key, val] : *commands) {
         delete val;
     }
-    delete globalCommandMap;
-    // delete fileHandler;
+    delete commands;
+    delete fileHandler;
+    delete compressor;
     
     return 0;
 }
