@@ -53,10 +53,10 @@ int main(int argc, char* argv[]) {
         string userInput = menu.getInput();
         
         // If input is empty (e.g., Ctrl+D), exit loop
-        if (userInput.empty()) break;
+        //if (userInput.empty()) break;
 
         // Append newline (protocol requirement)
-        userInput += "\n";
+        //userInput += "\n";
 
         // Send the command to the server
         int sentBytes = send(sock, userInput.c_str(), userInput.length(), 0);

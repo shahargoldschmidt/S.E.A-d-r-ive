@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 
     // put commands in a map
     map<string, ICommand*>* commands = new map<string, ICommand*>();
-    (*commands)["add"] = addCmd;
+    (*commands)["POST"] = addCmd;
     (*commands)["get"] = getCmd;
     (*commands)["search"] = searchCmd;
 
