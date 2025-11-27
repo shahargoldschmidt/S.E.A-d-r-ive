@@ -5,12 +5,14 @@
 #include "ICommand.h"
 #include <map>
 #include <string>
+#include "CommandInput.h"
 
 // This class runs commands from a menu
 class App {
 private:
     IMenu* menu;  // Interface for getting input
     std::map<std::string, ICommand*> commands; // Map of command strings 
+    CommandInput seperateInput(const string& userInput);
 
 public:
     App(IMenu* menu, const std::map<std::string, ICommand*>& commands); // The constructor
