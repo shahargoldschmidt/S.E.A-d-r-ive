@@ -12,7 +12,7 @@ string GetCommand::execute(const string &args)
     // If the user typed nothing, ignore the command silently
     if (args.empty() || isspace(args[0]))
     {
-        return "400 Bad Request\n";
+        return "400 Bad Request";
     }
 
     istringstream iss(args);
@@ -27,7 +27,7 @@ string GetCommand::execute(const string &args)
 
     if (!rest.empty())
     {
-        return "400 Bad Request\n";
+        return "400 Bad Request";
     }
     // Read compressed content from file
     string compressedContent = fileHandler->readFile(fileName);
@@ -35,12 +35,12 @@ string GetCommand::execute(const string &args)
     // If file not found silently ignore 
     if (compressedContent.empty())
     {
-        return "404 Not Found\n";
+        return "404 Not Found";
     }
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
 
     // Print decompressed content to the output stream
-    return "200 Ok\n\n" + decompressed + "\n";
+    return "200 Ok\n\n" + decompressed ;
 }

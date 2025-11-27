@@ -12,7 +12,7 @@ string AddFileCommand::execute(const string& input) {
 
     // if there is nothing after the command keep going without save file and warning
     if (input.empty() || isspace(input[0]))
-        return "400 Bad Request\n";
+        return "400 Bad Request";
 
     // separate the input
     stringstream ss(input);
@@ -23,7 +23,7 @@ string AddFileCommand::execute(const string& input) {
 
     // Reject empty file name
     if (fileName.empty())
-        return "400 Bad Request\n";
+        return "400 Bad Request";
 
     string content;
     // Reads the rest of the line, including leading whitespace after the file name
@@ -38,5 +38,5 @@ string AddFileCommand::execute(const string& input) {
     string compressed = compressor->compress(content); //Commpres the content
 
     fileHandler->saveFile(fileName, compressed); // save the file
-    return "201 Created\n";
+    return "201 Created";
 }

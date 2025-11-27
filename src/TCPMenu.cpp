@@ -25,5 +25,6 @@ string TCPMenu::getInput() {
 }
 
 void TCPMenu::respond(string message) {
+    message += "\n";
     send(m_socket, message.c_str(), message.length(), 0); //sending response
 }

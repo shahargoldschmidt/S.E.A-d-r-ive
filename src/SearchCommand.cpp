@@ -8,14 +8,14 @@
 
 using namespace std;
 // The contructor foe search command
-SearchCommand::SearchCommand(IFileHandler *fh)
+SearchCommand::SearchCommand(IFileHandler *fh, ICompressor *comp)
     : fileHandler(fh), compressor(comp) {}
 
 string SearchCommand::execute(const string &args)
 {
     // If no search term provided, do nothing
     if (args.empty())
-        return "400 Bad Request\n";
+        return "400 Bad Request";
 
     string result;    
     int count = 0; // counter to know if to end line or do nothing
@@ -28,6 +28,7 @@ string SearchCommand::execute(const string &args)
         {
             result += fname + " ";
             count++;
+            continue;
         }
        
         string compressed = fileHandler->readFile(fname);
@@ -41,7 +42,7 @@ string SearchCommand::execute(const string &args)
         }
     }
     if (count == 0)
-        return "404 Not Found\n";
+        return "404 Not Found";
 
-    return "200 Ok\n\n" + result + "\n";
+    return "200 Ok\n\n" + result;
 }
