@@ -13,14 +13,19 @@ using namespace std;
 // Fake Menu
 class FakeMenu : public IMenu {
 public:
-    vector<CommandInput> inputs;  
+    vector<string> inputs;  
     int index = 0;
+    string lastResponse; // To capture what App sends back
 
-    CommandInput getInput() override {
+    string getInput() override {
         if (index >= inputs.size()) {
             throw runtime_error("stop");
         }
         return inputs[index++];
+    }
+
+    void respond(string message) override {
+        lastResponse = message;
     }
 };
 
@@ -29,10 +34,14 @@ class FakeCommand : public ICommand {
 public:
     int callCount = 0;
     string lastArg;
+    string returnVal; // What this command should return
 
-    void execute(const string& arg) override {
+    FakeCommand(string ret = "OK") : returnVal(ret) {}
+
+    string execute(const string& arg) override {
         callCount++;
         lastArg = arg;
+        return returnVal;
     }
 };
 
@@ -51,13 +60,13 @@ public:
 TEST(AppTests, ExecutesValidCommand)
 {
     FakeMenu menu;
-    FakeCommand* cmd = new FakeCommand(); 
+    FakeCommand* cmd = new FakeCommand("200 Ok"); 
 
     map<string, ICommand*> commands = {
         {"add", cmd}
     };
 
-    menu.inputs = { {"add", " file1.txt"} };
+    menu.inputs = { "add file1.txt" };
 
     App app(&menu, commands);
 
@@ -66,7 +75,8 @@ TEST(AppTests, ExecutesValidCommand)
 
     
     EXPECT_EQ(cmd->callCount, 1); 
-    EXPECT_EQ(cmd->lastArg, " file1.txt");
+    EXPECT_EQ(cmd->lastArg, "file1.txt"); // Note: App removes the first space usually
+    EXPECT_EQ(menu.lastResponse, "200 Ok"); // Verify App sent the response to menu
 }
 
 // App skips an empty command 
@@ -79,15 +89,15 @@ TEST(AppTests, SkipsEmptyCommand)
         {"add", cmd}
     };
 
-    menu.inputs = { {"", ""} };  // should be skipped
+    menu.inputs = { "" };  // should be skipped or handled as bad request
 
     App app(&menu, commands);
 
     // Stop App::run() after inputs finish 
     EXPECT_THROW(app.run(), runtime_error);
-
-    //no execute function at all.
+    
     EXPECT_EQ(cmd->callCount, 0); 
+    EXPECT_EQ(menu.lastResponse, "400 Bad Request"); 
 }
 
 // Command throws but App continues running 
@@ -100,7 +110,7 @@ TEST(AppTests, CommandThrowsButAppContinues)
         {"add", cmd}
     };
 
-    menu.inputs = { {"add", " X"} };
+    menu.inputs = { "add X" };
 
     App app(&menu, commands);
 
@@ -115,15 +125,15 @@ TEST(AppTests, CommandThrowsButAppContinues)
 TEST(AppTests, TwoValidCommands)
 {
     FakeMenu menu;
-    FakeCommand* cmd1 = new FakeCommand(); 
-    FakeCommand* cmd2 = new FakeCommand(); 
+    FakeCommand* cmd1 = new FakeCommand("Res1"); 
+    FakeCommand* cmd2 = new FakeCommand("Res2"); 
 
     map<string, ICommand*> commands = {
         {"add", cmd1},
         {"get", cmd2}
     };
 
-    menu.inputs = { {"add", " file1.txt"}, {"get", " file2.txt"} };
+    menu.inputs = { "add file1.txt", "get file2.txt" };
 
     App app(&menu, commands);
 
@@ -131,8 +141,11 @@ TEST(AppTests, TwoValidCommands)
     EXPECT_THROW(app.run(), runtime_error);
 
     EXPECT_EQ(cmd1->callCount, 1);
-    EXPECT_EQ(cmd1->lastArg, " file1.txt");
+    EXPECT_EQ(cmd1->lastArg, "file1.txt");
 
     EXPECT_EQ(cmd2->callCount, 1);
-    EXPECT_EQ(cmd2->lastArg, " file2.txt");
+    EXPECT_EQ(cmd2->lastArg, "file2.txt");
+    
+    // Since run() loops, lastResponse will be from the last command
+    EXPECT_EQ(menu.lastResponse, "Res2");
 }
