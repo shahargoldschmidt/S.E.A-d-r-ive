@@ -50,13 +50,15 @@ class ThrowingCommand : public ICommand {
 public:
     int callCount = 0;
 
-    void execute(const string&) override {
+    // FIX: Changed return type from void to string to match ICommand interface
+    string execute(const string&) override {
         callCount++;
         throw runtime_error("command failed");
+        return ""; // Unreachable, but required for compilation
     }
 };
 
-//  App executes a valid command correctly tets
+// App executes a valid command correctly tests
 TEST(AppTests, ExecutesValidCommand)
 {
     FakeMenu menu;
@@ -170,20 +172,20 @@ TEST(AppTests, SeperateInputLogic) {
 
     // Test Valid Command with extra spaces
     // Should parse correctly and trim leading space of args
-    result = app.seperateInput("add   data");
-    EXPECT_EQ(result.command, "add");
-    EXPECT_EQ(result.args, "  data"); // Assuming your logic keeps internal spaces but trims the first separator
+    auto result2 = app.seperateInput("add   data");
+    EXPECT_EQ(result2.command, "add");
+    EXPECT_EQ(result2.args, "  data"); // Assuming your logic keeps internal spaces but trims the first separator
 
     // Test Invalid Command (Not in map)
     // "delete" is not in our map, so it should return empty
-    result = app.seperateInput("delete file.txt");
-    EXPECT_TRUE(result.command.empty());
+    auto result3 = app.seperateInput("delete file.txt");
+    EXPECT_TRUE(result3.command.empty());
     
     // Test Empty Input
-    result = app.seperateInput("");
-    EXPECT_TRUE(result.command.empty());
+    auto result4 = app.seperateInput("");
+    EXPECT_TRUE(result4.command.empty());
 
     // Test Case Insensitivity
-    result = app.seperateInput("AdD x");
-    EXPECT_EQ(result.command, "add");
+    auto result5 = app.seperateInput("AdD x");
+    EXPECT_EQ(result5.command, "add");
 }
