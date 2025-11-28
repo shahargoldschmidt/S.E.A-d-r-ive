@@ -18,13 +18,14 @@
 
 using namespace std;
 
+
 int main(int argc, char* argv[]) {
     
     // Parse the port number from the command line argument
-    int serverPort = atoi(argv[1]);
+    int serverPort = atoi(argv[2]);
 
     // Initialize Shared Resources 
-    IFileHandler* fileHandler = new OsFileHandler(); // Uncomment when you have this class
+    IFileHandler* fileHandler = new OSFileHandler(); // Uncomment when you have this class
     ICompressor* compressor = new RLEStrategy();
 
     // create commands
@@ -62,12 +63,14 @@ int main(int argc, char* argv[]) {
         perror("Error listening");
         return 1;
     }
-
+    cout << "🚀 Server started successfully. Listening on port " << serverPort << "..." << endl;
     // Accept Loop
     while (true) {
+        cout << "⌛ Waiting for client connection..." << endl;
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);
         
+       
         // The server blocks here until a client connects
         int clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, &clientAddrLen);
         
