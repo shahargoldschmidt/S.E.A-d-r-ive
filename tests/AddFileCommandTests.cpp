@@ -44,11 +44,12 @@ TEST(AddFileTests, NormalAddFile) {
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("notes hello world"); // add file with name and content
+    string result = add.execute("notes hello world"); // add file with name and content
 
     ASSERT_TRUE(fh.saveCalled); // check save was called
     EXPECT_EQ(fh.savedName, "notes"); // check file name
     EXPECT_EQ(fh.savedContent, "hello world"); // check content
+    EXPECT_EQ(result, "201 Created"); // Check return string
 }
 
 // Test adding file with spaces in content
@@ -57,11 +58,12 @@ TEST(AddFileTests, AllowSpacesContent) {
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("empty     "); // spaces should be preserved
+    string result = add.execute("empty     "); // spaces should be preserved
 
     ASSERT_TRUE(fh.saveCalled);
     EXPECT_EQ(fh.savedName, "empty");
     EXPECT_EQ(fh.savedContent, "    "); // content is spaces
+    EXPECT_EQ(result, "201 Created");
 }
 
 // Test that empty file name rejected
@@ -70,9 +72,10 @@ TEST(AddFileTests, RejectEmptyFileName) {
     MockCompressor comp;
 
     AddFileCommand add(&fh, &comp);
-    add.execute("   "); // no name
+    string result = add.execute("   "); // no name
 
     ASSERT_FALSE(fh.saveCalled); // should not save
+    EXPECT_EQ(result, "400 Bad Request");
 }
 
 // Test that compression is actually called
@@ -82,8 +85,9 @@ TEST(AddFileTests, CompressionIsCalled) {
     comp.out = "COMPRESSED!"; // fake compressed output
 
     AddFileCommand add(&fh, &comp);
-    add.execute("data abc");
+    string result = add.execute("data abc");
 
     ASSERT_TRUE(comp.compressCalled); // check compress called
     EXPECT_EQ(fh.savedContent, "COMPRESSED!"); // content is compressed
+    EXPECT_EQ(result, "201 Created");
 }
