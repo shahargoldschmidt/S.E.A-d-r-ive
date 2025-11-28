@@ -39,64 +39,58 @@ public:
 TEST(GetCommandTester, ReturnsCorrectOutput) {
     SCompressor comp;
     SFileHandler fh;
-    stringstream out;
-
     fh.content["hello.txt"] = comp.compress("HELLOOO");
-    GetCommand cmd(&fh, &comp, out);
-
-    cmd.execute("hello.txt");
-
-    EXPECT_EQ(out.str(), "HELLOOO\n");
+    // Removed ostream from constructor
+    GetCommand cmd(&fh, &comp);
+    string output = cmd.execute("hello.txt");
+    // Output should be "200 Ok\n\n" + content
+    EXPECT_EQ(output, "200 Ok\n\nHELLOOO");
 }
 
 // tests for non existing files
 TEST(GetCommandTester, MissingFileProducesNoOutput) {
     SCompressor comp;
     SFileHandler fh;
-    stringstream out;
-    GetCommand cmd(&fh, &comp, out);
-
-    cmd.execute("not_exists.txt");
-
-    EXPECT_TRUE(out.str().empty());
+    GetCommand cmd(&fh, &comp);
+    string output = cmd.execute("not_exists.txt");
+    // Should return 404
+    EXPECT_EQ(output, "404 Not Found");
 }
 
 // test for no arguments
 TEST(GetCommandTester, EmptyArgsDoNothing) {
     SCompressor comp;
     SFileHandler fh;
-    stringstream out;
     fh.content["x.txt"] = comp.compress("XXX");
-    GetCommand cmd(&fh, &comp, out);
+    GetCommand cmd(&fh, &comp);
 
-    cmd.execute("");
+    string output = cmd.execute("");
 
-    EXPECT_TRUE(out.str().empty());
+    // Should return 400 Bad Request
+    EXPECT_EQ(output, "400 Bad Request");
 }
 
 // test with invalid file name
 TEST(GetCommandTester, FilenameWithSpacesIgnored) {
     SCompressor comp;
     SFileHandler fh;
-    stringstream out;
     fh.content["good.txt"] = comp.compress("DATA");
-    GetCommand cmd(&fh, &comp, out);
+    GetCommand cmd(&fh, &comp);
 
-    cmd.execute("bad name");
+    string output = cmd.execute("bad name");
 
-    EXPECT_TRUE(out.str().empty());
+    EXPECT_EQ(output, "400 Bad Request");
 }
 
-// test with multiple files 
+// test with multiple files
 TEST(GetCommandTester, MultipleFilesWorkIndependently) {
     SCompressor comp;
     SFileHandler fh;
-    stringstream out;
     fh.content["a.txt"] = comp.compress("AAAA");
     fh.content["b.txt"] = comp.compress("BBBBBB");
-    GetCommand cmd(&fh, &comp, out);
+    GetCommand cmd(&fh, &comp);
 
-    cmd.execute("b.txt");
+    string output = cmd.execute("b.txt");
 
-    EXPECT_EQ(out.str(), "BBBBBB\n"); 
+    EXPECT_EQ(output, "200 Ok\n\nBBBBBB"); 
 }
