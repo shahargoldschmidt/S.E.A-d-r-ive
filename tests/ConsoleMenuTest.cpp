@@ -1,71 +1,57 @@
 #include "gtest/gtest.h"
 #include "ConsoleMenu.h"
-#include "ICommand.h"
-#include <map>
 #include <string>
-#include "CommandInput.h"
+#include <sstream>
+#include <iostream>
+
 using namespace std;
 
-
-// command examples to use in tests
-class MockCommand : public ICommand {
-public:
-    int called = 0;
-    string lastArgs;
-
-    void execute(const string& args) override {
-        called++;
-        lastArgs = args;
-    }
-};
-
-
-//  check that valid commands are separated correctly and returned.
-TEST(ConsoleMenuTests, ExecutesValidCommands) {
-    MockCommand add, get, search;
-    map<string, ICommand*> commands = {
-        {"add", &add}, {"get", &get}, {"search", &search}
-    };
-
-    istringstream input("");
-    ConsoleMenu menu(input, commands);
-
-    // Test ADD checking sentistive letters
-    auto ci = menu.seperateInput("ADD file.txt mydata");
-    EXPECT_EQ(ci.command, "add");
-    EXPECT_EQ(ci.args, "file.txt mydata");
-
-    // Test GET
-    ci = menu.seperateInput("get file.txt");
-    EXPECT_EQ(ci.command, "get");
-    EXPECT_EQ(ci.args, "file.txt");
-
-    // Test SEARCH
-    ci = menu.seperateInput("SeArCh abc");
-    EXPECT_EQ(ci.command, "search");
-    EXPECT_EQ(ci.args, "abc");
+// --- Test respond() ---
+// Checks that the function prints exactly the message
+TEST(ConsoleMenuTests, RespondPrintsToStdout) {
+    ConsoleMenu menu;
+    //capturing Standard Output
+    testing::internal::CaptureStdout();
+    menu.respond("Hello User");
+    // retrieve the output string
+    string output = testing::internal::GetCapturedStdout();
+    // Assertion: The message must include a newline at the end (endl)
+    EXPECT_EQ(output, "Hello User\n");
 }
 
-// check that invalid commands don't return anything
-TEST(ConsoleMenuTests, IgnoresInvalidCommands) {
-    MockCommand add, get, search;
-    map<string, ICommand*> commands = {
-        {"add", &add}, {"get", &get}, {"search", &search}
-    };
+// --- Test getInput() ---
+// Checks that the function reads a line from the user correctly
+TEST(ConsoleMenuTests, GetInputReadsLineFromCin) {
+    // mock user input
+    stringstream mockInput("add file.txt\n");
+    
+    // Save the original buffer of cin to restore it later
+    streambuf* origCin = cin.rdbuf();
+    
+    // Redirect cin to read from our mock stream instead of the keyboard
+    cin.rdbuf(mockInput.rdbuf());
 
-    istringstream dummyInput("");
-    ConsoleMenu menu(dummyInput, commands);
+    ConsoleMenu menu;
+    string result = menu.getInput();
 
-    // Invalid commands (wrong keyword or blank)
-    auto ci = menu.seperateInput("REMOVE something");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+    // Restore cin to its original state
+    cin.rdbuf(origCin);
 
-    ci = menu.seperateInput("");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+    EXPECT_EQ(result, "add file.txt");
+}
 
-    ci = menu.seperateInput("67");
-    EXPECT_TRUE(ci.command.empty());
-    EXPECT_TRUE(ci.args.empty());
+// Edge Case: Check what happens when input is empty
+TEST(ConsoleMenuTests, GetInputHandlesEmptyLine) {
+    // Input containing only a newline
+    stringstream mockInput("\n");
+    
+    streambuf* origCin = cin.rdbuf();
+    cin.rdbuf(mockInput.rdbuf());
+
+    ConsoleMenu menu;
+    string result = menu.getInput();
+
+    cin.rdbuf(origCin);
+
+    EXPECT_EQ(result, "");
 }

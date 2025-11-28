@@ -149,3 +149,41 @@ TEST(AppTests, TwoValidCommands)
     // Since run() loops, lastResponse will be from the last command
     EXPECT_EQ(menu.lastResponse, "Res2");
 }
+
+// --- NEW TEST FOR SEPERATE INPUT ---
+TEST(AppTests, SeperateInputLogic) {
+    FakeMenu menu;
+    FakeCommand* cmd = new FakeCommand();
+    
+    // We register "add" so the App knows it's valid
+    map<string, ICommand*> commands = {
+        {"add", cmd}
+    };
+
+    App app(&menu, commands);
+
+    // Test Valid Command with Arguments
+    // "ADD" should become "add", args should be "file.txt"
+    auto result = app.seperateInput("ADD file.txt");
+    EXPECT_EQ(result.command, "add");
+    EXPECT_EQ(result.args, "file.txt");
+
+    // Test Valid Command with extra spaces
+    // Should parse correctly and trim leading space of args
+    result = app.seperateInput("add   data");
+    EXPECT_EQ(result.command, "add");
+    EXPECT_EQ(result.args, "  data"); // Assuming your logic keeps internal spaces but trims the first separator
+
+    // Test Invalid Command (Not in map)
+    // "delete" is not in our map, so it should return empty
+    result = app.seperateInput("delete file.txt");
+    EXPECT_TRUE(result.command.empty());
+    
+    // Test Empty Input
+    result = app.seperateInput("");
+    EXPECT_TRUE(result.command.empty());
+
+    // Test Case Insensitivity
+    result = app.seperateInput("AdD x");
+    EXPECT_EQ(result.command, "add");
+}
