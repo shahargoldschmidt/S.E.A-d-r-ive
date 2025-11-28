@@ -11,28 +11,12 @@
 #include "AddFileCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
+#include "ClientHandler.h"
 
 #include "IFileHandler.h" 
 #include "ICompressor.h" 
 
 using namespace std;
-
-/**
- * This function runs in a separate thread for EACH connected client.
- * It is responsible for setting up the specific environment for the client
- *  and running the logic loop.
- */
-void clientHandler(int clientSock, map<string, ICommand*>* CommandsMap) {
-    //Create a Menu for this client with the socket
-    IMenu* menu = new TCPMenu(clientSock);
-    //Create the App for this client
-    App myApp(menu, CommandsMap);
-    myApp.run();
-    //Cleanup resources for this specific client
-    close(clientSock); // Close the network connection
-    delete menu;       // Free memory allocated for the menu
-}
-
 
 int main(int argc, char* argv[]) {
     
