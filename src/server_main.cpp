@@ -24,8 +24,13 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     
-    // Parse the port number from the command line argument
-    int serverPort = atoi(argv[2]);
+     // We expect exactly 2 arguments: program name + port
+    if (argc != 2) {
+        cerr << "Usage: " << argv[0] << " <port>" << endl;
+        return 1;
+    }
+
+    int serverPort = atoi(argv[1]);
 
     // Initialize Shared Resources 
     IFileHandler* fileHandler = new OSFileHandler(); // Uncomment when you have this class
