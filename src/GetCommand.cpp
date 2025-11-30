@@ -1,5 +1,6 @@
 #include "GetCommand.h"
 #include <sstream>
+#include <algorithm> 
 
 using namespace std;
 
@@ -23,7 +24,7 @@ string GetCommand::execute(const string &args)
     iss >> fileName;
 
     // get what is after first token
-    getline(iss, rest); 
+    getline(iss, rest);
 
     if (!rest.empty())
     {
@@ -32,15 +33,22 @@ string GetCommand::execute(const string &args)
     // Read compressed content from file
     string compressedContent = fileHandler->readFile(fileName);
 
-    // If file not found silently ignore 
-    if (compressedContent.empty())
+    // Check if file exists using listFiles
+    vector<string> files = fileHandler->listFiles();
+    if (find(files.begin(), files.end(), fileName) == files.end())
     {
         return "404 Not Found";
     }
+
+    /* If file not found silently ignore
+    if (compressedContent.empty())
+    {
+        return "404 Not Found";
+    }*/
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
 
     // Print decompressed content to the output stream
-    return "200 Ok\n\n" + decompressed ;
+    return "200 Ok\n\n" + decompressed;
 }
