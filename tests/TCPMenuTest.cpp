@@ -9,7 +9,7 @@ using namespace std;
 
 class TCPMenuTest : public ::testing::Test {
 protected:
-    int socks[2]; // socks[0] = Server side (Menu), socks[1] = Client side (Test)
+    int socks[2]; // server and client
 
     void SetUp() override {
         // Create a pair of connected sockets (simulates a network connection)
@@ -29,7 +29,6 @@ protected:
 TEST_F(TCPMenuTest, GetInputReadsFromSocket) {
     TCPMenu menu(socks[0]); // The Menu listens on side 0
 
-    // We act as the "Client", writing to side 1
     string message = "hello server";
     write(socks[1], message.c_str(), message.length());
 
@@ -44,8 +43,6 @@ TEST_F(TCPMenuTest, RespondWritesToSocket) {
 
     // The Menu sends a response
     menu.respond("Welcome");
-
-    // We act as the "Client", reading from side 1
     char buffer[1024] = {0};
     read(socks[1], buffer, sizeof(buffer));
 

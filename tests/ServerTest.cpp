@@ -63,7 +63,7 @@ TEST_F(ServerFlowTest, ServerRespondsToCommand) {
     // We pass it socks[0]
     thread serverThread(clientHandler, socks[0], &commands);
 
-    // We are the "Client" (socks[1]). Send a command known to the server
+    // We are the Client Send a command known to the server
     string commandToSend = "testcmd my_args";
     write(socks[1], commandToSend.c_str(), commandToSend.length());
 
