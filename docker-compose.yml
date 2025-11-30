@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  # --- The Server ---
+  server:
+    build: .
+    container_name: my_server
+    command: ./build/server_app 5555
+    ports:
+      - "5555:5555"
+    networks:
+      - ex2_net
+    volumes:
+      - ./data_files:/app/data_files
+    environment:
+      - MY_FILE_PATH=/app/data_files
+
+  # --- C++ Client ---
+  client_cpp:
+    build: .
+    container_name: client_cpp
+    # Keep alive for interactive mode
+    command: tail -f /dev/null
+    networks:
+      - ex2_net
+    depends_on:
+      - server
+
+  # --- Python Client ---
+  client_python:
+    build: .
+    container_name: client_py
+    command: tail -f /dev/null
+    networks:
+      - ex2_net
+    depends_on:
+      - server
+
+networks:
+  ex2_net:
+    driver: bridge
