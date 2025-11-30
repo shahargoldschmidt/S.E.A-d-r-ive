@@ -11,7 +11,10 @@
 #include "AddFileCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
+#include "DeleteCommand.h"
 #include "ClientHandler.h"
+#include "OSFileHandler.h"
+#include "RLEStrategy.h"
 
 #include "IFileHandler.h" 
 #include "ICompressor.h" 
@@ -32,12 +35,14 @@ int main(int argc, char* argv[]) {
     ICommand* addCmd = new AddFileCommand(fileHandler, compressor);
     ICommand* getCmd = new GetCommand(fileHandler, compressor);
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor);
+    ICommand* deleteCmd = new DeleteCommand(fileHandler);
 
     // put commands in a map
     map<string, ICommand*>* commands = new map<string, ICommand*>();
     (*commands)["post"] = addCmd;
     (*commands)["get"] = getCmd;
     (*commands)["search"] = searchCmd;
+    (*commands)["delete"] = deleteCmd;
 
     //Create the Server Socket (IPv4, TCP)
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
