@@ -9,22 +9,22 @@
 using std::string;
 
 // This class runs commands from a menu
-class App {
+class App
+{
 private:
-    IMenu* menu;  // Interface for getting input
-    std::map<std::string, ICommand*> commands; // Map of command strings 
-    CommandInput seperateInput(const string& userInput);
+    IMenu *menu;                                // Interface for getting input
+    std::map<std::string, ICommand *> commands; // Map of command strings
 
 public:
-    App(IMenu* menu, const std::map<std::string, ICommand*>& commands); // The constructor
-    
+    App(IMenu *menu, const std::map<std::string, ICommand *> &commands); // The constructor
+
     // Copy Constructor.
-    App(const App&) = delete; 
+    App(const App &) = delete;
     // Copy Assignment Operator.
-    App& operator=(const App&) = delete;
+    App &operator=(const App &) = delete;
 
-    void run();  // infinite loop
-
+    void run(); // infinite loop
+    CommandInput seperateInput(const string &userInput);
 };
 
 #endif

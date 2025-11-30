@@ -151,4 +151,4 @@ TEST_F(OSFileHandlerTest, RemoveFile_DoesNotCrash_WhenFileMissing) {
 
     // Assert
     EXPECT_FALSE(fs::exists(fullPath));
-}ה
+};

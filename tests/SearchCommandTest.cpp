@@ -25,6 +25,7 @@ public:
     void saveFile(const string& fname, const string& data) override { content[fname] = data; } // save to map
     string readFile(const string& fname) override { return content[fname]; }  // read from map
     vector<string> listFiles() override { return files; }  // return file names
+    void removeFile(const std::string& fileName) override {}
 };
 
 // Test find multiple files matching the query

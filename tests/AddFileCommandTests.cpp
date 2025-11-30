@@ -20,6 +20,7 @@ public:
         savedName = fileName;
         savedContent = content;
     }
+    void removeFile(const std::string& fileName) override {}
 };
 
 // MOCK COMPRESSOR

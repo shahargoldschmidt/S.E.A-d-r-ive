@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <thread>
 #include <map>
-#include "ServerHandler.h" // The new Header we created
+#include "ClientHandler.h" // The new Header we created
 #include "ICommand.h"
 #include "IFileHandler.h"
 #include "ICompressor.h"
@@ -24,6 +24,7 @@ public:
     string readFile(const string& name) override { return ""; }
     vector<string> listFiles() override { return {}; }
     string getBasePath() override { return ""; }
+    void removeFile(const std::string& fileName) override {}
 };
 
 // Mock for Command

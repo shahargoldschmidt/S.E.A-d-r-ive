@@ -69,5 +69,19 @@ set(TEST_SOURCES
     tests/TestApp.cpp
 )
 
-# Test Runner
-add_executable(tests_runner)
+# --- Test Runner ---
+add_executable(tests_runner
+    ${SERVER_SOURCES}
+    ${CLIENT_SOURCES}
+    ${TEST_SOURCES}
+)
+
+target_link_libraries(tests_runner PRIVATE
+    gtest_main
+    stdc++fs
+    Threads::Threads
+)
+
+# (מומלץ אך לא חובה)
+include(GoogleTest)
+gtest_discover_tests(tests_runner)

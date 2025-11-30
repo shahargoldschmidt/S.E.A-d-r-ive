@@ -32,6 +32,7 @@ public:
         for (const auto& p : content) res.push_back(p.first);
         return res;
     }
+    void removeFile(const std::string& fileName) override {}
 };
 
 // TESTS
