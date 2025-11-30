@@ -4,7 +4,7 @@ project(SysProgCLI CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- 1. הגדרת GoogleTest ---
+# --- GoogleTest Setup ---
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -13,15 +13,15 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# --- 2. תלויות מערכת ---
+# --- Dependencies ---
 find_package(Threads REQUIRED)
 
-# --- 3. הגדרת תיקיות ---
+# --- Include Directories ---
 include_directories(src)
 
-# --- 4. הגדרת קבוצות קבצים (מתוך התמונות ששלחת) ---
+# --- Source Groups ---
 
-# קבצי הלוגיקה של השרת (משותף לשרת ולטסטים)
+# 1. Server Logic Files
 set(SERVER_SOURCES
     src/App.cpp
     src/ClientHandler.cpp
@@ -34,12 +34,29 @@ set(SERVER_SOURCES
     src/SearchCommand.cpp
 )
 
-# קבצי הלוגיקה של הלקוח
+# 2. Client Logic Files
 set(CLIENT_SOURCES
     src/ConsoleMenu.cpp
 )
 
-# קבצי הטסטים (מתוך תיקיית tests)
+# --- Executables ---
+
+# 1. Server Application
+add_executable(server_app
+    src/server_main.cpp
+    ${SERVER_SOURCES}
+)
+target_link_libraries(server_app PRIVATE stdc++fs Threads::Threads)
+
+# 2. Client Application
+add_executable(client_app
+    src/ClientCpp.cpp
+    ${CLIENT_SOURCES}
+)
+target_link_libraries(client_app PRIVATE stdc++fs)
+
+# --- Tests ---
+
 set(TEST_SOURCES
     tests/AddFileCommandTests.cpp
     tests/ConsoleMenuTest.cpp
@@ -52,30 +69,5 @@ set(TEST_SOURCES
     tests/TestApp.cpp
 )
 
-# --- 5. יצירת קבצי ההרצה (Executables) ---
-
-# א. השרת (Server)
-add_executable(server_app
-    src/server_main.cpp
-    ${SERVER_SOURCES}
-)
-target_link_libraries(server_app PRIVATE stdc++fs Threads::Threads)
-
-# ב. הלקוח (Client)
-add_executable(client_app
-    src/ClientCpp.cpp
-    ${CLIENT_SOURCES}
-)
-target_link_libraries(client_app PRIVATE stdc++fs)
-
-# ג. מריץ הטסטים (Tests Runner)
-add_executable(tests_runner
-    ${SERVER_SOURCES}
-    ${CLIENT_SOURCES}
-    ${TEST_SOURCES}
-)
-target_link_libraries(tests_runner PRIVATE gtest_main stdc++fs Threads::Threads)
-
-# --- 6. הפעלת זיהוי הטסטים ---
-include(GoogleTest)
-gtest_discover_tests(tests_runner)
+# Test Runner
+add_executable(tests_runner)

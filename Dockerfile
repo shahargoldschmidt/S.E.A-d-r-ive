@@ -1,20 +1,24 @@
 FROM gcc:11
 
-# Install tools
+# Install CMake, Git, and Python3
 RUN apt-get update && apt-get install -y cmake git python3
 
-# Set up work directory
+# Set working directory inside container
 COPY . /app
 WORKDIR /app
 
-# Create data directory
+# Setup data directory
 ENV MY_FILE_PATH="/app/data_files"
 RUN mkdir -p ${MY_FILE_PATH}
 
-# Build the project
+# Build the C++ project
 RUN mkdir build
 WORKDIR /app/build
 RUN cmake .. && make
 
-# Default command: Run the server
+# Copy the python client script from src to the root app folder for easy access
+# This assumes your file is named 'ClientPy.py' inside 'src' folder
+RUN cp /app/src/ClientPy.py /app/client.py
+
+# Default command runs the server
 CMD ["./server_app", "5555"]
