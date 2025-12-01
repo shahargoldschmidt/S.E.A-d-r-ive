@@ -23,7 +23,9 @@ def main():
                 break
 
             # Add newline and send
-            sock.sendall((message + '\n').encode())
+            # errors ='ignore'
+            sock.sendall((message + '\n').encode('utf-8', errors='ignore'))
+            
             # Receive response
             response = sock.recv(4096)
 
