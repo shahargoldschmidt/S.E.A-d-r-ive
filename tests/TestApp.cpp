@@ -91,7 +91,7 @@ TEST(AppTests, SkipsEmptyCommand)
         {"add", cmd}
     };
 
-    menu.inputs = { "" };  // should be skipped or handled as bad request
+    menu.inputs = { " " };  // should be skipped or handled as bad request
 
     App app(&menu, commands);
 

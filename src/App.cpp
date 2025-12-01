@@ -26,8 +26,10 @@ void App::run()
     {
         // Get the next command splitted into command + args)
         string userInput = menu->getInput();
+        if (userInput.empty()) {
+             break; 
+        }
         auto userCom = seperateInput(userInput);
-        
         // Skip if no command was entered
         if (userCom.command.empty()){
             menu->respond("400 Bad Request1");

@@ -64,57 +64,14 @@ protected:
         close(socks[1]);
     }
 };
-void clientHandler1(int clientSock, map<string, ICommand *> *commands)
-{
-    char buffer[4096];
 
-    // Read once
-    int bytesRead = read(clientSock, buffer, sizeof(buffer) - 1);
-
-    if (bytesRead <= 0)
-    {
-        close(clientSock);
-        return;
-    }
-
-    string input(buffer, bytesRead);
-
-    // Parse command + args
-    string cmd, args;
-    size_t pos = input.find(' ');
-    if (pos == string::npos)
-    {
-        cmd = input;
-        args = "";
-    }
-    else
-    {
-        cmd = input.substr(0, pos);
-        args = input.substr(pos + 1);
-    }
-
-    string response;
-
-    if (commands->count(cmd))
-    {
-        response = (*commands)[cmd]->execute(args) + "\n";
-    }
-    else
-    {
-        response = "400 Bad Request\n";
-    }
-
-    write(clientSock, response.c_str(), response.size());
-
-    close(clientSock);
-}
 
 // This test simulates a client connecting to the server and sending a command
 TEST_F(ServerFlowTest, ServerRespondsToCommand)
 {
     // Run the ClientHandler in a separate thread (like a real server does)
     // We pass it socks[0]
-    thread serverThread(clientHandler1, socks[0], &commands);
+    thread serverThread(clientHandler, socks[0], &commands);
 
     // We are the Client Send a command known to the server
     string commandToSend = "testcmd my_args";
