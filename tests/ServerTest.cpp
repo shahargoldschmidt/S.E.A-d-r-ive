@@ -81,6 +81,8 @@ TEST_F(ServerFlowTest, ServerRespondsToCommand) {
     EXPECT_EQ(actualResponse, expectedResponse);
 
     // Proactive disconnect to terminate the Thread
-    close(socks[1]);
-    serverThread.detach(); 
+    close(socks[1]); 
+    if (serverThread.joinable()) {
+        serverThread.join(); 
+    }
 }
