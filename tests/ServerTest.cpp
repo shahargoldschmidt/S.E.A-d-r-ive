@@ -10,25 +10,6 @@
 
 using namespace std;
 
-// Mock for Compressor
-class ServerTestMockCompressor : public ICompressor
-{
-public:
-    string compress(const string &input) override { return "CMP_" + input; }
-    string decompress(const string &input) override { return input; }
-};
-
-// Mock for File Handler
-class ServerTestMockFileHandler : public IFileHandler
-{
-public:
-    void saveFile(const string &name, const string &content) override {} // Does nothing
-    string readFile(const string &name) override { return ""; }
-    vector<string> listFiles() override { return {}; }
-    string getBasePath() override { return ""; }
-    void removeFile(const std::string &fileName) override {}
-};
-
 // Mock for Command
 class ServerTestMockCommand : public ICommand
 {
