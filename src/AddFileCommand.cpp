@@ -25,6 +25,17 @@ string AddFileCommand::execute(const string& input) {
     if (fileName.empty())
         return "400 Bad Request";
 
+    
+    /*
+    // If the file exist
+    vector<string> files = fileHandler->listFiles();
+    for (const string& currentFile : files) {
+        if (currentFile == fileName) {
+            // we dont change the file and send back it's a bar
+            return "400 Bad Request"; 
+        }
+    } */
+
     string content;
     // Reads the rest of the line, including leading whitespace after the file name
     getline(ss, content);
@@ -34,7 +45,6 @@ string AddFileCommand::execute(const string& input) {
         content.erase(0, 1);
 
     // Do not trim trailing spaces, leave them as is so content like "    " is preserved
-
     string compressed = compressor->compress(content); //Commpres the content
 
     fileHandler->saveFile(fileName, compressed); // save the file

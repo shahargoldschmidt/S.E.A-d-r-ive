@@ -12,13 +12,13 @@ using std::string;
 class App
 {
 private:
-    IMenu *menu;                                // Interface for getting input
+    IMenu *menu;  // Interface for getting input
     std::map<std::string, ICommand *> commands; // Map of command strings
 
 public:
     App(IMenu *menu, const std::map<std::string, ICommand *> &commands); // The constructor
 
-    // Copy Constructor.
+    // Copy Constructor
     App(const App &) = delete;
     // Copy Assignment Operator.
     App &operator=(const App &) = delete;

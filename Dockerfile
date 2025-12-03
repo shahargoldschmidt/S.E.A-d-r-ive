@@ -17,7 +17,6 @@ WORKDIR /app/build
 RUN cmake .. && make
 
 # Copy the python client script from src to the root app folder for easy access
-# This assumes your file is named 'ClientPy.py' inside 'src' folder
 RUN cp /app/src/ClientPy.py /app/client.py
 
 # Default command runs the server

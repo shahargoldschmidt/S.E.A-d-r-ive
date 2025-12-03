@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-// Command that searches stored files for matches
+// Command that searches files for matches
 class SearchCommand : public ICommand {
 private:
     IFileHandler* fileHandler;   // Access to stored files

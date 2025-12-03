@@ -8,7 +8,7 @@ class IFileHandler {
 public:
     virtual ~IFileHandler() = default;
 
-    // Returns the root directory by the handler
+    // Return the root directory
     virtual std::string getBasePath() = 0;
 
     // Saves content to a file under the base path

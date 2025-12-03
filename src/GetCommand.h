@@ -14,9 +14,9 @@ private:
     ICompressor* compressor;     // Responsible for RLE decompression
 
 public:
-    // Constructor with filehandler' compressor and output
+    // Constructor with filehandler and compressor 
     GetCommand(IFileHandler* fh, ICompressor* comp);
-
+    // return a string as the output 
     std::string execute(const std::string& args) override;
 };
 

@@ -7,11 +7,8 @@
 
 using namespace std;
 
-/**
- * This function runs in a separate thread for EACH connected client.
- * It is responsible for setting up the specific environment for the client
- * and running the logic loop.
- */
+// This function runs in a separate thread for EACH connected client
+// It is responsible for setting up the environment for the client and running the logic loop.
 void clientHandler(int clientSock, map<string, ICommand*>* CommandsMap);
 
 #endif

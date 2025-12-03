@@ -8,7 +8,7 @@
 #include <vector>
 
 
-// Handles console input. read commands, splits into command,arguments, and validates them
+// Handles console input and output - read input and then send the output
 class ConsoleMenu : public IMenu {
     
 public:

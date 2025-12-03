@@ -10,7 +10,7 @@
 
 class AddFileCommand: public ICommand { // Inherits from ICommand
 public:
-    // Constructor including with a file handler and a compressor
+    // Constructor including  a file handler and a compressor
     AddFileCommand(IFileHandler* fileHandler, ICompressor* compressor);
 
     // Executing an add command with the given input

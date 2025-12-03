@@ -6,7 +6,7 @@
 class ICommand {
 public:
     virtual ~ICommand() = default;
-    // Execute the command
+    // Execute the command and return string
     virtual std::string execute(const std::string& args) = 0;
 };
 

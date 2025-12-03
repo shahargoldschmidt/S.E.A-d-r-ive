@@ -10,7 +10,7 @@ GetCommand::GetCommand(IFileHandler *fh, ICompressor *comp)
 
 string GetCommand::execute(const string &args)
 {
-    // If the user typed nothing, ignore the command silently
+    // If the user typed nothing, it is a bad request
     if (args.empty() || isspace(args[0]))
     {
         return "400 Bad Request";
@@ -39,12 +39,6 @@ string GetCommand::execute(const string &args)
     {
         return "404 Not Found";
     }
-
-    /* If file not found silently ignore
-    if (compressedContent.empty())
-    {
-        return "404 Not Found";
-    }*/
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);

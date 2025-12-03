@@ -12,10 +12,10 @@ fs::path get_full_path(const string& fileName, const string& basePath) {
     if (basePath.empty()) { 
         return {}; // Return empty path if basePath is not set
     }
-    return fs::path(basePath) / fileName; // Conect basePath and fileName
+    return fs::path(basePath) / fileName; // Connect basePath and fileName
 }
 
-// Retrieve base path from environment variable "MY_FILE_PATH"
+// get base path from environment variable "MY_FILE_PATH"
 string OSFileHandler::getBasePath() {
    
     const char* path = getenv("MY_FILE_PATH"); // Get environment variable

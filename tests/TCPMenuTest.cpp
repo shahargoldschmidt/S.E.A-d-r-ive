@@ -12,7 +12,7 @@ protected:
     int socks[2]; // server and client
 
     void SetUp() override {
-        // Create a pair of connected sockets (simulates a network connection)
+        // Create a pair of connected sockets that simulates a network connection
         if (socketpair(AF_UNIX, SOCK_STREAM, 0, socks) < 0) {
             perror("socketpair");
             exit(1);
@@ -46,7 +46,7 @@ TEST_F(TCPMenuTest, RespondWritesToSocket) {
     char buffer[1024] = {0};
     read(socks[1], buffer, sizeof(buffer));
 
-    // Expect to see the message + newline (as implemented in respond)
+    // Expect to see the message and newline 
     EXPECT_STREQ(buffer, "Welcome\n");
 }
 

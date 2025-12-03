@@ -7,7 +7,7 @@
 #include "SearchCommand.h"
 
 using namespace std;
-// The contructor foe search command
+// The contructor for search command
 SearchCommand::SearchCommand(IFileHandler *fh, ICompressor *comp)
     : fileHandler(fh), compressor(comp) {}
 
@@ -23,7 +23,7 @@ string SearchCommand::execute(const string &args)
     
     for (const string &fname : fileHandler->listFiles())
     {
-        // 1. First check filename (not compressed)
+        // First check filename (not compressed)
         if (fname.find(args) != string::npos)
         {
             result += fname + " ";

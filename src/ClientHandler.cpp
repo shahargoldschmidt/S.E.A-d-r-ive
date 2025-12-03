@@ -7,12 +7,12 @@
 using namespace std;
 
 void clientHandler(int clientSock, map<string, ICommand*>* CommandsMap) {
-    //Create a Menu for this client with the socket
+    // Create a Menu for this client with the socket
     IMenu* menu = new TCPMenu(clientSock);
-    //Create the App for this client
+    // Create the App for this client
     App myApp(menu, *CommandsMap);
     myApp.run();
-    //Cleanup resources for this specific client
+    // Cleanup resources for this specific client
     close(clientSock); // Close the network connection
-    delete menu;       // Free memory allocated for the menu
+    delete menu;       // Free menu memory 
 }

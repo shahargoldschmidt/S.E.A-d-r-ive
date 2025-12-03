@@ -24,7 +24,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     
-     // We expect exactly 2 arguments: program name + port
+     // We expect exactly 2 arguments the program name and port
     if (argc != 2) {
         cerr << "Usage: " << argv[0] << " <port>" << endl;
         return 1;
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     int serverPort = atoi(argv[1]);
 
     // Initialize Shared Resources 
-    IFileHandler* fileHandler = new OSFileHandler(); // Uncomment when you have this class
+    IFileHandler* fileHandler = new OSFileHandler();
     ICompressor* compressor = new RLEStrategy();
 
     // create commands
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     (*commands)["search"] = searchCmd;
     (*commands)["delete"] = deleteCmd;
 
-    //Create the Server Socket (IPv4, TCP)
+    //Create the Server Socket with IPv4 and TCP
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSock < 0) {
         perror("Error creating socket");

@@ -50,7 +50,7 @@ class ThrowingCommand : public ICommand {
 public:
     int callCount = 0;
 
-    // FIX: Changed return type from void to string to match ICommand interface
+    // Changed return type from void to string to match ICommand interface
     string execute(const string&) override {
         callCount++;
         throw runtime_error("command failed");
@@ -77,7 +77,7 @@ TEST(AppTests, ExecutesValidCommand)
 
     
     EXPECT_EQ(cmd->callCount, 1); 
-    EXPECT_EQ(cmd->lastArg, "file1.txt"); // Note: App removes the first space usually
+    EXPECT_EQ(cmd->lastArg, "file1.txt"); 
     EXPECT_EQ(menu.lastResponse, "200 Ok"); // Verify App sent the response to menu
 }
 
@@ -91,7 +91,7 @@ TEST(AppTests, SkipsEmptyCommand)
         {"add", cmd}
     };
 
-    menu.inputs = { " " };  // should be skipped or handled as bad request
+    menu.inputs = { " " };  // should be handled as bad request
 
     App app(&menu, commands);
 
@@ -152,7 +152,7 @@ TEST(AppTests, TwoValidCommands)
     EXPECT_EQ(menu.lastResponse, "Res2");
 }
 
-// --- NEW TEST FOR SEPERATE INPUT ---
+// Test for seprate the input
 TEST(AppTests, SeperateInputLogic) {
     FakeMenu menu;
     FakeCommand* cmd = new FakeCommand();

@@ -17,7 +17,6 @@ string DeleteCommand::execute(const string &args)
         return "400 Bad Request"; 
     }
 
-
     stringstream iss(args);
     string fileName;
     string rest;
@@ -44,7 +43,7 @@ string DeleteCommand::execute(const string &args)
         }
     }
 
-    // If we found the file - remove it
+    // If we found the file remove it
     if (found) {
         fileHandler->removeFile(fileName);
         return "204 No Content";

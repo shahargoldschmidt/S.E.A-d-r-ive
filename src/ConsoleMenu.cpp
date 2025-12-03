@@ -8,7 +8,7 @@ using namespace std;
 // Implements console based menu for user input
 ConsoleMenu::ConsoleMenu() {}
 
-// gets users input and returns the splitted input to command and its content
+// gets users input
 string ConsoleMenu::getInput() {
     string userInput;
     
@@ -19,6 +19,7 @@ string ConsoleMenu::getInput() {
     
     return userInput;
 }
+// prints users output
 void ConsoleMenu::respond(string message) {
     // Simply print the message followed by a newline
     cout << message << endl;

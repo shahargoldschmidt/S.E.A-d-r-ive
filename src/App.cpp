@@ -15,7 +15,7 @@
 
 using namespace std;
 
-// The constructor for the app running
+// The constructor for the app running for each client
 App::App(IMenu *menu, const map<string, ICommand *> &commands)
     : menu(menu), commands(commands) {}
 

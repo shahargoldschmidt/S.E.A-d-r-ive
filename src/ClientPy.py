@@ -22,8 +22,7 @@ def main():
             except EOFError:
                 break
 
-            # Add newline and send
-            # errors ='ignore'
+            # Add newline and send, errors ='ignore'
             sock.sendall((message + '\n').encode('utf-8', errors='ignore'))
             
             # Receive response
@@ -33,8 +32,7 @@ def main():
                 print("Server disconnected.")
                 break
 
-            # converts bytes to string and print respons
-            # end='' prevents double newlines
+            # converts bytes to string and print respons, when end='' prevents double newlines
             print(response.decode(), end='')
 
     except ConnectionRefusedError:

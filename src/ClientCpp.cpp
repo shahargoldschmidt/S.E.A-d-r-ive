@@ -6,19 +6,19 @@
 #include <cstring>
 #include <netdb.h> // gethostbyname
 
-// Include the custom menu class (handles user I/O via console)
+// Include the custom menu class 
 #include "ConsoleMenu.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    //  Validate command-line arguments (program must get IP and Port)
+    // Validate command-line arguments because program need to get IP and Port
     if (argc < 3) {
         cerr << "Usage: " << argv[0] << " <host> <port>" << endl;
         return 1;
     }
 
-    // Extract server IP and port from CLI arguments
+    // Extract server IP and port from CLI arg
     const char* server_host = argv[1];
     int server_port = atoi(argv[2]);
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     // Define server address structure
     struct sockaddr_in serverAddr;
     memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;         // IPv4
+    serverAddr.sin_family = AF_INET;     // IPv4
     serverAddr.sin_port = htons(server_port); // Convert port to network byte order
 
     // Convert hostname to IP
@@ -49,18 +49,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Create a ConsoleMenu object to handle user input/output
+    // Create a ConsoleMenu object to handle user input or output
     ConsoleMenu menu;
 
     while (true) {
        // Get user input from console using the menu
         string userInput = menu.getInput();
-
-        // If input is empty (e.g., Ctrl+D), exit loop
-        //if (userInput.empty()) break;
-
-        // Append newline (protocol requirement)
-        //userInput += "\n";
 
         // Send the command to the server
         int sentBytes = send(sock, userInput.c_str(), userInput.length(), 0);

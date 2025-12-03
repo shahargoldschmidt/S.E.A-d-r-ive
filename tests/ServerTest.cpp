@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <thread>
 #include <map>
-#include "ClientHandler.h" // The new Header we created
+#include "ClientHandler.h" 
 #include "ICommand.h"
 #include "IFileHandler.h"
 #include "ICompressor.h"
@@ -29,7 +29,7 @@ protected:
 
     void SetUp() override
     {
-        // Create socket pair (simulates network connection)
+        // Create socket pair that simulates network connection
         socketpair(AF_UNIX, SOCK_STREAM, 0, socks);
 
         // Prepare command map for the server
@@ -50,8 +50,7 @@ protected:
 // This test simulates a client connecting to the server and sending a command
 TEST_F(ServerFlowTest, ServerRespondsToCommand)
 {
-    // Run the ClientHandler in a separate thread (like a real server does)
-    // We pass it socks[0]
+    // Run the ClientHandler in a separate thread
     thread serverThread(clientHandler, socks[0], &commands);
 
     // We are the Client Send a command known to the server

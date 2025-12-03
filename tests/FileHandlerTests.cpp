@@ -143,10 +143,10 @@ TEST_F(OSFileHandlerTest, RemoveFile_DoesNotCrash_WhenFileMissing) {
     string filename = "ghost_file.dat";
     fs::path fullPath = basePath / filename;
 
-    // Verify file surely doesn't exist
+    // Verify file doesn't exist
     if(fs::exists(fullPath)) fs::remove(fullPath);
 
-    // Try to remove non-existent file - return without error/crash
+    // Try to remove non-exist file - return without error
     handler.removeFile(filename); 
 
     // Assert

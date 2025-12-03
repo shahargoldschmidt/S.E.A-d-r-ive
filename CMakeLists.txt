@@ -4,7 +4,7 @@ project(SysProgCLI CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- GoogleTest Setup ---
+# GoogleTest Setup
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -13,15 +13,13 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# --- Dependencies ---
+#  Dependencies 
 find_package(Threads REQUIRED)
 
-# --- Include Directories ---
+# Include Directories 
 include_directories(src)
 
-# --- Source Groups ---
-
-# 1. Server Logic Files
+# Server Logic Files
 set(SERVER_SOURCES
     src/App.cpp
     src/ClientHandler.cpp
@@ -34,29 +32,26 @@ set(SERVER_SOURCES
     src/SearchCommand.cpp
 )
 
-# 2. Client Logic Files
+# Client Logic Files
 set(CLIENT_SOURCES
     src/ConsoleMenu.cpp
 )
 
-# --- Executables ---
-
-# 1. Server Application
+# Server Application
 add_executable(server_app
     src/server_main.cpp
     ${SERVER_SOURCES}
 )
 target_link_libraries(server_app PRIVATE stdc++fs Threads::Threads)
 
-# 2. Client Application
+# Client Application
 add_executable(client_app
     src/ClientCpp.cpp
     ${CLIENT_SOURCES}
 )
 target_link_libraries(client_app PRIVATE stdc++fs)
 
-# --- Tests ---
-
+# Tests
 set(TEST_SOURCES
     tests/AddFileCommandTests.cpp
     tests/ConsoleMenuTest.cpp
@@ -69,7 +64,7 @@ set(TEST_SOURCES
     tests/TestApp.cpp
 )
 
-# --- Test Runner ---
+# Test Runner
 add_executable(tests_runner
     ${SERVER_SOURCES}
     ${CLIENT_SOURCES}
@@ -82,6 +77,5 @@ target_link_libraries(tests_runner PRIVATE
     Threads::Threads
 )
 
-# (מומלץ אך לא חובה)
 include(GoogleTest)
 gtest_discover_tests(tests_runner)

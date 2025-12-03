@@ -38,21 +38,19 @@ TEST(SearchCommandTester, MultipleFilesFinder) {
     fh.content["u.txt"] = SampComp.compress("u is for u and me");
     fh.content["n.txt"] = SampComp.compress("not found");
 
-    // Removed ostream from constructor
     SearchCommand cmd(&fh, &SampComp);
 
     // execute now returns the string directly
     string output = cmd.execute("is for"); // search query
 
-    // Check return format "200 Ok\n\nResult..."
+    // Check return format "200 Ok\n\nResult"
     ASSERT_NE(output.find("200 Ok"), string::npos);
     ASSERT_NE(output.find("f.txt"), string::npos); // f.txt should appear
     ASSERT_NE(output.find("u.txt"), string::npos); // u.txt should appear
     ASSERT_EQ(output.find("n.txt"), string::npos); // n.txt should not appear
 }
 
-// Test: Search finds a file when the query matches the FILENAME 
-// (even if the content doesn't match)
+// test if search finds a file when the query matches the FILENAME even if the content doesn't match
 TEST(SearchCommandTester, MatchesFilenameOnly) {
     SampleCompressor comp;
     SampleFileHandler fh;

@@ -14,7 +14,7 @@ public:
     // Return the base directory for file operations
     std::string getBasePath() override;
 
-    // Write the given content to a file in the base directory
+    // write the given content to a file in the base directory
     void saveFile(const std::string& fileName, const std::string& content) override;
 
     // Returns the contents of the specified file
@@ -23,7 +23,7 @@ public:
     // List all files in the directory
     std::vector<std::string> listFiles() override;
 
-    // Removes the specified file
+    // Remove a specified file
     void removeFile(const std::string& fileName) override;
 
 };

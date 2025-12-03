@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  # --- The Server ---
+  # The Server
   server:
     build: .
     container_name: my_server
@@ -15,7 +15,7 @@ services:
     environment:
       - MY_FILE_PATH=/app/data_files
 
-  # --- C++ Client ---
+  # C++ Client
   client_cpp:
     build: .
     container_name: client_cpp
@@ -26,7 +26,7 @@ services:
     depends_on:
       - server
 
-  # --- Python Client ---
+  # Python Client
   client_python:
     build: .
     container_name: client_py

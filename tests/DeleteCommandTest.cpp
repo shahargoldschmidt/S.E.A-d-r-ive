@@ -52,17 +52,17 @@ protected:
 };
 
 TEST_F(DeleteCommandTest, Execute_Returns400_WhenArgsEmpty) {
-    // empty input -> 400
+    // empty input so error 400
     EXPECT_EQ(command->execute(""), "400 Bad Request");
 }
 
 TEST_F(DeleteCommandTest, Execute_Returns400_WhenLeadingSpace) {
-    // space at start means bad parsing -> 400
+    // space at start means bad parsing so error 400
     EXPECT_EQ(command->execute(" file.txt"), "400 Bad Request");
 }
 
 TEST_F(DeleteCommandTest, Execute_Returns400_WhenMultipleArgs) {
-    // too many args -> 400
+    // too many args so error 400
     EXPECT_EQ(command->execute("file1 file2"), "400 Bad Request");
 }
 
