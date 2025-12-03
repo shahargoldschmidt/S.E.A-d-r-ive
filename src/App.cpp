@@ -32,7 +32,7 @@ void App::run()
         auto userCom = seperateInput(userInput);
         // Skip if no command was entered
         if (userCom.command.empty()){
-            menu->respond("400 Bad Request1");
+            menu->respond("400 Bad Request");
             continue;
         }
         string response = "";

@@ -33,7 +33,7 @@ string AddFileCommand::execute(const string& input) {
     if (!content.empty() && content[0] == ' ')
         content.erase(0, 1);
 
-    // Do not trim trailing spaces, leave them as is this way, content like "    " is preserved
+    // Do not trim trailing spaces, leave them as is so content like "    " is preserved
 
     string compressed = compressor->compress(content); //Commpres the content
 

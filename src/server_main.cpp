@@ -73,10 +73,9 @@ int main(int argc, char* argv[]) {
         perror("Error listening");
         return 1;
     }
-    cout << "🚀 Server started successfully. Listening on port " << serverPort << "..." << endl;
+
     // Accept Loop
     while (true) {
-        cout << "⌛ Waiting for client connection..." << endl;
         struct sockaddr_in clientAddr;
         socklen_t clientAddrLen = sizeof(clientAddr);
         
