@@ -3,25 +3,35 @@
 #include "../src/IFileHandler.h"
 #include "../src/ICompressor.h"
 using namespace std;
-
 // MOCK FILE HANDLER
 class MockFileHandler : public IFileHandler {
 public:
     bool saveCalled = false;
     string savedName = "";
     string savedContent = "";
+    
+    // Added variables to control mock behavior for new tests
+    string mockBasePath = "./"; 
+    vector<string> storedFiles; 
 
-    string getBasePath() override { return ""; }
+    // Return base path (defaults to "./")
+    string getBasePath() override { return mockBasePath; }
+    
     string readFile(const string& fileName) override { return ""; }
-    vector<string> listFiles()  override { return {}; }
+    
+    // Return actual stored files list
+    vector<string> listFiles() override { return storedFiles; }
    
+    // Simulate saving to list
     void saveFile(const string& fileName, const string& content) override {
         saveCalled = true;
         savedName = fileName;
         savedContent = content;
+        storedFiles.push_back(fileName);
     }
     void removeFile(const std::string& fileName) override {}
 };
+
 
 // MOCK COMPRESSOR
 class MockCompressor : public ICompressor {
@@ -91,4 +101,41 @@ TEST(AddFileTests, CompressionIsCalled) {
     ASSERT_TRUE(comp.compressCalled); // check compress called
     EXPECT_EQ(fh.savedContent, "COMPRESSED!"); // content is compressed
     EXPECT_EQ(result, "201 Created");
+}
+
+// New Test for Server Error  - Invalid Base Path
+TEST(AddFileTests, Returns500_WhenBasePathError) {
+    MockFileHandler fh;
+    MockCompressor comp;
+    
+    // Simulate invalid base path
+    fh.mockBasePath = ""; 
+
+    AddFileCommand add(&fh, &comp);
+    string result = add.execute("file data");
+
+    EXPECT_EQ(result, "500 Internal Server Error");
+    ASSERT_FALSE(fh.saveCalled); // Should verify we didn't try to save
+}
+
+// New Test for Server Error - Save Verification Failed
+TEST(AddFileTests, Returns500_WhenSaveVerificationFails) {
+    MockFileHandler fh;
+    MockCompressor comp;
+    // Smulating OS failure -  We create a  mock locally to override logic just for this test
+    class BrokenSaveHandler : public MockFileHandler {
+    public:
+        void saveFile(const string& fileName, const string& content) override {
+            // We pretend to save, but DON'T add to storedFiles vector
+            saveCalled = true; 
+        }
+    };
+
+    BrokenSaveHandler brokenFh;
+    AddFileCommand add(&brokenFh, &comp);
+    
+    string result = add.execute("file data");
+
+    ASSERT_TRUE(brokenFh.saveCalled); // We tried to save
+    EXPECT_EQ(result, "500 Internal Server Error"); // But failed verification
 }

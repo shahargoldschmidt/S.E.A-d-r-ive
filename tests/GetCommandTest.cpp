@@ -15,12 +15,15 @@ public:
     string compress(const string& s) override { return s; }
     string decompress(const string& s) override { return s; }
 };
-
 // Sample file handler
 class SFileHandler : public IFileHandler {
 public:
     map<string, string> content;
-    string getBasePath() override { return ""; }
+    string mockBasePath = "./"; // Added control for base path
+
+    // Return controllable base path
+    string getBasePath() override { return mockBasePath; }
+    
     void saveFile(const string& fname, const string& data) override { content[fname] = data; }
     string readFile(const string& fname) override {
         auto it = content.find(fname);
@@ -94,4 +97,16 @@ TEST(GetCommandTester, MultipleFilesWorkIndependently) {
     string output = cmd.execute("b.txt");
 
     EXPECT_EQ(output, "200 Ok\n\nBBBBBB"); 
+}
+
+// New Test for Server Error  - nvalid Base Path
+TEST(GetCommandTester, Returns500_WhenBasePathInvalid) {
+    SCompressor comp;
+    SFileHandler fh;
+    fh.mockBasePath = ""; // Invalid path
+
+    GetCommand cmd(&fh, &comp);
+    string output = cmd.execute("anyfile.txt");
+
+    EXPECT_EQ(output, "500 Internal Server Error");
 }

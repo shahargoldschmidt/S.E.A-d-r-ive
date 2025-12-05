@@ -99,7 +99,7 @@ TEST(AppTests, SkipsEmptyCommand)
     EXPECT_THROW(app.run(), runtime_error);
     
     EXPECT_EQ(cmd->callCount, 0); 
-    EXPECT_EQ(menu.lastResponse, "400 Bad Request1"); 
+    EXPECT_EQ(menu.lastResponse, "400 Bad Request"); 
 }
 
 // Command throws but App continues running 

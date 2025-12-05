@@ -6,16 +6,16 @@
 #include <algorithm>
 
 using namespace std;
-
 // Fake handler
 class FakeFileHandler : public IFileHandler {
 public:
     vector<string> filesInStorage; // list of files
     bool wasRemoveCalled = false;  // did we call remove?
     string lastRemovedFile = "";   // name of file we tried to delete
+    string mockBasePath = "./";    // Added base path
 
-    // Empty implementation for methods we are using
-    string getBasePath() override { return ""; }
+    // Return controllable base path 
+    string getBasePath() override { return mockBasePath; }
     void saveFile(const string& name, const string& content) override {}
     string readFile(const string& name) override { return ""; }
 
@@ -98,4 +98,35 @@ TEST_F(DeleteCommandTest, Execute_Returns204_AndRemovesFile_WhenFileExists) {
     
     // Check if file is gone from list
     EXPECT_EQ(fakeHandler.filesInStorage.size(), 2);
+}
+
+// New Test for Server Error  - Invalid Base Path
+TEST_F(DeleteCommandTest, Execute_Returns500_WhenBasePathInvalid) {
+    fakeHandler.mockBasePath = ""; // Set invalid path
+    string result = command->execute("file.txt");
+    EXPECT_EQ(result, "500 Internal Server Error");
+}
+
+// New Test for Server Error - Remove Verification Failed
+TEST_F(DeleteCommandTest, Execute_Returns500_WhenRemoveVerificationFails) {
+    string filename = "stuck.txt";
+    fakeHandler.filesInStorage = {filename};
+    
+    // Temporarily override removeFile logic to fail  
+    class BrokenDeleteHandler : public FakeFileHandler {
+    public:
+        void removeFile(const string& fileName) override {
+            wasRemoveCalled = true;
+            // Deliberately not removing from files
+        }
+    };
+    
+    BrokenDeleteHandler brokenHandler;
+    brokenHandler.mockBasePath = "./";
+    brokenHandler.filesInStorage = {filename};
+    
+    DeleteCommand cmd(&brokenHandler);
+    string result = cmd.execute(filename);
+    
+    EXPECT_EQ(result, "500 Internal Server Error");
 }

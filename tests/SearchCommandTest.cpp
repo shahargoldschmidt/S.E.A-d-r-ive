@@ -18,10 +18,15 @@ public:
 
 class SampleFileHandler : public IFileHandler {
 public: 
-    vector<string> files; // list of file names
+    vector<string> files;  // list of file names
     map<string, string> content; // file name -> content
+    
+    // Added control for base path
+    string mockBasePath = "./";
 
-    string getBasePath() override { return ""; } // no base path
+    //  Return controllable base path 
+    string getBasePath() override { return mockBasePath; } 
+    
     void saveFile(const string& fname, const string& data) override { content[fname] = data; } // save to map
     string readFile(const string& fname) override { return content[fname]; }  // read from map
     vector<string> listFiles() override { return files; }  // return file names
@@ -104,4 +109,17 @@ TEST(SearchCommandTester, ArgsEmptyReturnsNothing) {
     EXPECT_EQ(output, "400 Bad Request");
 };
 
+// New Test for Server Error - Invalid Base Path
+TEST(SearchCommandTester, Returns500_WhenBasePathInvalid) {
+    SampleCompressor SampComp;
+    SampleFileHandler fh;
+    
+    fh.mockBasePath = ""; // Invalid base path logic
+
+    SearchCommand cmd(&fh, &SampComp);
+
+    string output = cmd.execute("query"); 
+    
+    EXPECT_EQ(output, "500 Internal Server Error");
+}
  
