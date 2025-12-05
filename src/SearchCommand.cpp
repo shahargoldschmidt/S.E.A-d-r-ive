@@ -17,6 +17,12 @@ string SearchCommand::execute(const string &args)
     if (args.empty())
         return "400 Bad Request";
 
+      // ⭐ SERVER ERROR CHECK 1 — invalid base path
+    string basePath = fileHandler->getBasePath();
+    if (basePath.empty()) {
+        return "500 Internal Server Error";
+    }    
+
     string result;    
     int count = 0; // counter to know if to end line or do nothing
     // Iterate over all files

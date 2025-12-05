@@ -3,6 +3,8 @@
 #include <string>
 #include <cctype>   // isspace
 #include <sstream>  // stringstream
+#include <algorithm>
+
 
 using namespace std;
 
@@ -30,6 +32,13 @@ string DeleteCommand::execute(const string &args)
     if (!rest.empty()) {
         return "400 Bad Request";
     }
+
+    
+    // ⭐ SERVER ERROR CHECK 1 — base path invalid
+    string basePath = fileHandler->getBasePath();
+    if (basePath.empty()) {
+        return "500 Internal Server Error";   
+    }
     
     // Get the file list
     vector<string> files = fileHandler->listFiles();
@@ -46,6 +55,12 @@ string DeleteCommand::execute(const string &args)
     // If we found the file remove it
     if (found) {
         fileHandler->removeFile(fileName);
+
+        // ⭐ SERVER ERROR CHECK 2 — remove failed
+        vector<string> after = fileHandler->listFiles();
+        if (find(after.begin(), after.end(), fileName) != after.end()) {
+            return "500 Internal Server Error";   
+        }
         return "204 No Content";
     } else {
         return "404 Not Found";

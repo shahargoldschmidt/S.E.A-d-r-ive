@@ -1,6 +1,8 @@
 #include "AddFileCommand.h"
 #include <sstream>
 #include <string>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -25,8 +27,13 @@ string AddFileCommand::execute(const string& input) {
     if (fileName.empty())
         return "400 Bad Request";
 
+     // ⭐ CHECK 1 — SERVER FAILURE: missing path / invalid base dir
+    string basePath = fileHandler->getBasePath();
+    if (basePath.empty()) {
+        return "500 Internal Server Error";
+    }
+
     
-    /*
     // If the file exist
     vector<string> files = fileHandler->listFiles();
     for (const string& currentFile : files) {
@@ -34,7 +41,7 @@ string AddFileCommand::execute(const string& input) {
             // we dont change the file and send back it's a bar
             return "400 Bad Request"; 
         }
-    } */
+    } 
 
     string content;
     // Reads the rest of the line, including leading whitespace after the file name
@@ -48,5 +55,12 @@ string AddFileCommand::execute(const string& input) {
     string compressed = compressor->compress(content); //Commpres the content
 
     fileHandler->saveFile(fileName, compressed); // save the file
+
+     // ⭐ CHECK 2 — verify save succeeded (reload file list!)
+    vector<string> after = fileHandler->listFiles();
+    if (find(after.begin(), after.end(), fileName) == after.end()) {
+        return "500 Internal Server Error";
+    }
+
     return "201 Created";
 }

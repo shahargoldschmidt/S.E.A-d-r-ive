@@ -30,15 +30,24 @@ string GetCommand::execute(const string &args)
     {
         return "400 Bad Request";
     }
-    // Read compressed content from file
-    string compressedContent = fileHandler->readFile(fileName);
 
-    // Check if file exists using listFiles
+     // ⭐ SERVER ERROR CHECK 1 — base path missing / invalid
+    string basePath = fileHandler->getBasePath();
+    if (basePath.empty()) {
+        return "500 Internal Server Error";
+    }
+
+     // Check if file exists using listFiles
     vector<string> files = fileHandler->listFiles();
     if (find(files.begin(), files.end(), fileName) == files.end())
     {
         return "404 Not Found";
     }
+    
+    // Read compressed content from file
+    string compressedContent = fileHandler->readFile(fileName);
+    
+   
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
