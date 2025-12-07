@@ -3,8 +3,11 @@
 2. Make sure the Docker software is running
 3. Build + Run containers: docker-compose up --build -d
 4. Run tests: docker exec -it my_server /app/build/tests_runner
-5. Run C++ client: docker exec -it client_cpp /app/build/client_app my_server 5555
-6. Run Python client: docker exec -it Client_py python3 /app/ClientPy.py my_server 5555
+   ![תמונה של WhatsApp‏ 2025-12-07 בשעה 18 31 56_ae5c6e0f](https://github.com/user-attachments/assets/8bc0dff3-d9c0-47ad-8a7f-1775ff63e1c4)
+6. Run C++ client: docker exec -it client_cpp /app/build/client_app my_server 5555
+7. Run Python client: docker exec -it client_py python3 /app/src/ClientPy.py my_server 5555
+   ![תמונה של WhatsApp‏ 2025-12-07 בשעה 18 46 45_f9ccb9e1](https://github.com/user-attachments/assets/306c7da6-7b2a-40b8-8edf-f7906ff76d63)
+
 
 # Answers for the Questions:
 1. Did the fact that command names changed require you to touch code that was supposed to be "closed for modification but open for extension"?
