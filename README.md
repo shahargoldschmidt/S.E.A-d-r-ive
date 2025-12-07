@@ -4,7 +4,7 @@
 3. Build + Run containers: docker-compose up --build -d
 4. Run tests: docker exec -it my_server /app/build/tests_runner
 5. Run C++ client: docker exec -it client_cpp /app/build/client_app my_server 5555
-6. Run Python client: docker exec -it Client_py python3 /app/clientPy.py my_server 5555
+6. Run Python client: docker exec -it Client_py python3 /app/ClientPy.py my_server 5555
 
 # Answers for the Questions:
 1. Did the fact that command names changed require you to touch code that was supposed to be "closed for modification but open for extension"?
