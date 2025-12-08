@@ -27,7 +27,7 @@ string AddFileCommand::execute(const string& input) {
     if (fileName.empty())
         return "400 Bad Request";
 
-     // ⭐ CHECK 1 — SERVER FAILURE: missing path / invalid base dir
+     // SERVER FAILURE: missing path / invalid base dir
     string basePath = fileHandler->getBasePath();
     if (basePath.empty()) {
         return "500 Internal Server Error";
@@ -56,7 +56,7 @@ string AddFileCommand::execute(const string& input) {
 
     fileHandler->saveFile(fileName, compressed); // save the file
 
-     // ⭐ CHECK 2 — verify save succeeded (reload file list!)
+     //verify save succeeded
     vector<string> after = fileHandler->listFiles();
     if (find(after.begin(), after.end(), fileName) == after.end()) {
         return "500 Internal Server Error";

@@ -103,7 +103,7 @@ TEST(AddFileTests, CompressionIsCalled) {
     EXPECT_EQ(result, "201 Created");
 }
 
-// New Test for Server Error  - Invalid Base Path
+//  Invalid Base Path
 TEST(AddFileTests, Returns500_WhenBasePathError) {
     MockFileHandler fh;
     MockCompressor comp;
@@ -118,11 +118,11 @@ TEST(AddFileTests, Returns500_WhenBasePathError) {
     ASSERT_FALSE(fh.saveCalled); // Should verify we didn't try to save
 }
 
-// New Test for Server Error - Save Verification Failed
+// Save Verification Failed
 TEST(AddFileTests, Returns500_WhenSaveVerificationFails) {
     MockFileHandler fh;
     MockCompressor comp;
-    // Smulating OS failure -  We create a  mock locally to override logic just for this test
+    // Smulating OS failure, a local mock to override logic just for this test
     class BrokenSaveHandler : public MockFileHandler {
     public:
         void saveFile(const string& fileName, const string& content) override {

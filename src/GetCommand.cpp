@@ -31,7 +31,7 @@ string GetCommand::execute(const string &args)
         return "400 Bad Request";
     }
 
-     // ⭐ SERVER ERROR CHECK 1 — base path missing / invalid
+     // base path missing / invalid
     string basePath = fileHandler->getBasePath();
     if (basePath.empty()) {
         return "500 Internal Server Error";

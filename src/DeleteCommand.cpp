@@ -34,7 +34,7 @@ string DeleteCommand::execute(const string &args)
     }
 
     
-    // ⭐ SERVER ERROR CHECK 1 — base path invalid
+    // base path invalid
     string basePath = fileHandler->getBasePath();
     if (basePath.empty()) {
         return "500 Internal Server Error";   
@@ -56,7 +56,7 @@ string DeleteCommand::execute(const string &args)
     if (found) {
         fileHandler->removeFile(fileName);
 
-        // ⭐ SERVER ERROR CHECK 2 — remove failed
+        //remove failed
         vector<string> after = fileHandler->listFiles();
         if (find(after.begin(), after.end(), fileName) != after.end()) {
             return "500 Internal Server Error";   
