@@ -4,6 +4,7 @@
 #include <string>
 #include <vector> // Required for vector
 #include <filesystem>
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -52,6 +53,26 @@ void OSFileHandler::saveFile(const string& fileName, const string& content) {
     _mutex.unlock(); // Unlock at the end of function
 }
 
+// Overwrite file content (Truncate) - NEW
+void OSFileHandler::overwriteFile(const string& fileName, const string& content) {
+    _mutex.lock();
+    string basePath = getBasePath();
+    fs::path fullPath = get_full_path(fileName, basePath);
+
+    if (fullPath.empty()) {
+        _mutex.unlock();
+        return;
+    }
+
+    // ios::trunc deletes old content
+    ofstream file(fullPath, ios::binary | ios::trunc);    
+    if (file.is_open()) {
+        file << content;
+        file.close();
+    }
+    _mutex.unlock();
+}
+
 // Read content from a file in the base path
 string OSFileHandler::readFile(const string& fileName) {
     _mutex.lock(); // lock
@@ -67,7 +88,12 @@ string OSFileHandler::readFile(const string& fileName) {
          _mutex.unlock(); // must unlock before the return
         return ""; // Return empty string if file does not exist
     }
-    
+        // Safety check: Don't read directory as file
+    if (fs::is_directory(fullPath)) {
+        _mutex.unlock();
+        return "";
+    }
+
     ifstream file(fullPath, ios::binary); 
     if (!file.is_open()) {
         _mutex.unlock(); // must unlock before the return
@@ -81,24 +107,30 @@ string OSFileHandler::readFile(const string& fileName) {
 }
 
 // List all regular files in the base path
-vector<string> OSFileHandler::listFiles() {
+vector<string> OSFileHandler::listFiles(const string& subPath) {
     _mutex.lock(); // lock
     vector<string> fileNames;
     string basePath = getBasePath();
     
-    
+    // Construct full path with optional subPath
+    fs::path fullPath = get_full_path(subPath, basePath);
+
     if (basePath.empty() || !fs::exists(basePath)) {
         _mutex.unlock(); // must unlock before the return
         return fileNames;  // Return empty vector if base path is invalid
     }
     
-    
-    for (const auto& entry : fs::directory_iterator(basePath)) {
-        
-        if (entry.is_regular_file()) {
-            fileNames.push_back(entry.path().filename().string());  // Add filename only
-        }
+    // Ensure it's a directory
+    if (!fs::is_directory(fullPath)) {
+        _mutex.unlock();
+        return fileNames;
+    } 
+
+    for (const auto& entry : fs::directory_iterator(fullPath)) {
+         // Return both regular files and directories
+        fileNames.push_back(entry.path().filename().string());
     }
+
     _mutex.unlock(); // Unlock at the end of function
     return fileNames;
 }
@@ -118,11 +150,50 @@ void OSFileHandler::removeFile(const string& fileName) {
     // Checking if a file exists before delete
     if (fs::exists(fullPath)) {
         try {
-            fs::remove(fullPath);
+            // Using remove_all to support folders
+            fs::remove_all(fullPath);
         } catch (const fs::filesystem_error& e) {
     
         }
     }
 
     _mutex.unlock(); // Unlock at the end of function
+}
+// Create directory
+void OSFileHandler::createDirectory(const string& dirName) {
+    _mutex.lock();
+    string basePath = getBasePath();
+    fs::path fullPath = get_full_path(dirName, basePath);
+
+    if (!dirName.empty() && !fs::exists(fullPath)) {
+        try {
+            fs::create_directory(fullPath);
+        } catch (...) {}
+    }
+    _mutex.unlock();
+}
+// Check if path is directory
+bool OSFileHandler::isDirectory(const string& path) {
+    _mutex.lock();
+    string basePath = getBasePath();
+    fs::path fullPath = get_full_path(path, basePath);
+    
+    bool res = fs::exists(fullPath) && fs::is_directory(fullPath);
+    _mutex.unlock();
+    return res;
+}
+
+// Rename path
+void OSFileHandler::renamePath(const string& oldName, const string& newName) {
+    _mutex.lock();
+    string basePath = getBasePath();
+    fs::path oldPath = get_full_path(oldName, basePath);
+    fs::path newPath = get_full_path(newName, basePath);
+
+    if (fs::exists(oldPath)) {
+        try {
+            fs::rename(oldPath, newPath);
+        } catch (...) {}
+    }
+    _mutex.unlock();
 }
