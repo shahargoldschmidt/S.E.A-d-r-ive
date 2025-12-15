@@ -1,6 +1,7 @@
 #include "GetCommand.h"
 #include <sstream>
 #include <algorithm> 
+#include <vector> // הוספתי: נדרש לשימוש ב-vector
 
 using namespace std;
 
@@ -17,11 +18,11 @@ string GetCommand::execute(const string &args)
     }
 
     istringstream iss(args);
-    string fileName;
+    string path;
     string rest;
 
-    // Extract the first token, expected to be the filename
-    iss >> fileName;
+    // Extract the first token, expected to be the path/filename
+    iss >> path;
 
     // get what is after first token
     getline(iss, rest);
@@ -39,15 +40,29 @@ string GetCommand::execute(const string &args)
 
      // Check if file exists using listFiles
     vector<string> files = fileHandler->listFiles();
-    if (find(files.begin(), files.end(), fileName) == files.end())
+    if (find(files.begin(), files.end(), path) == files.end())
     {
-        return "404 Not Found";
+        // The current folder is "."
+        if (path != ".") { 
+            return "404 Not Found";
+        }
     }
+    // Automatic Decision is it a File or Directory?
     
-    // Read compressed content from file
-    string compressedContent = fileHandler->readFile(fileName);
+     // The user requested a directory
+    if (fileHandler->isDirectory(path)) {
+        vector<string> files = fileHandler->listFiles(path);
+        
+        string result = "";
+        for (const string& f : files) {
+            result += f + "\n";
+        }
+        return "200 Ok\n\n" + result;
+    }
+
+     // It's not a directory,  Read compressed content from file
+    string compressedContent = fileHandler->readFile(path);
     
-   
 
     // Decompress content using the strategy
     string decompressed = compressor->decompress(compressedContent);
