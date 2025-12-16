@@ -10,6 +10,7 @@ app.use(express.json());
 // const tokensRoutes = require('./routes/tokensRoutes');
 // const fileRoutes = require('./routes/fileRoutes');
 // const searchRoutes = require('./routes/searchRoutes');
+//const validator = require('./security/validator');
 
 // Define Routes 
 // Connecting the specific paths to their routers
