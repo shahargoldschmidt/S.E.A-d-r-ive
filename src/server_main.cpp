@@ -15,6 +15,7 @@
 #include "ClientHandler.h"
 #include "OSFileHandler.h"
 #include "RLEStrategy.h"
+#include "UpdateFileCommand.h" // Added include
 
 #include "IFileHandler.h" 
 #include "ICompressor.h" 
@@ -41,6 +42,8 @@ int main(int argc, char* argv[]) {
     ICommand* getCmd = new GetCommand(fileHandler, compressor);
     ICommand* searchCmd = new SearchCommand(fileHandler, compressor);
     ICommand* deleteCmd = new DeleteCommand(fileHandler);
+    ICommand* updateCmd = new UpdateFileCommand(fileHandler, compressor); // Added update command
+
 
     // put commands in a map
     map<string, ICommand*>* commands = new map<string, ICommand*>();
@@ -48,6 +51,8 @@ int main(int argc, char* argv[]) {
     (*commands)["get"] = getCmd;
     (*commands)["search"] = searchCmd;
     (*commands)["delete"] = deleteCmd;
+    (*commands)["patch"] = updateCmd; // Register update command
+
 
     //Create the Server Socket with IPv4 and TCP
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
