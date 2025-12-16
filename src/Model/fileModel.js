@@ -3,18 +3,54 @@ const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 
 // In-Memory Storage for File Metadata
 // Map Structure: <fileId, FileMetadataObject>
-// Metadata Object: { id, owner, name, size, createdAt }
+// Metadata Object: { id, owner, name, type, parentId, size, createdAt, content? }
 const filesMetadata = new Map();
 
 class FileModel {
 
+    //  Helper Methods (Internal Use)
+
     /**
-     * Retrieves all files owned by a specific user from memory.
+     * Helper: Retrieves all direct children
+     *(files and sub-folders) of a specific folder.
+     */
+    _getDirectChildren(parentId) {
+        const children = [];
+        for (const file of filesMetadata.values()) {
+            if (file.parentId === parentId) {
+                children.push(file);
+            }
+        }
+        return children;
+    }
+
+    /**
+     * Helper: Fetches and formats content from the C++ TCP Server.
+     */
+    async _fetchContentFromTcp(fileId) {
+        try {
+            const response = await tcpClient.sendCommand(`get ${fileId}`);
+            if (response.startsWith("200 Ok")) {
+                // Extract content after the headers (double newline)
+                return response.split("\n\n")[1] || "";
+            }
+            return "(Content unavailable)";
+        } catch (error) {
+            console.error(`[FileModel] TCP Error for ${fileId}: ${error.message}`);
+            return "(Error fetching content)";
+        }
+    }
+
+    //  Public Methods (API)
+
+    /**
+     * Retrieves root items (files/folders) for a specific user.
+     * Filters items where parentId is NULL.
      */
     async getFilesByOwner(userId) {
         const userFiles = [];
         for (const file of filesMetadata.values()) {
-            if (file.owner === userId) {
+            if (file.owner === userId && file.parentId === null) {
                 userFiles.push(file);
             }
         }
@@ -22,82 +58,103 @@ class FileModel {
     }
 
     /**
-     * Creates a new file entry.
-     * Process:
-     * Generates a unique ID
+     * Creates a new file or folder.
+     * - Folders: Saved only in Node.js memory.
+     * - Files: Saved in memory AND sent to C++ server via TCP.
      */
     async create(userId, fileData) {
-        // Generate a unique ID for the system (mapping logical name to physical ID)
-        const uniqueFileId = uuidv4(); 
+        const uniqueFileId = uuidv4();
         
-        // Prepare Metadata
+        const type = fileData.type || 'file';
+        const isFile = type === 'file';
+        const parentId = fileData.parentId || null;
+        const content = fileData.content || "";
+
         const newFileMeta = {
-            id: uniqueFileId,       // The internal ID used for C++ storage
-            owner: userId,          // The owner's User ID
-            name: fileData.name,    // Original display name
-            size: fileData.content ? fileData.content.length : 0,
+            id: uniqueFileId,
+            owner: userId,
+            name: fileData.name,
+            type: type,
+            parentId: parentId,
+            size: isFile ? content.length : 0,
             createdAt: new Date().toISOString()
         };
 
-        // Command format: "post <fileName> <content>"
-        const content = fileData.content || "";
-        const command = `post ${uniqueFileId} ${content}`;
+        // If it's a file, send 'post' command to C++
+        if (isFile) {
+            try {
+                const command = `post ${uniqueFileId} ${content}`;
+                const response = await tcpClient.sendCommand(command);
 
-        try {
-            // Send to C++ Server
-            const response = await tcpClient.sendCommand(command);
-            
-            // Validate Server Response (Expects "201 Created")
-            if (response.includes("201 Created")) {
-                filesMetadata.set(uniqueFileId, newFileMeta); // Commit to memory only on success
-                return newFileMeta;
-            } else {
-                throw new Error(`TCP Server Error: ${response}`);
+                if (!response.includes("201")) {
+                    throw new Error(`TCP Server Error: ${response}`);
+                }
+            } catch (error) {
+                // If TCP fails, do not save metadata in memory
+                throw new Error(`Failed to create file: ${error.message}`);
             }
-        } catch (error) {
-            throw new Error(`Failed to create file: ${error.message}`);
         }
+
+        // Save metadata to memory (Map)
+        filesMetadata.set(uniqueFileId, newFileMeta);
+        return newFileMeta;
     }
 
     /**
-     * Retrieves file metadata and fetches content from the C++ server.
-     * @param {string} fileId - The unique file ID.
-     * @returns {Promise<Object|null>} File object with content, or null if not found.
+     * Retrieves file/folder data by ID.
+     * - If Folder: Returns metadata + children array (with content for child files).
+     * - If File: Returns metadata + content.
      */
     async getFileById(fileId) {
         const fileMeta = filesMetadata.get(fileId);
         if (!fileMeta) return null;
 
-        try {
-            // TCP Command: "get <fileName>"
-            const response = await tcpClient.sendCommand(`get ${fileId}`);
+        // CASE 1: It is a FOLDER
+        if (fileMeta.type === 'folder') {
+            const children = this._getDirectChildren(fileId);
             
-            // Expected Response: "200 Ok\n\n<content>"
-            if (response.startsWith("200 Ok")) {
-                // Extract content by splitting headers
-                const content = response.split("\n\n")[1] || "";
-                return { ...fileMeta, content: content };
-            } else {
-                // Sync Error: File exists in Metadata but missing in C++ Server
-                console.error(`[FileModel] Sync error for ${fileId}: ${response}`);
-                return { ...fileMeta, content: "(Content unavailable)" };
-            }
-        } catch (error) {
-            throw new Error(`Failed to fetch file content: ${error.message}`);
+            // Use Promise.all to fetch content for all child files in parallel (Efficiency!)
+            const childrenWithContent = await Promise.all(children.map(async (child) => {
+                if (child.type === 'folder') {
+                    return child; // Return folder metadata as is
+                }
+                // If child is a file, fetch its content
+                const content = await this._fetchContentFromTcp(child.id);
+                return { ...child, content };
+            }));
+
+            return { ...fileMeta, children: childrenWithContent };
         }
+
+        // CASE 2: It is a FILE
+        const content = await this._fetchContentFromTcp(fileId);
+        return { ...fileMeta, content };
     }
 
+
     /**
-     * Updates file metadata.
-     * Note: Currently handles metadata updates in-memory.
-     * If content update is required, logic to send 'update' command to C++ should be added.
+     * Updates file metadata and content.
+     * If content changes, it sends an 'update' command to the C++ server.
      */
     async update(fileId, updates) {
         const file = filesMetadata.get(fileId);
         if (!file) return null;
 
-        // TODO: If 'updates.content' exists, implement TCP update logic here.
-        // E.g., await tcpClient.sendCommand(`update ${fileId} ${updates.content}`);
+        // If it's a FILE and content is updated -> sync with C++
+        if (file.type === 'file' && updates.content) {
+            try {
+                const cmd = `update ${fileId} ${updates.content}`;
+                const response = await tcpClient.sendCommand(cmd);
+                
+                // Expecting 200 or 204 from C++
+                if (!response.startsWith("200") && !response.startsWith("204")) {
+                    throw new Error(`TCP Update failed: ${response}`);
+                }
+                updates.size = updates.content.length;
+            } catch (error) {
+                throw new Error(`Failed to update file in C++: ${error.message}`);
+            }
+        }
 
         // Update In-Memory Metadata
         const updatedFile = { ...file, ...updates };
@@ -106,69 +163,51 @@ class FileModel {
     }
 
     /**
-     * Deletes a file.
-     * 1. Sends 'delete' command to C++ server.
-     * 2. Removes metadata from Node.js memory.
+     * Recursive Delete.
+     * Deletes the target item and ALL its descendants (children, grandchildren, etc.).
+     * Cleans up both C++ storage (for files) and Node.js memory.
      */
     async deleteFile(fileId) {
         if (!filesMetadata.has(fileId)) return false;
 
-        try {
-            // TCP Command: "delete <fileName>"
-            const response = await tcpClient.sendCommand(`delete ${fileId}`);
+        const allIdsToDelete = [];
+
+        // Recursive helper to collect all descendant IDs
+        const collectDescendants = (currentId) => {
+            allIdsToDelete.push(currentId); // Add current item
+            const children = this._getDirectChildren(currentId);
+            for (const child of children) {
+                collectDescendants(child.id); // Recurse
+            }
+        };
+
+        // Gather all IDs
+        collectDescendants(fileId);
+
+        // Perform deletion
+        for (const id of allIdsToDelete) {
+            const meta = filesMetadata.get(id);
             
-            // Success (200/204) or Already Gone (404) -> We clean up memory in both cases
-            if (response.includes("204") || response.includes("200") || response.includes("404")) {
-                filesMetadata.delete(fileId); 
-                return true;
+            // If it's a physical file, send delete command to C++
+            if (meta && meta.type === 'file') {
+                tcpClient.sendCommand(`delete ${id}`).catch(e => 
+                    console.warn(`[FileModel] TCP Delete warning for ${id}: ${e.message}`)
+                );
             }
             
-            return false;
-
-        } catch (error) {
-            console.error(`[FileModel] Delete error: ${error.message}`);
-            return false;
+            // Remove from memory
+            filesMetadata.delete(id);
         }
+
+        return true;
     }
 
-    /**
-     * Search for files containing a query string.
-     * Utilizes the C++ server's 'search' command for content inspection.
-     * @param {string} userId - Requesting user.
-     * @param {string} query - Text to search for.
-     * @returns {Promise<Array>} List of matching file objects.
-     */
+    /*
     async searchFiles(userId, query) {
-        try {
-            // TCP Command: "search <query>"
-            const response = await tcpClient.sendCommand(`search ${query}`);
-            
-            if (!response.startsWith("200 Ok")) {
-                return []; 
-            }
-
-            // Parse Response: "200 Ok\n\nid1 id2 id3 ..."
-            const rawBody = response.split("\n\n")[1] || "";
-            const foundIds = rawBody.trim().split(" "); // Split by space to get IDs
-
-            const results = [];
-            
-            // Filter results: Match IDs with Metadata and verify Ownership/Permissions
-            for (const id of foundIds) {
-                const meta = filesMetadata.get(id);
-                // Check if file exists in metadata and belongs to the user
-                // Note: In a full implementation, check PermissionModel for shared files as well.
-                if (meta && meta.owner === userId) {
-                    results.push(meta);
-                }
-            }
-            return results;
-
-        } catch (error) {
-            console.error(`[FileModel] Search error: ${error.message}`);
-            return []; // Return empty array on failure
-        }
+        // Feature currently disabled.
+        // Implementation would use tcpClient.sendCommand(`search ${query}`)
     }
+    */
 }
 
 module.exports = new FileModel();
