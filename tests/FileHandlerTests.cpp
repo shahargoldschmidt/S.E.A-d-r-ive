@@ -137,6 +137,41 @@ TEST_F(OSFileHandlerTest, RemoveFile_RemovesExistingFile) {
     EXPECT_FALSE(fs::exists(fullPath)); 
 }
 
+// TESTS FOR updateFile
+TEST_F(OSFileHandlerTest, OverwriteFile_ReplacesExistingContent) {
+    string filename = "overwrite_test.dat";
+    string initialContent = "Initial Data";
+    string updatedContent = "Updated Data";
+    fs::path fullPath = basePath / filename;
+
+    // Create file first
+    handler.saveFile(filename, initialContent);
+    ASSERT_EQ(readFilePhysical(fullPath), initialContent);
+
+    // Overwrite it
+    handler.overwriteFile(filename, updatedContent);
+
+    // Verify content changed
+    EXPECT_EQ(readFilePhysical(fullPath), updatedContent);
+}
+
+// Verify it DOES NOT create a file if it's missing
+TEST_F(OSFileHandlerTest, OverwriteFile_DoesNotCreateFile_IfMissing) {
+    string filename = "ghost_overwrite.dat";
+    string content = "Should Not Exist";
+    fs::path fullPath = basePath / filename;
+
+    // Ensure file doesn't exist
+    ASSERT_FALSE(fs::exists(fullPath));
+
+    // Overwrite - should simply return without creating
+    handler.overwriteFile(filename, content);
+
+    // Verify it still DOES NOT exist
+    EXPECT_FALSE(fs::exists(fullPath)); 
+}
+
+
 TEST_F(OSFileHandlerTest, RemoveFile_DoesNotCrash_WhenFileMissing) {
     setenv(ENV_NAME.c_str(), basePath.string().c_str(), 1);
 
