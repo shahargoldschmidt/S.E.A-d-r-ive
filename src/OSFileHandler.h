@@ -20,8 +20,9 @@ public:
     // Returns the contents of the specified file
     std::string readFile(const std::string& fileName) override;
 
-   // List all files in the directory (supports sub-path)
-    std::vector<std::string> listFiles(const std::string& subPath = "") override;
+ 
+    // Lists all files available under the base path
+    virtual std::vector<std::string> listFiles() override;
 
     // Remove a specified file
     void removeFile(const std::string& fileName) override;
@@ -29,14 +30,6 @@ public:
     // Overwrite existing file content (Truncate)
     void overwriteFile(const std::string& fileName, const std::string& content) override;
 
-    // Check if path is a directory
-    bool isDirectory(const std::string& path) override;
-
-    // Create a new directory
-    void createDirectory(const std::string& dirName) override;
-
-    // Rename file or directory
-    void renamePath(const std::string& oldName, const std::string& newName) override;
 };
 
 #endif
