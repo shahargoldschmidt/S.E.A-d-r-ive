@@ -41,6 +41,11 @@ class FileModel {
         }
     }
 
+    //Helper: Retrieves file metadata directly from memory
+    getMetadata(fileId) {
+        return filesMetadata.get(fileId) || null;
+    }
+
     //  Public Methods (API)
 
     /**
@@ -109,7 +114,7 @@ class FileModel {
         const fileMeta = filesMetadata.get(fileId);
         if (!fileMeta) return null;
 
-        // CASE 1: It is a FOLDER
+        // if It is a FOLDER
         if (fileMeta.type === 'folder') {
             const children = this._getDirectChildren(fileId);
             
@@ -126,7 +131,7 @@ class FileModel {
             return { ...fileMeta, children: childrenWithContent };
         }
 
-        // CASE 2: It is a FILE
+        // if It is a FILE
         const content = await this._fetchContentFromTcp(fileId);
         return { ...fileMeta, content };
     }
@@ -137,7 +142,7 @@ class FileModel {
      * If content changes, it sends an 'update' command to the C++ server.
      */
     async update(fileId, updates) {
-        const file = filesMetadata.get(fileId);
+        const file = this.getMetadata(fileId)
         if (!file) return null;
 
         // If it's a FILE and content is updated -> sync with C++
