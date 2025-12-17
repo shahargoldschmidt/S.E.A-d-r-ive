@@ -92,6 +92,7 @@ const filesMetadata = new Map();
     const create = async (userId, fileData) => { 
         const uniqueFileId = uuidv4();
         const name = fileData.name;
+        const parentId = fileData.parentId || null;
 
         // Passing userId to the check
         if (_isNameTaken(parentId, name, userId)) {
@@ -100,7 +101,6 @@ const filesMetadata = new Map();
         
         const type = fileData.type || 'file';
         const isFile = type === 'file';
-        const parentId = fileData.parentId || null;
         const content = fileData.content || "";
 
         const newFileMeta = {
