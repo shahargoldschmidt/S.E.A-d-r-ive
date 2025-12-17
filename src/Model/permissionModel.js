@@ -6,6 +6,8 @@ const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 // Permission Object: { id, fileId, userId, type }
 const permissionsStore = new Map();
 
+
+
     /**
      * Retrieves all permissions associated with a specific file or folder.
      * @param {string} fileId - The ID of the file/folder.
@@ -123,7 +125,10 @@ const permissionsStore = new Map();
 
             if (userPerm) {
                 // check what kind of prmission
-                const role = userPerm.type; // 'VIEWER' or 'EDITOR'
+                const role = userPerm.type; // 'VIEWER' or 'EDITOR' or ADMIN
+                if (actionType === 'ADMIN') {
+                     return false; 
+                }
                 if (actionType === 'WRITE' || actionType === 'DELETE') {
                     // Writing and deleting requires EDITOR
                     if (role === 'EDITOR') return true;
