@@ -144,7 +144,7 @@ const updateFile = async (req, res) => {
             return res.status(404).json({ error: "File or Folder not found" });
         }
         
-        res.status(200).json(updatedItem); 
+        res.status(204).send();
 
     } catch (error) {
         console.error(`[FileController] Error in updateFile: ${error.message}`);
