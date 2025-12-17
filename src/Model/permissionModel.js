@@ -1,3 +1,4 @@
+const fileModel = require('./fileModel'); 
 const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 
 // In-Memory Storage for Permissions
@@ -5,14 +6,14 @@ const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 // Permission Object: { id, fileId, userId, type }
 const permissionsStore = new Map();
 
-class PermissionModel {
+
 
     /**
      * Retrieves all permissions associated with a specific file or folder.
      * @param {string} fileId - The ID of the file/folder.
      * @returns {Promise<Array>} List of permission objects.
      */
-    async getPermissionsByFileId(fileId) {
+    const getPermissionsByFileId = async (fileId) => { 
         const result = [];
         for (const perm of permissionsStore.values()) {
             if (perm.fileId === fileId) {
@@ -20,7 +21,7 @@ class PermissionModel {
             }
         }
         return result;
-    }
+    };
 
     /**
      * Grants a new permission to a user for a file/folder.
@@ -30,7 +31,15 @@ class PermissionModel {
      * @param {string} type - 'VIEWER' or 'EDITOR'.
      * @returns {Promise<Object>} The created permission object.
      */
-    async addPermission(fileId, userId, type) {
+    const addPermission = async (fileId, userId, type) => {
+        //check if user already have a permission 
+        const currentPermissions = await getPermissionsByFileId(fileId);
+        const exists = currentPermissions.find(p => p.userId === userId);
+        
+        if (exists) {
+            throw new Error("User already has a permission for this item.");
+        }
+
         const uniqueId = uuidv4();
 
         const newPermission = {
@@ -42,7 +51,7 @@ class PermissionModel {
 
         permissionsStore.set(uniqueId, newPermission);
         return newPermission;
-    }
+    };
 
     /**
      * Updates an existing permission level (e.g., VIEWER -> EDITOR).
@@ -50,7 +59,7 @@ class PermissionModel {
      * @param {string} newType - The new permission type.
      * @returns {Promise<Object|null>} The updated object, or null if not found.
      */
-    async updatePermission(pId, newType) {
+    const updatePermission = async (pId, newType) => { 
         const perm = permissionsStore.get(pId);
         
         // If permission does not exist, return null so controller can return 404
@@ -63,29 +72,29 @@ class PermissionModel {
         permissionsStore.set(pId, updatedPerm);
         
         return updatedPerm;
-    }
+    };
 
     /**
      * Removes a permission (Unshare).
      * @param {string} pId - The permission ID.
      * @returns {Promise<boolean>} True if deleted, False if ID was not found.
      */
-    async removePermission(pId) {
+    const removePermission = async (pId) => { 
         if (!permissionsStore.has(pId)) {
             return false;
         }
 
         permissionsStore.delete(pId);
         return true;
-    }
+    };
 
     /**
      * Helper: Get a single permission by ID.
      * Useful for internal checks or middleware.
      */
-    async getPermissionById(pId) {
+    const getPermissionById = async (pId) => { 
         return permissionsStore.get(pId) || null;
-    }
+    };
 
     /**
      * Checks if a user has permission to perform an action on a file.
@@ -95,7 +104,7 @@ class PermissionModel {
      * @param {string} actionType - 'READ' (needs Viewer/Editor) or 'WRITE' (needs Editor).
      * @returns {Promise<boolean>} True if access is granted.
      */
-    async hasPermission(userId, fileId, actionType) {
+    const hasPermission = async (userId, fileId, actionType) => {
         let currentFileId = fileId;
 
     // Loop upwards until we reach the root (null)
@@ -110,7 +119,7 @@ class PermissionModel {
             }
 
             // Check explicit permissions for this specific level
-            const permissions = await this.getPermissionsByFileId(currentFileId);
+            const permissions = await getPermissionsByFileId(currentFileId);
             //search userId in list of premissions
             const userPerm = permissions.find(p => p.userId === userId); 
 
@@ -132,8 +141,13 @@ class PermissionModel {
         }
         // Reached the top and found no matching permissions
         return false;
-    }
-}
+    };
 
-
-module.exports = new PermissionModel();
+module.exports = {
+    getPermissionsByFileId,
+    addPermission,
+    updatePermission,
+    removePermission,
+    getPermissionById,
+    hasPermission
+};
