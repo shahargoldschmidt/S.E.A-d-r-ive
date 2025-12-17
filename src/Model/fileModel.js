@@ -99,7 +99,7 @@ const filesMetadata = new Map();
             throw new Error(`A file or folder named '${name}' already exists in this location.`);
         }
         
-        const type = fileData.type || 'file';
+        const type = fileData.type ;
         if (type !== 'file' && type !== 'folder') {
             throw new Error(`Invalid type: '${type}'. Allowed types are 'file' or 'folder'.`);
         }
