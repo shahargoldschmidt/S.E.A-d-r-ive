@@ -63,7 +63,7 @@ const uploadFile = async (req, res) => {
         await permissionModel.addPermission(newItem.id, userId, 'ADMIN');
         
         // Status 201: Created
-        res.status(201).json(newItem);
+        res.status(201).send();
     } catch (error) {
         console.error(`[FileController] Error in uploadFile: ${error.message}`);
         res.status(500).json({ error: error.message });
