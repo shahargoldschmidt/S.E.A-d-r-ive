@@ -6,6 +6,10 @@ const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 // Permission Object: { id, fileId, userId, type }
 const permissionsStore = new Map();
 
+const ROLE_PERMISSIONS = {
+    'VIEWER': ['READ'],
+    'EDITOR': ['READ', 'WRITE', 'DELETE']
+};
 
 
     /**
@@ -96,6 +100,7 @@ const permissionsStore = new Map();
         return permissionsStore.get(pId) || null;
     };
 
+
     /**
      * Checks if a user has permission to perform an action on a file.
      * Implements "Permission Inheritance": checks the file, then its parent, grandparent, etc.
@@ -125,19 +130,12 @@ const permissionsStore = new Map();
 
             if (userPerm) {
                 // check what kind of prmission
-                const role = userPerm.type; // 'VIEWER' or 'EDITOR' or ADMIN
-                if (actionType === 'ADMIN') {
-                     return false; 
-                }
-                if (actionType === 'WRITE' || actionType === 'DELETE') {
-                    // Writing and deleting requires EDITOR
-                    if (role === 'EDITOR') return true;
-                } else {
-                    // Reading ('READ') allows both VIEWER and EDITOR
-                    if (actionType === 'READ')
-                    return true;
-                }
-                return false; 
+                if (userPerm) {
+                     // Get allowed actions for this user's role (VIEWER/EDITOR)
+                    const allowedActions = ROLE_PERMISSIONS[userPerm.type] || [];
+                    // Check if the requested action is allowed
+                     return allowedActions.includes(actionType);
+        }
             }
             // Climb up to the parent folder to see if theres premission for folders
             currentFileId = file.parentId;
