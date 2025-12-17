@@ -84,12 +84,12 @@ const filesMetadata = new Map();
             if (file.owner === userId) {
                  accessibleFiles.push(file);
                  continue;
-        }
+             }
 
-        const hasAccess = await permissionModel.hasPermission(userId, file.id, 'READ');
-        if (hasAccess) {
-            accessibleFiles.push(file);
-        }
+            const hasAccess = await permissionModel.hasPermission(userId, file.id, 'READ');
+            if (hasAccess) {
+                accessibleFiles.push(file);
+             }
     }
     return accessibleFiles;
 };
