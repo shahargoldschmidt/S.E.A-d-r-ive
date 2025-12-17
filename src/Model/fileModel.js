@@ -74,15 +74,25 @@ const filesMetadata = new Map();
      * Retrieves root items (files/folders) for a specific user.
      * Filters items where parentId is NULL.
      */
-    const getFilesByOwner = async (userId) => { 
-        const userFiles = [];
+   const getAccessibleRootFiles = async (userId) => { 
+        const permissionModel = require('./permissionModel'); 
+    
+        const accessibleFiles = [];
         for (const file of filesMetadata.values()) {
-            if (file.owner === userId && file.parentId === null) {
-                userFiles.push(file);
-            }
+            if (file.parentId !== null) continue;
+
+            if (file.owner === userId) {
+                 accessibleFiles.push(file);
+                 continue;
         }
-        return userFiles;
-    };
+
+        const hasAccess = await permissionModel.hasPermission(userId, file.id, 'READ');
+        if (hasAccess) {
+            accessibleFiles.push(file);
+        }
+    }
+    return accessibleFiles;
+};
 
     /**
      * Creates a new file or folder.
@@ -290,7 +300,7 @@ module.exports = {
     _getDirectChildren, 
     _fetchContentFromTcp, 
     getMetadata,
-    getFilesByOwner,
+    getAccessibleRootFiles,
     create,
     getFileById,
     update,

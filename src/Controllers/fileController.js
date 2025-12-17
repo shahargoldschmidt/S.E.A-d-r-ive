@@ -13,7 +13,7 @@ const getFiles = async (req, res) => {
         console.log(`[FileController] Getting root files for user: ${userId}`);
 
         // Fetch only root-level items from the model
-        const files = await fileModel.getFilesByOwner(userId);
+        const files = await fileModel.getAccessibleRootFiles(userId);
         
         res.status(200).json(files); 
     } catch (error) {
