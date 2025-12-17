@@ -125,7 +125,10 @@ const permissionsStore = new Map();
 
             if (userPerm) {
                 // check what kind of prmission
-                const role = userPerm.type; // 'VIEWER' or 'EDITOR'
+                const role = userPerm.type; // 'VIEWER' or 'EDITOR' or ADMIN
+                if (actionType === 'ADMIN') {
+                     return false; 
+                }
                 if (actionType === 'WRITE' || actionType === 'DELETE') {
                     // Writing and deleting requires EDITOR
                     if (role === 'EDITOR') return true;
