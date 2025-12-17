@@ -8,7 +8,8 @@ const permissionsStore = new Map();
 
 const ROLE_PERMISSIONS = {
     'VIEWER': ['READ'],
-    'EDITOR': ['READ', 'WRITE', 'DELETE']
+    'EDITOR': ['READ', 'WRITE', 'DELETE'],
+    'ADMIN': ['READ', 'WRITE', 'DELETE','MANAGE']
 };
 
 

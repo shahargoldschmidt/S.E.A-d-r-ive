@@ -42,7 +42,7 @@ const createPermission = async (req, res) => {
         }
 
         // Validation: Ensure type is valid
-        if (type !== 'VIEWER' && type !== 'EDITOR') {
+        if (type !== 'VIEWER' && type !== 'EDITOR' && type !=='ADMIN') {
             return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER' or 'EDITOR'" });
         }
 
@@ -68,7 +68,7 @@ const updatePermission = async (req, res) => {
         const { type } = req.body;  // New level (e.g., change VIEWER to EDITOR)
 
         // Validate type
-        if (!type || (type !== 'VIEWER' && type !== 'EDITOR')) {
+        if (!type || (type !== 'VIEWER' && type !== 'EDITOR' && type !=='ADMIN' )) {
             return res.status(400).json({ error: "Valid permission type (VIEWER/EDITOR) is required" });
         }
 
