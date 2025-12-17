@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
+const crypto = require('crypto');
 
 // In-Memory Storage for Permissions
 // Map Structure: <permissionId, PermissionObject>
@@ -44,7 +44,7 @@ const ROLE_PERMISSIONS = {
             throw new Error("User already has a permission for this item.");
         }
 
-        const uniqueId = uuidv4();
+        const uniqueId = crypto.randomUUID();;
 
         const newPermission = {
             id: uniqueId,
