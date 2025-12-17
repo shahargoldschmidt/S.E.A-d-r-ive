@@ -149,10 +149,38 @@ const updateFile = async (req, res) => {
     }
 };
 
+
+/**
+ * Search files by name (Node) and content (C++).
+ * Route: GET /api/search/:query
+ */
+const searchFiles = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const query = req.params.query;
+
+        if (!query) {
+            return res.status(400).json({ error: "Search query is missing" });
+        }
+
+        console.log(`[FileController] User ${userId} searching for: ${query}`);
+
+        // search logic go to Model
+        const results = await fileModel.searchFiles(userId, query);
+
+        res.status(200).json(results);
+
+    } catch (error) {
+        console.error(`[FileController] Search Error: ${error.message}`);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getFiles,
     uploadFile,
     getFileData,
     deleteFile,
-    updateFile
+    updateFile, 
+    searchFiles
 };

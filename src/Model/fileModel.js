@@ -244,12 +244,57 @@ const filesMetadata = new Map();
         return true;
     };
 
-    /*
-    const searchFiles = async (userId, query) => { // * CHANGED: 'const' instead of method
-        // Feature currently disabled.
-        // Implementation would use tcpClient.sendCommand(`search ${query}`)
-    }
-    */
+
+     // Search files by logical name (Node.js) AND content (C++).
+     // ONLY returns files the user has permission to view.
+    const searchFiles = async (userId, query) => {
+        // Use a Map to prevent duplicates (Key - File ID, Value -  File Object)
+        const resultsMap = new Map();
+
+        // Search by Name (In-Memory) Iterate all files in memory
+        for (const file of filesMetadata.values()) {
+            // Check if name matches query
+            if (file.name.includes(query)) {
+                // Check permissions: Is owner OR has 'READ' permission
+                const hasAccess = (file.owner === userId) || await permissionModel.hasPermission(userId, file.id, 'READ');
+                
+                if (hasAccess) {
+                    resultsMap.set(file.id, file);
+                }
+            }
+        }
+
+        // Search by Content (C++)
+        try {
+            // C++ searches physical files and it returns a list of IDs where the content was found.
+            const response = await tcpClient.sendCommand(`search ${query}`);
+            
+            if (response.startsWith("200 Ok")) {
+                const rawBody = response.split("\n\n")[1] || "";
+                const foundIds = rawBody.trim().split(" "); 
+
+                for (const id of foundIds) {
+                    if (!id) continue;
+                    
+                    const meta = filesMetadata.get(id);
+                    // If file exists in metadata 
+                    if (meta) {
+                        // Check permissions for these files
+                        const hasAccess = (meta.owner === userId) || await permissionModel.hasPermission(userId, meta.id, 'READ');
+                        
+                        if (hasAccess) {
+                            resultsMap.set(meta.id, meta);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn(`[FileModel] Search warning (C++ might be empty or error): ${error.message}`);
+        }
+
+        // Convert Map values to array
+        return Array.from(resultsMap.values());
+    };
 
 module.exports = {
     _getDirectChildren, 
@@ -259,5 +304,6 @@ module.exports = {
     create,
     getFileById,
     update,
-    deleteFile
-};
+    deleteFile,
+    searchFiles 
+};;
