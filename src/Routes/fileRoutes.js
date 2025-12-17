@@ -44,12 +44,12 @@ router.route('/:id')
 router.route('/:id/permissions')
     // List permissions for this file
     .get(
-        requirePermission('ADMIN'),        
+        requirePermission('MANAGE'),        
         permissionController.getPermissions
     )
     // Add permission to this file
     .post(
-        requirePermission('ADMIN'),       
+        requirePermission('MANAGE'),       
         permissionController.createPermission
     );
 
@@ -57,12 +57,12 @@ router.route('/:id/permissions')
 router.route('/:id/permissions/:pId')
     // Update specific permission
     .patch(
-        requirePermission('ADMIN'),        
+        requirePermission('MANAGE'),        
         permissionController.updatePermission
     )
     // Remove specific permission
     .delete(
-        requirePermission('ADMIN'),       
+        requirePermission('MANAGE'),       
         permissionController.deletePermission
     );
 

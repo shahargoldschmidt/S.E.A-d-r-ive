@@ -8,7 +8,8 @@ const permissionsStore = new Map();
 
 const ROLE_PERMISSIONS = {
     'VIEWER': ['READ'],
-    'EDITOR': ['READ', 'WRITE', 'DELETE']
+    'EDITOR': ['READ', 'WRITE', 'DELETE'],
+    'ADMIN' : ['READ', 'WRITE', 'DELETE', 'MANAGE']
 };
 
 
@@ -129,13 +130,10 @@ const ROLE_PERMISSIONS = {
             const userPerm = permissions.find(p => p.userId === userId); 
 
             if (userPerm) {
-                // check what kind of prmission
-                if (userPerm) {
                      // Get allowed actions for this user's role (VIEWER/EDITOR)
                     const allowedActions = ROLE_PERMISSIONS[userPerm.type] || [];
                     // Check if the requested action is allowed
                      return allowedActions.includes(actionType);
-        }
             }
             // Climb up to the parent folder to see if theres premission for folders
             currentFileId = file.parentId;

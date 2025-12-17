@@ -2,7 +2,7 @@ const permissionModel = require('../models/permissionModel');
 
 /**
  * Middleware: Checks recursive permissions.
- * @param {string} actionType - 'READ' or 'WRITE'
+ * @param {string} actionType - 'READ' or 'WRITE' or 'DELETE'
  */
 const requirePermission = (actionType) => {
     return async (req, res, next) => {
