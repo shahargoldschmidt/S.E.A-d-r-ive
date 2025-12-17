@@ -149,17 +149,7 @@ const filesMetadata = new Map();
         if (fileMeta.type === 'folder') {
             const children = _getDirectChildren(fileId); 
             
-            // Use Promise.all to fetch content for all child files in parallel
-            const childrenWithContent = await Promise.all(children.map(async (child) => {
-                if (child.type === 'folder') {
-                    return child; // Return folder metadata as is
-                }
-                // If child is a file, fetch its content
-                const content = await _fetchContentFromTcp(child.id); 
-                return { ...child, content };
-            }));
-
-            return { ...fileMeta, children: childrenWithContent };
+            return { ...fileMeta, children: children };
         }
 
         // if It is a FILE
