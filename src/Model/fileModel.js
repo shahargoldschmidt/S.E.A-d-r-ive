@@ -40,7 +40,7 @@ const filesMetadata = new Map();
     };
 
     //Helper: Retrieves file metadata directly from memory
-    const getMetadata = (fileId) => { // * CHANGED: 'const' instead of method
+    const getMetadata = (fileId) => { 
         return filesMetadata.get(fileId) || null;
     };
 
@@ -175,7 +175,7 @@ const filesMetadata = new Map();
      * Deletes the target item and ALL its descendants (children, grandchildren, etc.).
      * Cleans up both C++ storage (for files) and Node.js memory.
      */
-    const deleteFile = async (fileId) => { // * CHANGED: 'const' instead of method
+    const deleteFile = async (fileId) => { 
         if (!filesMetadata.has(fileId)) return false;
 
         const allIdsToDelete = [];
@@ -183,7 +183,7 @@ const filesMetadata = new Map();
         // Recursive helper to collect all descendant IDs
         const collectDescendants = (currentId) => {
             allIdsToDelete.push(currentId); // Add current item
-            const children = _getDirectChildren(currentId); // * CHANGED: Removed 'this.'
+            const children = _getDirectChildren(currentId); 
             for (const child of children) {
                 collectDescendants(child.id); // Recurse
             }
