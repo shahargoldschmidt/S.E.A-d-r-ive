@@ -100,6 +100,9 @@ const filesMetadata = new Map();
         }
         
         const type = fileData.type || 'file';
+        if (type !== 'file' && type !== 'folder') {
+            throw new Error(`Invalid type: '${type}'. Allowed types are 'file' or 'folder'.`);
+        }
         const isFile = type === 'file';
         const content = fileData.content || "";
 
