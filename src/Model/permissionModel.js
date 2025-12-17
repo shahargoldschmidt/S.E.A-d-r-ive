@@ -1,4 +1,3 @@
-const fileModel = require('./fileModel'); 
 const { v4: uuidv4 } = require('uuid'); // Install: npm install uuid
 
 // In-Memory Storage for Permissions
@@ -111,6 +110,7 @@ const ROLE_PERMISSIONS = {
      * @returns {Promise<boolean>} True if access is granted.
      */
     const hasPermission = async (userId, fileId, actionType) => {
+        const fileModel = require('./fileModel');
         let currentFileId = fileId;
 
     // Loop upwards until we reach the root (null)
