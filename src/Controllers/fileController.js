@@ -34,6 +34,19 @@ const uploadFile = async (req, res) => {
         if (!fileData.name) {
             return res.status(400).json({ error: "Name is required" });
         }
+        // if wants to write in a folder' checks it has premiision to upload in folder
+        if (fileData.parentId) {
+            const hasWriteAccess = await permissionModel.hasPermission(
+                userId, 
+                fileData.parentId, 
+                'WRITE' // Creation requires WRITE permission
+            );
+
+            if (!hasWriteAccess) {
+                console.warn(`[Security] User ${userId} tried to create file in unauthorized folder ${fileData.parentId}`);
+                return res.status(403).json({ error: "Access Denied: You do not have permission to write in this folder." });
+            }
+        }
 
         // Parent Validation: If parentId is provided, ensure it exists and is a FOLDER.
         // We do this check here to return a specific 400 Bad Request error.
