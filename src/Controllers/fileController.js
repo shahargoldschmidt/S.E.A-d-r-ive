@@ -1,4 +1,5 @@
 const fileModel = require('../models/fileModel');
+const permissionModel = require('../models/permissionModel');
 
 /**
  * 
@@ -58,6 +59,8 @@ const uploadFile = async (req, res) => {
 
         // Delegate creation to the model
         const newItem = await fileModel.create(userId, fileData);
+        // create an admin permision to owner of the file
+        await permissionModel.addPermission(newItem.id, userId, 'ADMIN');
         
         // Status 201: Created
         res.status(201).json(newItem);
