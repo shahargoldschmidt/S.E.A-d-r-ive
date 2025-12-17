@@ -1,8 +1,8 @@
-// middlewares/permissionMiddleware.js
 const permissionModel = require('../models/permissionModel');
 
 /**
- * Middleware: Checks if the user has the required permission for the requested file.
+ * Middleware: Checks recursive permissions.
+ * @param {string} actionType - 'READ' or 'WRITE'
  */
 const requirePermission = (actionType) => {
     return async (req, res, next) => {
@@ -10,14 +10,16 @@ const requirePermission = (actionType) => {
             const userId = req.userId; 
             const fileId = req.params.id;
 
-            // Check if the user has the specific permission in the model
+            if (!fileId) {
+                return res.status(400).json({ error: "File ID is missing" });
+            }
+            
             const hasAccess = await permissionModel.hasPermission(userId, fileId, actionType);
             
             if (!hasAccess) {
                 return res.status(403).json({ error: "Access Denied" });
             }
 
-            // Permission granted, proceed to the controller
             next();
         } catch (error) {
             console.error(`[PermissionMiddleware] Error: ${error.message}`);
