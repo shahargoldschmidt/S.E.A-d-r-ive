@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 // Metadata Object: { id, owner, name, type, parentId, size, createdAt, content? }
 const filesMetadata = new Map();
 
-    //  Helper Methods (Internal Use)
+    //  Helper Methods
 
     /**
      * Helper: Retrieves all direct children
@@ -171,7 +171,7 @@ const filesMetadata = new Map();
      */
     const update = async (fileId, updates) => { 
         const file = getMetadata(fileId); 
-        
+
         if (!file) return null;
         if (updates.name && updates.name !== file.name) {
             if (_isNameTaken(file.parentId, updates.name, file.owner)) {
