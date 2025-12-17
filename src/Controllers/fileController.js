@@ -1,6 +1,7 @@
 const fileModel = require('../models/fileModel');
 
 /**
+ * 
  * Get all ROOT files/folders for the current user.
  * only items where parentId is null (Top-level).
  * Route: GET /api/files
@@ -34,28 +35,22 @@ const uploadFile = async (req, res) => {
         if (!fileData.name) {
             return res.status(400).json({ error: "Name is required" });
         }
-        // if wants to write in a folder' checks it has premiision to upload in folder
+        // Parent Validation: If parentId is provided, ensure it exists and is a FOLDER.
         if (fileData.parentId) {
+            const parent = fileModel.getMetadata(fileData.parentId);
+            // check that folder exists in data 
+            if (!parent || parent.type !== 'folder') { 
+                return res.status(400).json({ error: "Invalid parent folder ID: Parent must be an existing folder." });
+            }
+            // check permission to upload in a folder
             const hasWriteAccess = await permissionModel.hasPermission(
                 userId, 
                 fileData.parentId, 
-                'WRITE' // Creation requires WRITE permission
+                'WRITE'
             );
-
             if (!hasWriteAccess) {
                 console.warn(`[Security] User ${userId} tried to create file in unauthorized folder ${fileData.parentId}`);
                 return res.status(403).json({ error: "Access Denied: You do not have permission to write in this folder." });
-            }
-        }
-
-        // Parent Validation: If parentId is provided, ensure it exists and is a FOLDER.
-        // We do this check here to return a specific 400 Bad Request error.
-        if (fileData.parentId) {
-            const parent = fileModel.getMetadata(fileData.parentId);
-            
-            // Check if parent doesn't exist OR if parent is actually a file (cannot contain children)
-            if (!parent || parent.type === 'file') {
-                return res.status(400).json({ error: "Invalid parent folder ID: Parent must be an existing folder." });
             }
         }
 
