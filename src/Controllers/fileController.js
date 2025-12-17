@@ -61,7 +61,7 @@ const uploadFile = async (req, res) => {
         const newItem = await fileModel.create(userId, fileData);
         // create an admin permision to owner of the file
         await permissionModel.addPermission(newItem.id, userId, 'ADMIN');
-        
+        res.set('Location', `/api/files/${newFileId}`);
         // Status 201: Created
         res.status(201).send();
     } catch (error) {
