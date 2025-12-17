@@ -44,30 +44,6 @@ const filesMetadata = new Map();
         return filesMetadata.get(fileId) || null;
     };
 
-    /**
-     * * NEW HELPER *
-     * Checks if a name is taken.
-     * Logic:
-     * - Inside a specific folder (parentId exists): Name must be unique globally in that folder.
-     * - At Root (parentId is null): Name must be unique ONLY for this specific user.
-     */
-    const _isNameTaken = (parentId, name, userId) => {
-        for (const file of filesMetadata.values()) {
-            
-            // 1. Check if files are in the same location
-            if (file.parentId !== parentId) continue;
-
-            // 2. SPECIAL HANDLING FOR ROOT (null)
-            // If we are at root, we only care about files belonging to THIS user.
-            // (User A's root is different from User B's root)
-            if (parentId === null && file.owner !== userId) continue;
-
-            // 3. Check name collision
-            if (file.name === name) return true;
-        }
-        return false;
-    };
-
     //  Public Methods (API)
 
     /**
@@ -103,11 +79,6 @@ const filesMetadata = new Map();
         const uniqueFileId = uuidv4();
         const name = fileData.name;
         const parentId = fileData.parentId || null;
-
-        // Passing userId to the check
-        if (_isNameTaken(parentId, name, userId)) {
-            throw new Error(`A file or folder named '${name}' already exists in this location.`);
-        }
         
         const type = fileData.type ;
         if (type !== 'file' && type !== 'folder') {
@@ -176,11 +147,6 @@ const filesMetadata = new Map();
         const file = getMetadata(fileId); 
 
         if (!file) return null;
-        if (updates.name && updates.name !== file.name) {
-            if (_isNameTaken(file.parentId, updates.name, file.owner)) {
-                throw new Error(`A file or folder named '${updates.name}' already exists in this location.`);
-            }
-        }
 
         // If it's a FILE and content is updated -> sync with C++
         if (file.type === 'file' && updates.content) {
