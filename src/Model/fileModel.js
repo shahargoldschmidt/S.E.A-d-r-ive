@@ -1,5 +1,5 @@
 const tcpClient = require('../services/tcpClientService');
-const { v4: uuidv4 } = require('uuid'); 
+const crypto = require('crypto');
 
 // In-Memory Storage for File Metadata
 // Map Structure: <fileId, FileMetadataObject>
@@ -76,7 +76,7 @@ const filesMetadata = new Map();
      * - Files: Saved in memory AND sent to C++ server via TCP.
      */
     const create = async (userId, fileData) => { 
-        const uniqueFileId = uuidv4();
+        const uniqueFileId = crypto.randomUUID();;
         const name = fileData.name;
         const parentId = fileData.parentId || null;
         
