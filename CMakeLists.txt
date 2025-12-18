@@ -30,6 +30,8 @@ set(SERVER_SOURCES
     src/DeleteCommand.cpp
     src/GetCommand.cpp
     src/SearchCommand.cpp
+    src/UpdateFileCommand.cpp
+    
 )
 
 # Client Logic Files
@@ -62,6 +64,7 @@ set(TEST_SOURCES
     tests/ServerTest.cpp
     tests/TCPMenuTest.cpp
     tests/TestApp.cpp
+    tests/UpdateFileCommandTests.cpp
 )
 
 # Test Runner
