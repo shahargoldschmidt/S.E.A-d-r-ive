@@ -22,6 +22,19 @@ const filesMetadata = new Map();
         return children;
     };
 
+    const getAllDescendantIds = (fileId) => {
+        const ids = [];
+         const collect = (id) => {
+             ids.push(id);
+             const children = _getDirectChildren(id);
+                for (const child of children) {
+                  collect(child.id);
+                 }
+         };
+    collect(fileId);
+    return ids;
+};
+
     /**
      * Helper: Fetches and formats content from the C++ TCP Server.
      */
@@ -187,7 +200,6 @@ const filesMetadata = new Map();
           }
     }
     
-    // הסרה מהזיכרון
     return filesMetadata.delete(id);
 };
 
@@ -247,6 +259,7 @@ module.exports = {
     _getDirectChildren, 
     _fetchContentFromTcp, 
     getMetadata,
+    getAllDescendantIds,
     getAccessibleRootFiles,
     create,
     getFileById,
