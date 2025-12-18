@@ -30,6 +30,7 @@ public:
         storedFiles.push_back(fileName);
     }
     void removeFile(const std::string& fileName) override {}
+    void overwriteFile(const string& fileName, const string& content) override {}
 };
 
 

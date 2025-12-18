@@ -31,6 +31,7 @@ public:
     string readFile(const string& fname) override { return content[fname]; }  // read from map
     vector<string> listFiles() override { return files; }  // return file names
     void removeFile(const std::string& fileName) override {}
+    void overwriteFile(const string& fileName, const string& content) override {}
 };
 
 // Test find multiple files matching the query

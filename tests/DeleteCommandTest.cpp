@@ -35,6 +35,8 @@ public:
             filesInStorage.erase(it);
         }
     }
+
+    void overwriteFile(const string& fileName, const string& content) override {}
 };
 
 class DeleteCommandTest : public ::testing::Test {

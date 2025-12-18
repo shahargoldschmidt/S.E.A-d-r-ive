@@ -126,7 +126,7 @@ void OSFileHandler::removeFile(const string& fileName) {
 
     _mutex.unlock(); // Unlock at the end of function
 }
-// Overwrite file content (Truncate) - NEW
+// Overwrite file content - NEW
 void OSFileHandler::overwriteFile(const string& fileName, const string& content) {
     _mutex.lock();
     string basePath = getBasePath();
@@ -136,7 +136,11 @@ void OSFileHandler::overwriteFile(const string& fileName, const string& content)
         _mutex.unlock();
         return;
     }
-
+     // does the file exist?
+    if (!fs::exists(fullPath)) {
+        _mutex.unlock();
+        return; // if not we arnt going to make new file
+    }
     // ios::trunc deletes old content
     ofstream file(fullPath, ios::binary | ios::trunc);    
     if (file.is_open()) {

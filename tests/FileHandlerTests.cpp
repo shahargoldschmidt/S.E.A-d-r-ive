@@ -139,6 +139,7 @@ TEST_F(OSFileHandlerTest, RemoveFile_RemovesExistingFile) {
 
 // TESTS FOR updateFile
 TEST_F(OSFileHandlerTest, OverwriteFile_ReplacesExistingContent) {
+    setenv(ENV_NAME.c_str(), basePath.string().c_str(), 1);
     string filename = "overwrite_test.dat";
     string initialContent = "Initial Data";
     string updatedContent = "Updated Data";
@@ -157,6 +158,8 @@ TEST_F(OSFileHandlerTest, OverwriteFile_ReplacesExistingContent) {
 
 // Verify it DOES NOT create a file if it's missing
 TEST_F(OSFileHandlerTest, OverwriteFile_DoesNotCreateFile_IfMissing) {
+    setenv(ENV_NAME.c_str(), basePath.string().c_str(), 1);
+    
     string filename = "ghost_overwrite.dat";
     string content = "Should Not Exist";
     fs::path fullPath = basePath / filename;
