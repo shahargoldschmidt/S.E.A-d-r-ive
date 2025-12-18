@@ -1,8 +1,9 @@
-const permissionModel = require('../models/permissionModel');
+
+const permissionService = require('../services/permissionService');
 
 /**
  * Middleware: Checks recursive permissions.
- * @param {string} actionType - 'READ' or 'WRITE'
+ * @param {string} actionType - 'READ' or 'WRITE' or
  */
 const requirePermission = (actionType) => {
     return async (req, res, next) => {
@@ -13,10 +14,11 @@ const requirePermission = (actionType) => {
             if (!fileId) {
                 return res.status(400).json({ error: "File ID is missing" });
             }
-            
-            const hasAccess = await permissionModel.hasPermission(userId, fileId, actionType);
+
+            const hasAccess = await permissionService.hasPermission(userId, fileId, actionType);
             
             if (!hasAccess) {
+                console.warn(`[Security] Access Denied for user ${userId} on item ${fileId}`);
                 return res.status(403).json({ error: "Access Denied" });
             }
 
