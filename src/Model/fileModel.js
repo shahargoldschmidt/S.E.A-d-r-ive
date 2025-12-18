@@ -175,40 +175,21 @@ const filesMetadata = new Map();
      * Deletes the target item and ALL its descendants (children, grandchildren, etc.).
      * Cleans up both C++ storage (for files) and Node.js memory.
      */
-    const deleteFile = async (fileId) => { 
-        if (!filesMetadata.has(fileId)) return false;
-
-        const allIdsToDelete = [];
-
-        // Recursive helper to collect all descendant IDs
-        const collectDescendants = (currentId) => {
-            allIdsToDelete.push(currentId); // Add current item
-            const children = _getDirectChildren(currentId); 
-            for (const child of children) {
-                collectDescendants(child.id); // Recurse
-            }
-        };
-
-        // Gather all IDs
-        collectDescendants(fileId);
-
-        // Perform deletion
-        for (const id of allIdsToDelete) {
-            const meta = filesMetadata.get(id);
+    const deleteSingleFile = async (id) => {
+        const meta = filesMetadata.get(id);
+    
+        if (meta && meta.type === 'file') { 
+            try {
             
-            // If it's a physical file, send delete command to C++
-            if (meta && meta.type === 'file') {
-                tcpClient.sendCommand(`delete ${id}`).catch(e => 
-                    console.warn(`[FileModel] TCP Delete warning for ${id}: ${e.message}`)
-                );
-            }
-            
-            // Remove from memory
-            filesMetadata.delete(id);
-        }
-
-        return true;
-    };
+                 await tcpClient.sendCommand(`delete ${id}`);
+         } catch (e) {
+             console.warn(`[FileModel] TCP Delete warning for ${id}: ${e.message}`);
+          }
+    }
+    
+    // הסרה מהזיכרון
+    return filesMetadata.delete(id);
+};
 
 
      // Search files by logical name (Node.js) AND content (C++).
@@ -270,6 +251,6 @@ module.exports = {
     create,
     getFileById,
     update,
-    deleteFile,
+    deleteSingleFile,
     searchFiles 
 };;

@@ -105,18 +105,30 @@ const getFileData = async (req, res) => {
 const deleteFile = async (req, res) => {
     try {
         const fileId = req.params.id;
-
-        console.log(`[FileController] Deleting item: ${fileId}`);
         
-        // Perform recursive delete via model
-        const wasDeleted = await fileModel.deleteFile(fileId);
-
-        if (!wasDeleted) {
-            // If false, it means the ID was not found in memory
+        //  get information of item
+        const targetMetadata = await fileModel.getMetadata(fileId);
+        if (!targetMetadata) {
             return res.status(404).json({ error: "File or Folder not found" });
         }
 
-        // (Standard for successful delete)
+        let allIdsToDelete = [];
+
+        //.if a folder want s to be delted get all his children to delete
+        if (targetMetadata.type === 'FOLDER') {
+            console.log(`[FileController] Recursive delete triggered for folder: ${fileId}`);
+            allIdsToDelete = fileModel.getAllDescendantIds(fileId);
+        } else {
+            console.log(`[FileController] Single file delete triggered: ${fileId}`);
+            allIdsToDelete = [fileId]; // 
+        }
+
+        // each id remove its permiisions and delete it
+        for (const id of allIdsToDelete) {
+            await permissionModel.removeAllPermissionsForFile(id);
+            await fileModel.deleteSingleFile(id);
+        }
+
         res.status(204).send(); 
     } catch (error) {
         console.error(`[FileController] Error in deleteFile: ${error.message}`);

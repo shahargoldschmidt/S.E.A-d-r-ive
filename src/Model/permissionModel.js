@@ -102,6 +102,15 @@ const ROLE_PERMISSIONS = {
     };
 
 
+    const removeAllPermissionsForFile = async (fileId) => {
+        for (const [pId, perm] of permissionsStore.entries()) {
+          if (perm.fileId === fileId) {
+              permissionsStore.delete(pId);
+        }
+    }
+};
+
+
     /**
      * Checks if a user has permission to perform an action on a file.
      * Implements "Permission Inheritance": checks the file, then its parent, grandparent, etc.
@@ -148,5 +157,6 @@ module.exports = {
     updatePermission,
     removePermission,
     getPermissionById,
+    removeAllPermissionsForFile,
     hasPermission
 };
