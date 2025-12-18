@@ -61,7 +61,7 @@ const uploadFile = async (req, res) => {
         const newItem = await fileModel.create(userId, fileData);
         // create an admin permision to owner of the file
         await permissionModel.addPermission(newItem.id, userId, 'ADMIN');
-        res.set('Location', `/api/files/${newItemId}`);
+        res.set('Location', `/api/files/${newItem.id}`);
         // Status 201: Created
         res.status(201).send();
     } catch (error) {
@@ -115,7 +115,7 @@ const deleteFile = async (req, res) => {
         let allIdsToDelete = [];
 
         //.if a folder want s to be delted get all his children to delete
-        if (targetMetadata.type === 'FOLDER') {
+        if (targetMetadata.type === 'folder') {
             console.log(`[FileController] Recursive delete triggered for folder: ${fileId}`);
             allIdsToDelete = fileModel.getAllDescendantIds(fileId);
         } else {

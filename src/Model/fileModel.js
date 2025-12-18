@@ -89,7 +89,7 @@ const filesMetadata = new Map();
      * - Files: Saved in memory AND sent to C++ server via TCP.
      */
     const create = async (userId, fileData) => { 
-        const uniqueFileId = crypto.randomUUID();;
+        const uniqueFileId = crypto.randomUUID();
         const name = fileData.name;
         const parentId = fileData.parentId || null;
         
