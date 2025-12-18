@@ -55,7 +55,7 @@ const updatePermission = async (req, res) => {
         const { type } = req.body;
 
         if (!type || (type !== 'VIEWER' && type !== 'EDITOR' && type !== 'ADMIN')) {
-            return res.status(400).json({ error: "Valid permission type (VIEWER/EDITOR) is required" });
+            return res.status(400).json({ error: "Valid permission type (VIEWER/EDITOR/ADMIN) is required" });
         }
 
         console.log(`[PermissionController] Updating permission ${pId} to '${type}'`);
