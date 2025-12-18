@@ -100,6 +100,14 @@ const ROLE_PERMISSIONS = {
         return permissionsStore.get(pId) || null;
     };
 
+ const removeAllPermissionsForFile = async (fileId) => {
+    for (const [pId, perm] of permissionsStore.entries()) {
+        if (perm.fileId === fileId) {
+            permissionsStore.delete(pId);
+        }
+    }
+};
+
 
     /**
      * Checks if a user has permission to perform an action on a file.
@@ -151,5 +159,6 @@ module.exports = {
     updatePermission,
     removePermission,
     getPermissionById,
+    removeAllPermissionsForFile,
     hasPermission
 };
