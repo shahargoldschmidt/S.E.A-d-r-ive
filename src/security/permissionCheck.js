@@ -14,6 +14,10 @@ const requirePermission = (actionType) => {
                 return res.status(400).json({ error: "File ID is missing" });
             }
             
+            if (file.owner === userId) {
+                console.log(`[Security] Owner access granted for user ${userId} on ${fileId}`);
+                return next();
+            }
             const hasAccess = await permissionModel.hasPermission(userId, fileId, actionType);
             
             if (!hasAccess) {
