@@ -11,7 +11,7 @@ const register = async (req, res) => {
             return res.status(400).json({ error: "Username and password are required" });
         }
 
-        // Create a new user via the model
+        // Create a new user via the service
         const newUser = await userService.createUser({ username, password, name, image });
         res.status(201).json(newUser);
 
