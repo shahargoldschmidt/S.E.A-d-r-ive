@@ -1,18 +1,7 @@
 const userModel = require('../models/userModel');
 
-// ==========================================================
-// User Controller
-// Handles user registration and user data retrieval
-// ==========================================================
-
-/**
- * Register a new user
- * Endpoint: POST /api/users
- *
- * Validates required fields and delegates user creation
- * to the UserModel.
- */
-const register = (req, res) => {
+// Registers a new user via POST /api/users
+const register = async (req, res) => {
     try {
         // Extract user data from request body
         const { username, password, name, image } = req.body;
@@ -23,10 +12,9 @@ const register = (req, res) => {
         }
 
         // Create a new user via the model
-        const newUser = userModel.createUser({ username, password, name, image });
-
-        // Successfully created
+        const newUser = await userService.createUser({ username, password, name, image });
         res.status(201).json(newUser);
+
     } catch (error) {
         // Handle duplicate username error
         if (error.message === 'Username already exists') {
@@ -38,19 +26,12 @@ const register = (req, res) => {
     }
 };
 
-/**
- * Get user information by user ID
- * Endpoint: GET /api/users/:id
- *
- * Returns user details (without password) if found.
- */
-const getUser = (req, res) => {
+//Retrieves user information via GET /api/users/:id
+const getUser = async (req, res) => {
     try {
         // Extract user ID from URL parameters
         const userId = req.params.id;
-
-        // Retrieve user from the model
-        const user = userModel.getUserById(userId);
+        const user = await userService.getUser(userId); 
 
         // User not found
         if (!user) {
@@ -64,9 +45,6 @@ const getUser = (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-// Note: Login functionality is intentionally handled
-// in a separate TokenController (POST /api/tokens)
 
 module.exports = {
     register,
