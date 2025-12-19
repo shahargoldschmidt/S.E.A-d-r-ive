@@ -92,8 +92,21 @@ const searchFiles = async (userId, query) => {
     // content match by TCP
     const tcpIds = await fileModel.searchTcp(query);
     for (const id of tcpIds) { 
+        if (resultsMap.has(id)) continue; //If the file was already matched by name, skip
+
         const meta = await fileModel.getById(id);
-        if (meta) resultsMap.set(id, meta);
+        //edge case If the query is a substring of the ID 
+        // might have matched by name and not content
+        if (id.includes(query)) {
+            // fetch the actual content to verify the match
+            const actualContent = await fileModel.getTcpContent(id);
+            if (actualContent.includes(query)) { //only after match is verified add to map
+                resultsMap.set(id, meta);
+            }
+        } else {
+            // If the query is in the ID, it must have been found in the content
+            resultsMap.set(id, meta);
+        }
     }
 
     // Filter by permissions, only files with its premissions will show to user
