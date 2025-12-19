@@ -4,24 +4,17 @@ const crypto = require('crypto');
 // In-Memory Storage
 const filesMetadata = new Map();
 
-/**
- * Retrieves all metadata objects from memory.
- */
+// Retrieves all metadata objects from memory no filter.
 const getFiles = async () => {
     return Array.from(filesMetadata.values());
 };
 
-/**
- * Retrieves a single metadata object. 
- * Validation: Checks if the ID exists in the Map.
- */
+// Retrieves a single metadata object if exists
 const getById = async (fileId) => {
     return filesMetadata.get(fileId) || null;
 };
 
-/**
- * Raw creation logic .
- */
+// create file/folder and add to metadata. 
 const create = async (userId, fileId, fileData) => {
     const isFile = fileData.type === 'file';
     const content = fileData.content || "";
@@ -35,7 +28,7 @@ const create = async (userId, fileId, fileData) => {
         size: isFile ? content.length : 0,
         createdAt: new Date().toISOString()
     };
-
+    // add to tcp if its a file
     if (isFile) {
         const command = `post ${fileId} ${content}`;
         const response = await tcpClient.sendCommand(command);
@@ -43,14 +36,12 @@ const create = async (userId, fileId, fileData) => {
             throw new Error(`TCP Storage Error: ${response}`);
         }
     }
-
+    //add to metadata
     filesMetadata.set(fileId, newFileMeta);
     return newFileMeta;
 };
 
-/**
- * Updates metadata and/or TCP content.
- */
+// Updates metadata for name and TCP for content.
 const update = async (fileId, updates) => {
     const file = filesMetadata.get(fileId);
     if (!file) return null;
@@ -79,13 +70,11 @@ const update = async (fileId, updates) => {
     return updatedFile;
 };
 
-/**
- * Deletes from Map and TCP.
- */
+// Deletes from Map and TCP.
 const deleteFile = async (id) => {
     const meta = filesMetadata.get(id);
     if (!meta) return false;
-
+    //if its a file delte also from TCP
     if (meta.type === 'file') {
         await tcpClient.sendCommand(`delete ${id}`);
     }
@@ -93,9 +82,7 @@ const deleteFile = async (id) => {
     return filesMetadata.delete(id);
 };
 
-/**
- * Fetches matching IDs from the C++ Server.
- */
+// Fetches matching IDs from the C++ Server. 
 const searchTcp = async (query) => {
     try {
         const response = await tcpClient.sendCommand(`search ${query}`);
@@ -109,9 +96,7 @@ const searchTcp = async (query) => {
     return [];
 };
 
-/**
- * Fetches content for a specific file from TCP.
- */
+// Fetches content for a specific file from TCP.
 const getTcpContent = async (fileId) => {
     const response = await tcpClient.sendCommand(`get ${fileId}`);
     if (response.startsWith("200 Ok")) {

@@ -86,10 +86,10 @@ const searchFiles = async (userId, query) => {
     const resultsMap = new Map();
     const all = await fileModel.getFiles();
 
-    // Metadata name match
+    // name match by metadata
     all.filter(f => f.name.includes(query)).forEach(f => resultsMap.set(f.id, f));
 
-    // TCP content match
+    // content match by TCP
     const tcpIds = await fileModel.searchTcp(query);
     for (const id of tcpIds) { 
         const meta = await fileModel.getById(id);
