@@ -13,7 +13,7 @@ const ROLE_PERMISSIONS = {
 const hasPermission = async (userId, fileId, actionType) => {
     let currentFileId = fileId;
 
-    while (currentFileId) { //go up the hierachy
+    while (currentFileId) { 
         const file = fileModel.getMetadata(currentFileId);
         if (!file) return false;
 
@@ -31,7 +31,7 @@ const hasPermission = async (userId, fileId, actionType) => {
                 return true;
             }
         }
-        //climb the hierachy
+        //climb the hierachy to check folder premissions 
         currentFileId = file.parentId;
     }
     return false;
