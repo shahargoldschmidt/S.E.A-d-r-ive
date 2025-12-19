@@ -55,15 +55,25 @@ const update = async (fileId, updates) => {
     const file = filesMetadata.get(fileId);
     if (!file) return null;
 
-    if (file.type === 'file' && updates.content) {
-        const cmd = `update ${fileId} ${updates.content}`;
-        const response = await tcpClient.sendCommand(cmd);
-        if (!response.startsWith("200") && !response.startsWith("204")) {
-            throw new Error("TCP Content Update failed");
+    // Check if we need to update content (Only for files)
+    if (file.type === 'file' && updates.content !== undefined) {
+        // DELETE from C++ Storage
+        await tcpClient.sendCommand(`delete ${fileId}`);
+        // POST to C++ Storage
+        const response = await tcpClient.sendCommand(`post ${fileId} ${updates.content}`);
+        
+        if (!response.includes("201")) {
+            throw new Error(`TCP Content update failed: ${response}`);
         }
+
+        // Update size based on new content
         updates.size = updates.content.length;
+        
+        // Remove content from updates so it's not saved in the metadata Map
+        delete updates.content;
     }
 
+    // Update the metadata in the local Map 
     const updatedFile = { ...file, ...updates };
     filesMetadata.set(fileId, updatedFile);
     return updatedFile;

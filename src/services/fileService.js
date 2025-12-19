@@ -106,6 +106,9 @@ const searchFiles = async (userId, query) => {
 };
 
 const updateFile = async (fileId, updates) => {
+    if (file.type === 'folder' && updates.content !== undefined) {
+        throw new Error("Invalid Operation: Only files can have content");
+    }
     return await fileModel.update(fileId, updates);
 };
 

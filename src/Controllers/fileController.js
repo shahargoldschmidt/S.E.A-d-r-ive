@@ -47,10 +47,16 @@ const deleteFile = async (req, res) => {
 
 const updateFile = async (req, res) => {
     try {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ error: "Update data is required" });
+        }
         const updated = await fileService.updateFile(req.params.id, req.body);
         if (!updated) return res.status(404).json({ error: "File or Folder not found" });
         res.status(204).send();
     } catch (e) {
+        if (e.message.includes("Only files can have content")) {
+            return res.status(400).json({ error: e.message });
+        }
         res.status(500).json({ error: e.message });
     }
 };
