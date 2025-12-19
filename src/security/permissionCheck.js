@@ -1,10 +1,7 @@
 
 const permissionService = require('../services/permissionService');
 
-/**
- * Middleware: Checks recursive permissions.
- * @param {string} actionType - 'READ' or 'WRITE' or
- */
+// a security check by type of action neede before accesing a function 
 const requirePermission = (actionType) => {
     return async (req, res, next) => {
         try {
