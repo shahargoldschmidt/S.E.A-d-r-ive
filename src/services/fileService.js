@@ -97,7 +97,7 @@ const searchFiles = async (userId, query) => {
         const meta = await fileModel.getById(id);
         if (!meta) continue;
         //edge case If the query is a substring of the ID 
-        // might have matched by name and not content
+        // might have matched by name and not content in TCP
         if (id.includes(query)) {
             // fetch the actual content to verify the match
             const actualContent = await fileModel.getTcpContent(id);
