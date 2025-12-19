@@ -7,9 +7,7 @@ const ROLE_PERMISSIONS = {
     'ADMIN': ['READ', 'WRITE', 'DELETE', 'MANAGE']
 };
 
-/**
- * Checks if a user has permission for a specific action either for a file or for a folder .
- */
+// Checks if a user has permission for a specific action either for a file or for a folder .
 const hasPermission = async (userId, fileId, actionType) => {
     let currentFileId = fileId;
 
