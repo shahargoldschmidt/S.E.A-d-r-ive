@@ -8,7 +8,7 @@ const ROLE_PERMISSIONS = {
 };
 
 /**
- * Checks if a user has permission by climbing the folder hierarchy.
+ * Checks if a user has permission for a specific action either for a file or for a folder .
  */
 const hasPermission = async (userId, fileId, actionType) => {
     let currentFileId = fileId;
