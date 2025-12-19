@@ -95,6 +95,7 @@ const searchFiles = async (userId, query) => {
         if (resultsMap.has(id)) continue; //If the file was already matched by name, skip
 
         const meta = await fileModel.getById(id);
+        if (!meta) continue;
         //edge case If the query is a substring of the ID 
         // might have matched by name and not content
         if (id.includes(query)) {
