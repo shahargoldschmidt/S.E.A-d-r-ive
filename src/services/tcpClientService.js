@@ -63,7 +63,7 @@ function _isResponseComplete(data) {
     const shortResponsePattern = /^(201|204|400|404|500).*\n$/;
     
     // Long responses (200 OK) starting with header 
-    const longResponsePattern = /^200 Ok\n\n[\s\S]+\n$/;
+    const longResponsePattern = /^200 Ok\n\n[\s\S]*\n$/;
 
     // Return true if the data matches either of the standard protocol patterns
     return shortResponsePattern.test(data) || longResponsePattern.test(data);
