@@ -1,5 +1,6 @@
 const fileService = require('../services/fileService');
 
+// get all root items user has a access too
 const getFiles = async (req, res) => {
     try {
         const files = await fileService.getFiles(req.userId);
@@ -8,7 +9,7 @@ const getFiles = async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 };
-
+// create a file or a folder 
 const createFile = async (req, res) => {
     try {
         // HTTP Validation
@@ -24,7 +25,7 @@ const createFile = async (req, res) => {
         res.status(status).json({ error: e.message });
     }
 };
-
+// get a specific file data by id 
 const getFileData = async (req, res) => {
     try {
         const file = await fileService.getFileData(req.params.id);
@@ -34,7 +35,7 @@ const getFileData = async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 };
-
+//delete a specific file
 const deleteFile = async (req, res) => {
     try {
         await fileService.deleteFile(req.params.id);
@@ -45,16 +46,23 @@ const deleteFile = async (req, res) => {
     }
 };
 
+//update a name/content file  
 const updateFile = async (req, res) => {
     try {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ error: "Update data is required" });
+        }
         const updated = await fileService.updateFile(req.params.id, req.body);
         if (!updated) return res.status(404).json({ error: "File or Folder not found" });
         res.status(204).send();
     } catch (e) {
+        if (e.message.includes("Only files can have content")) {
+            return res.status(400).json({ error: e.message });
+        }
         res.status(500).json({ error: e.message });
     }
 };
-
+// a query for a file/folder
 const searchFiles = async (req, res) => {
     try {
         if (!req.params.query) return res.status(400).json({ error: "Query is required" });

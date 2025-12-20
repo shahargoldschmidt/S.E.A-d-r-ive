@@ -17,7 +17,7 @@ router.route('/')
     // List all files
     .get(fileController.getFiles)   
      // Create/Upload a new file
-    .post(fileController.uploadFile);
+    .post(fileController.createFile);
 
 // Route: /api/files/:id
 router.route('/:id')
