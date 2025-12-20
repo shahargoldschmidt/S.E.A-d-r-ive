@@ -13,13 +13,10 @@ const validator = (req, res, next) => {
     }
 
     // Check Does the user exist in the system
-    //UNCOMMENT THIS AFTER MERGING WITH USER-MANAGEMENT BRANCH
-    /*
     const user = userModel.findById(userId);
     if (!user) {
          return res.status(401).json({ error: "Access Denied. User not found." });
     }
-    */
 
     // Validation passed
     req.userId = userId;
