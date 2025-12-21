@@ -15,7 +15,7 @@ const createUser = async (userData) => {
     const userId = crypto.randomUUID();
     
     // Delegate the object building and persistence to the Model 
-    const newUser = await userModel.create(userId, userData);
+    const newUser = await userModel.createUser(userId, userData);
     
     //  Redact the password from the return object 
     const { password, ...userWithoutPassword } = newUser;

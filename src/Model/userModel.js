@@ -20,7 +20,7 @@ const getByUsername = async (username) => {
 //Data Creation: Responsible for building the User object structure.
 //Assigns ID, default values, and timestamps before saving to the Map.
 
-const create = async (userId, userData) => {
+const createUser = async (userId, userData) => {
     const newUser = {
         id: userId,
         username: userData.username,
@@ -37,5 +37,5 @@ const create = async (userId, userData) => {
 module.exports = {
     getById,
     getByUsername,
-    create // Maintaining naming consistency with other models
+    createUser // Maintaining naming consistency with other models
 };

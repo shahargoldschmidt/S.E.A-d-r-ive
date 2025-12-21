@@ -1,7 +1,7 @@
-const userModel = require('../models/userModel');
+const userService = require('../services/userService');
 
 // Registers a new user via POST /api/users
-const register = async (req, res) => {
+const createUser = async (req, res) => {
     try {
         // Extract user data from request body
         const { username, password, name, image } = req.body;
@@ -47,6 +47,6 @@ const getUser = async (req, res) => {
 };
 
 module.exports = {
-    register,
+    createUser,
     getUser
 };
