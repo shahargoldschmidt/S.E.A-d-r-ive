@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first (to utilize Docker cache for faster builds)
+COPY package.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the Node.js code
+COPY . .
+
+# Expose the Web Server port
+EXPOSE 3000
+
+# Run the server
+CMD ["node", "app.js"]

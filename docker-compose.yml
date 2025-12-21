@@ -1,41 +1,37 @@
-version: '3'
+version: '3.8'
 
 services:
-  # The Server
-  server:
-    build: .
-    container_name: my_server
-    command: /app/build/server_app 5555
+  # The CPP Server
+  cpp_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpp 
+    container_name: cpp_server_container
     ports:
       - "5555:5555"
     networks:
-      - ex2_net
+      - ex3_net
     volumes:
       - ./data_files:/app/data_files
     environment:
       - MY_FILE_PATH=/app/data_files
 
-  # C++ Client
-  client_cpp:
-    build: .
-    container_name: client_cpp
-    # Keep alive for interactive mode
-    command: tail -f /dev/null
+  # Node.js server
+  node_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.node 
+    container_name: node_server_container
+    ports:
+      - "3000:3000"
     networks:
-      - ex2_net
+      - ex3_net
     depends_on:
-      - server
-
-  # Python Client
-  client_python:
-    build: .
-    container_name: client_py
-    command: tail -f /dev/null
-    networks:
-      - ex2_net
-    depends_on:
-      - server
+      - cpp_server # wait for the cpp server
+    environment:
+      - CPP_SERVER_HOST=cpp_server
+      - CPP_SERVER_PORT=5555
 
 networks:
-  ex2_net:
+  ex3_net:
     driver: bridge
