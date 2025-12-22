@@ -1,0 +1,91 @@
+#include <iostream>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string>
+#include <cstring>
+#include <netdb.h> // gethostbyname
+
+// Include the custom menu class 
+#include "ConsoleMenu.h"
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+    // Validate command-line arguments because program need to get IP and Port
+    if (argc < 3) {
+        cerr << "Usage: " << argv[0] << " <host> <port>" << endl;
+        return 1;
+    }
+
+    // Extract server IP and port from CLI arg
+    const char* server_host = argv[1];
+    int server_port = atoi(argv[2]);
+
+    // Create a TCP socket
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        perror("Error creating socket");
+        return 1;
+    }
+
+    // Define server address structure
+    struct sockaddr_in serverAddr;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;     // IPv4
+    serverAddr.sin_port = htons(server_port); // Convert port to network byte order
+
+    // Convert hostname to IP
+    struct hostent* host = gethostbyname(server_host);
+    if (host == nullptr) {
+        cerr << "Error: Could not resolve hostname " << server_host << endl;
+        return 1;
+    }
+    memcpy(&serverAddr.sin_addr, host->h_addr_list[0], host->h_length);
+
+    // Connect to the server
+    if (connect(sock, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
+        perror("Connection failed");
+        return 1;
+    }
+
+    // Create a ConsoleMenu object to handle user input or output
+    ConsoleMenu menu;
+
+    while (true) {
+       // Get user input from console using the menu
+        string userInput = menu.getInput();
+
+        // Send the command to the server
+        int sentBytes = send(sock, userInput.c_str(), userInput.length(), 0);
+        if (sentBytes < 0) {
+            menu.respond("Error sending data");
+            break;
+        }
+
+       // Prepare buffer to receive server response
+        char buffer[4096];
+        memset(buffer, 0, sizeof(buffer));
+        int readBytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
+
+        // If server disconnected or error occurred
+        if (readBytes <= 0) {
+            menu.respond("Server disconnected");
+            break;
+        }
+
+        // Convert buffer to string using the exact number of bytes read
+        string serverResponse(buffer, readBytes);
+
+        if (!serverResponse.empty() && serverResponse.back() == '\n') {
+            serverResponse.pop_back();
+        }
+
+        // Display server response through menu
+        menu.respond(serverResponse);
+    }
+
+    // Close socket connection
+    close(sock);
+    return 0;
+}
