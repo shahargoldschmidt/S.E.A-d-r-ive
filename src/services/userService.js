@@ -11,6 +11,11 @@ const createUser = async (userData) => {
         throw new Error('Username already exists');
     }
 
+    // Ensure the email is unique before proceeding 
+    const existingEmail = await userModel.getByEmail(userData.email);
+    if (existingEmail) {
+        throw new Error('Email already exists'); 
+    }
 
     const userId = crypto.randomUUID();
     

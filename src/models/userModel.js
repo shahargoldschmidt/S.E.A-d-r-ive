@@ -16,6 +16,15 @@ const getByUsername = async (username) => {
     return null;
 };
 
+// The user have a email, and two users cant have the same email
+const getByEmail = async (email) => {
+    for (const user of usersStorage.values()) {
+        if (user.email === email) {
+            return user;
+        }
+    }
+    return null;
+};
 
 //Data Creation: Responsible for building the User object structure.
 //Assigns ID, default values, and timestamps before saving to the Map.
@@ -25,6 +34,7 @@ const createUser = async (userId, userData) => {
         id: userId,
         username: userData.username,
         password: userData.password,
+        email: userData.email,
         name: userData.name || "Anonymous",
         image: userData.image || "",
         createdAt: new Date().toISOString()
@@ -37,5 +47,6 @@ const createUser = async (userId, userData) => {
 module.exports = {
     getById,
     getByUsername,
+    getByEmail,
     createUser // Maintaining naming consistency with other models
 };

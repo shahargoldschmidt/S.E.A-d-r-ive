@@ -4,20 +4,20 @@ const userService = require('../services/userService');
 const createUser = async (req, res) => {
     try {
         // Extract user data from request body
-        const { username, password, name, image } = req.body;
+       const { username, password, name, image, email } = req.body;
 
         // Validate mandatory fields
-        if (!username || !password) {
-            return res.status(400).json({ error: "Username and password are required" });
+        if (!username || !password || !email) {
+            return res.status(400).json({ error: "Username, password and email are required" });
         }
 
         // Create a new user via the service
-        const newUser = await userService.createUser({ username, password, name, image });
+        const newUser = await userService.createUser({ username, password, name, image, email });
         res.status(201).json(newUser);
 
     } catch (error) {
         // Handle duplicate username error
-        if (error.message === 'Username already exists') {
+        if (error.message === 'Username already exists' || error.message === 'Email already exists') {
             return res.status(409).json({ error: error.message });
         }
 
