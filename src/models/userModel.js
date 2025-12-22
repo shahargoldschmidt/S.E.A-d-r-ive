@@ -6,7 +6,7 @@ const getById = async (userId) => {
     return usersStorage.get(userId) || null;
 };
 
-//T Finds a user by username.
+// Finds a user by username
 const getByUsername = async (username) => {
     for (const user of usersStorage.values()) {
         if (user.username === username) {
@@ -26,9 +26,7 @@ const getByEmail = async (email) => {
     return null;
 };
 
-//Data Creation: Responsible for building the User object structure.
-//Assigns ID, default values, and timestamps before saving to the Map.
-
+//Data Creation: Responsible for building the User - Assigns ID and default values before saving
 const createUser = async (userId, userData) => {
     const newUser = {
         id: userId,
@@ -48,5 +46,5 @@ module.exports = {
     getById,
     getByUsername,
     getByEmail,
-    createUser // Maintaining naming consistency with other models
+    createUser 
 };

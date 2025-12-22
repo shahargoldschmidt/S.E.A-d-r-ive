@@ -1,8 +1,7 @@
 const userModel = require('../models/userModel');
 const crypto = require('crypto'); 
 
- // generates a unique ID using crypto, 
- //and instructs the model to create the record
+ // generates a unique ID using crypto, and instructs the model to create the record
 
 const createUser = async (userData) => {
     // Ensure the username is unique before proceeding 

@@ -8,9 +8,7 @@ class TcpClientService {
         this.timeout = 5000;
     }
 
-    /**
-     * Establishes a connection, sends a command, waits for a response, and closes the connection.
-     */
+    // Establishes a connection, sends a command, waits for a response, and closes the connection
     sendCommand(command) {
         return new Promise((resolve, reject) => {
             const client = new net.Socket();
@@ -55,9 +53,8 @@ class TcpClientService {
     }
 }
 
-/**
- * helper to encapsulates the logic of identifying a complete C++ response.
- */
+
+// helper to encapsulates the logic of identifying a complete C++ response
 function _isResponseComplete(data) {
     // Short responses (201, 204, 400, 404, 500) ending with a single \n
     const shortResponsePattern = /^(201|204|400|404|500).*\n$/;

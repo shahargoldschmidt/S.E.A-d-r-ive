@@ -3,9 +3,8 @@ const permissionService = require('./permissionService');
 const permissionModel = require('../models/permissionModel');
 const crypto = require('crypto');
 
-/**
- * Get root items the user has premission to  root level
- */
+
+//  Get root items the user has premission to  root level
 const getFiles = async (userId) => {
     const allFiles = await fileModel.getFiles();
     const accessible = []; // array to store all accesible items
@@ -19,9 +18,8 @@ const getFiles = async (userId) => {
     return accessible;
 };
 
-/**
- * Validate parent folder and initialize permissions.
- */
+
+ // Validate parent folder and initialize permissions.
 const createFile = async (userId, fileData) => {
     const fileId = crypto.randomUUID();
 
@@ -40,9 +38,7 @@ const createFile = async (userId, fileData) => {
     return newItem;
 };
 
-/**
- * Fetch metadata Recursive children (folders) or Content (files).
- */
+// Fetch metadata Recursive children (folders) or Content (files).
 const getFileData = async (fileId) => {
     const meta = await fileModel.getById(fileId);
     if (!meta) return null;
@@ -58,9 +54,8 @@ const getFileData = async (fileId) => {
     return { ...meta, content };
 };
 
-/**
- * Collect all descendant IDs and perform clean recursive deletion.
- */
+
+// Collect all descendant IDs and perform clean recursive deletion.
 const deleteFile = async (fileId) => {
     const target = await fileModel.getById(fileId);
     if (!target) throw new Error("File or Folder not found");
@@ -80,9 +75,7 @@ const deleteFile = async (fileId) => {
     }
 };
 
-/**
- * Orchestrate multi-source search and permission filtering.
- */
+ // Orchestrate multi-source search and permission filtering
 const searchFiles = async (userId, query) => {
     const resultsMap = new Map();
     const all = await fileModel.getFiles();
@@ -119,15 +112,32 @@ const searchFiles = async (userId, query) => {
     }
     return finalResults;
 };
+
 //update folder only by name or filr by name and content
-const updateFile = async (fileId, updates) => {
+const updateFile = async (userId,fileId, updates) => {
     const file = await fileModel.getById(fileId); 
     if (!file) return null;
     //cant update a folders content
     if (file.type === 'folder' && updates.content !== undefined) {
         throw new Error("Invalid Operation: Only files can have content");
     }
+    // move file to a diffrent folder
+    if (updates.parentId) {
+        //check that it's a folder
+        const newParent = await fileModel.getById(updates.parentId);
+        if (!newParent || newParent.type !== 'folder') {
+            throw new Error("Invalid parent folder: Target does not exist or is not a folder");
+        }
+
+        // Does the user have Permission to write in the folder
+        const hasWriteAccess = await permissionService.hasPermission(userId, updates.parentId, 'WRITE');
+        if (!hasWriteAccess) {
+            throw new Error("Permission Denied: You do not have write access to the target folder");
+        }
+    }
+
     return await fileModel.update(fileId, updates);
+    
 };
 
 module.exports = {

@@ -3,18 +3,11 @@ const router = express.Router();
 
 const userController = require('../Controllers/userController');
 
-// User Routes
-// Base path: /api/user
-/**
- * Register a new user
- * POST /api/users
- */
+// User Routes 
+// Register a new user POST /api/users
 router.post('/', userController.createUser);
 
-/**
- * Get user information by ID 
- * GET /api/users/:id
- */
+// Get user information by ID GET /api/users/:id
 router.get('/:id', userController.getUser);
 
 module.exports = router;

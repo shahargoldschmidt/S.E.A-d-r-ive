@@ -17,8 +17,7 @@ const createToken = async (req, res) => {
             // Successful login:
             res.status(200).json(result);
         } else {
-            // Authentication failed:
-            // invalid username or password
+            // Authentication failed: invalid username or password
             res.status(404).json({ error: "Invalid username or password" });
         }
     } catch (error) {

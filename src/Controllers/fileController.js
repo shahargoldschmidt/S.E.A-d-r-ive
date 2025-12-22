@@ -52,16 +52,21 @@ const updateFile = async (req, res) => {
         if (Object.keys(req.body).length === 0) {
             return res.status(400).json({ error: "Update data is required" });
         }
-        const updated = await fileService.updateFile(req.params.id, req.body);
+        const updated = await fileService.updateFile(req.userId, req.params.id, req.body);
         if (!updated) return res.status(404).json({ error: "File or Folder not found" });
         res.status(204).send();
     } catch (e) {
         if (e.message.includes("Only files can have content")) {
             return res.status(400).json({ error: e.message });
         }
+        // if you cant move a file to a diffrent folder
+        if (e.message.includes("Permission Denied")) {
+            return res.status(403).json({ error: e.message });
+        }
         res.status(500).json({ error: e.message });
     }
 };
+
 // a query for a file/folder
 const searchFiles = async (req, res) => {
     try {

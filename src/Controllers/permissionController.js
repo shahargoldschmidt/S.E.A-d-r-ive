@@ -41,9 +41,7 @@ const createPermission = async (req, res) => {
     }
 };
 
-/**
- * Update an existing permission
- */
+// Update an existing permission
 const updatePermission = async (req, res) => {
     try {
         const { pId } = req.params; 

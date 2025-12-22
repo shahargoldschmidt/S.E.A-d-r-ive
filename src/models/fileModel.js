@@ -46,38 +46,42 @@ const update = async (fileId, updates) => {
     const file = filesMetadata.get(fileId);
     if (!file) return null;
 
-    // Get the current content from the C++ storage before making any changes
-    const oldContent = await getTcpContent(fileId);
+    // if there is a change in the content 
+    if (updates.content !== undefined) {
+        
+        // Get the current content from the C++ storage before making any changes
+        const oldContent = await getTcpContent(fileId);
 
-    try {
-        // Delete the existing file from the C++ storage server
-        await tcpClient.sendCommand(`delete ${fileId}`);
+        try {
+            // Delete the existing file from the C++ storage server
+            await tcpClient.sendCommand(`delete ${fileId}`);
 
-        //  Attempt to upload the new content
-        const response = await tcpClient.sendCommand(`post ${fileId} ${updates.content}`);
+            // Attempt to upload the new content
+            const response = await tcpClient.sendCommand(`post ${fileId} ${updates.content}`);
 
-        //  Verify if the C++ server returned a "201 Created" success code
-        if (!response.includes("201")) {
-            throw new Error(`TCP Error: ${response}`);
+            // Verify if the C++ server returned a "201 Created" success code
+            if (!response.includes("201")) {
+                throw new Error(`TCP Error: ${response}`);
+            }
+
+            // Success: Update local metadata like file size
+            updates.size = updates.content.length;
+            // Remove content from the updates object so it is not saved in the metadata Map
+            delete updates.content;
+
+        } catch (e) {
+            //ROLLBACK: If the new upload fails, try to restore the original data
+            console.error(`[Rollback] Update failed, restoring old content: ${e.message}`);
+
+            // Send the original content back to the C++ server
+            await tcpClient.sendCommand(`post ${fileId} ${oldContent}`);
+
+            // Throw an error so the Controller can notify the user that the update failed
+            throw new Error(`Critical: Content update failed. Old content was restored.`);
         }
-
-        // Success: Update local metadata like file size
-        updates.size = updates.content.length;
-        // Remove content from the updates object so it is not saved in the metadata Map
-        delete updates.content;
-
-    } catch (e) {
-        //ROLLBACK: If the new upload fails, try to restore the original data
-        console.error(`[Rollback] Update failed, restoring old content: ${e.message}`);
-
-        // Send the original content back to the C++ server
-        await tcpClient.sendCommand(`post ${fileId} ${oldContent}`);
-
-        // Throw an error so the Controller can notify the user that the update failed
-        throw new Error(`Critical: Content update failed. Old content was restored.`);
     }
 
-    // Update the metadata in the local Map 
+    // Update the metadata in the local Map
     const updatedFile = { ...file, ...updates };
     filesMetadata.set(fileId, updatedFile);
     return updatedFile;

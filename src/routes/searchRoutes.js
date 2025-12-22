@@ -4,7 +4,7 @@ const router = express.Router();
 // Middleware - must be connected
 const validator = require('../security/userCheck');
 
-// the controller that will handel search .
+// the controller that will handel search
 const fileController = require('../Controllers/fileController');
 
 // Security
