@@ -67,8 +67,6 @@ int main(int argc, char* argv[]) {
     (*commands)["search"] = searchCmd;
     (*commands)["delete"] = deleteCmd;
 
-     ThreadPool pool(10);
-
     //Create the Server Socket with IPv4 and TCP
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSock < 0) {
