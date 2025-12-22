@@ -1,5 +1,17 @@
 const userService = require('../services/userService');
 
+
+// Helper function to validate email format using Regex
+
+const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+const hasSpaces = (str) => {
+    return /\s/.test(str); 
+};
+
 // Registers a new user via POST /api/users
 const createUser = async (req, res) => {
     try {
@@ -9,6 +21,14 @@ const createUser = async (req, res) => {
         // Validate mandatory fields
         if (!username || !password || !email) {
             return res.status(400).json({ error: "Username, password and email are required" });
+        }
+
+        if (hasSpaces(username)) {
+            return res.status(400).json({ error: "Username cannot contain spaces" });
+        }
+        
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ error: "Invalid email format (e.g., user@example.com)" });
         }
 
         // Create a new user via the service
@@ -48,5 +68,5 @@ const getUser = async (req, res) => {
 
 module.exports = {
     createUser,
-    getUser
+    getUser,
 };
