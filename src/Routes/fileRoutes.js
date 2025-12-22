@@ -12,7 +12,7 @@ const permissionController = require('../Controllers/permissionController');
 // Security
 router.use(validator);
 
-// Route: /api/files
+// Route: /api/files.
 router.route('/')
     // List all files
     .get(fileController.getFiles)   

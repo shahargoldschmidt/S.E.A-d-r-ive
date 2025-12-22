@@ -12,7 +12,7 @@ const userController = require('../Controllers/userController');
 router.post('/', userController.createUser);
 
 /**
- * Get user information by ID
+ * Get user information by ID 
  * GET /api/users/:id
  */
 router.get('/:id', userController.getUser);

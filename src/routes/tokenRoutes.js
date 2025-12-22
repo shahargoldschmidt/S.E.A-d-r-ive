@@ -10,7 +10,7 @@ const tokenController = require('../Controllers/tokenController');
  * User login
  * POST /api/tokens
  *
- * Validates username and password and returns user ID
+ * Validates username and password and returns user ID 
  */
 router.post('/', tokenController.createToken);
 
