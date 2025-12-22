@@ -15,6 +15,7 @@ services:
       - ./data_files:/app/data_files
     environment:
       - MY_FILE_PATH=/app/data_files
+      - THREAD_POOL_SIZE=10
 
   # Node.js server
   node_server:
