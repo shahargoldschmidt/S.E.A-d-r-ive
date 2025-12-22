@@ -37,7 +37,7 @@ const hasPermission = async (userId, fileId, actionType) => {
 
 //add a premission
 const createPermission = async (fileId, targetUserId, type) => {
-    const item = fileModel.getMetadata(fileId);
+    const item = await fileModel.getById(fileId);
     if (!item) throw new Error("File or Folder not found");
     // check if a premision already exists for user
     const currentPermissions = await permissionModel.getPermissions(fileId);
