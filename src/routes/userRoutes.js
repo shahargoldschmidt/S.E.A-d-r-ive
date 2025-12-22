@@ -9,7 +9,7 @@ const userController = require('../Controllers/userController');
  * Register a new user
  * POST /api/users
  */
-router.post('/', userController.register);
+router.post('/', userController.createUser);
 
 /**
  * Get user information by ID

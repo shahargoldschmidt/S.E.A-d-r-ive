@@ -7,7 +7,7 @@ app.use(express.json());
 
 // Import Routers
 const userRoutes = require('./routes/userRoutes');
-const tokensRoutes = require('./routes/tokensRoutes');
+const tokenRoutes = require('./routes/tokenRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 
@@ -15,7 +15,7 @@ const searchRoutes = require('./routes/searchRoutes');
 // Define Routes 
 // Connecting the specific paths to their routers
 app.use('/api/users', userRoutes);
-app.use('/api/tokens', tokensRoutes);
+app.use('/api/tokens', tokenRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/search', searchRoutes);
 
