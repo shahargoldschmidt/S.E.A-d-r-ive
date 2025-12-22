@@ -22,6 +22,7 @@ include_directories(src)
 # Server Logic Files
 set(SERVER_SOURCES
     src/App.cpp
+    src/ThreadPool.cpp
     src/ClientHandler.cpp
     src/TCPMenu.cpp
     src/OSFileHandler.cpp
@@ -30,6 +31,7 @@ set(SERVER_SOURCES
     src/DeleteCommand.cpp
     src/GetCommand.cpp
     src/SearchCommand.cpp
+    
 )
 
 # Client Logic Files
