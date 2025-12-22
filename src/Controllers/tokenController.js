@@ -1,4 +1,4 @@
-const userModel = require('../models/userModel');
+const userService = require('../services/userService');
 
 
 // User login via POST /api/tokens

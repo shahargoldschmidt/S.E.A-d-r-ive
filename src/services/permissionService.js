@@ -11,8 +11,8 @@ const ROLE_PERMISSIONS = {
 const hasPermission = async (userId, fileId, actionType) => {
     let currentFileId = fileId;
 
-    while (currentFileId) { 
-        const file = fileModel.getMetadata(currentFileId);
+    while (currentFileId != null) { 
+        const file = await fileModel.getById(currentFileId);
         if (!file) return false;
 
         if (file.owner === userId) { // if user is the owner permission is granted automaticaly

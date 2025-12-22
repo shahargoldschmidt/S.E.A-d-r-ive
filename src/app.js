@@ -5,7 +5,7 @@ const port = 3000;
 
 app.use(express.json());
 
-// Import Routers (Commented out until we actually create the files)
+// Import Routers
 const userRoutes = require('./routes/userRoutes');
 const tokensRoutes = require('./routes/tokensRoutes');
 const fileRoutes = require('./routes/fileRoutes');

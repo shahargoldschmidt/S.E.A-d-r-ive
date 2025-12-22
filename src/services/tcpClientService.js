@@ -3,7 +3,7 @@ const net = require('net');
 
 class TcpClientService {
     constructor() {
-        this.host = process.env.CPP_SERVER_HOST || 'cpp_storage'; 
+        this.host = process.env.CPP_SERVER_HOST || 'cpp_server'; 
         this.port = parseInt(process.env.CPP_SERVER_PORT) || 5555; 
         this.timeout = 5000;
     }

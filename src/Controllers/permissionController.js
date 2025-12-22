@@ -26,7 +26,7 @@ const createPermission = async (req, res) => {
         }
 
         if (type !== 'VIEWER' && type !== 'EDITOR' && type !== 'ADMIN') {
-            return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER' or 'EDITOR'" });
+            return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER' or 'EDITOR' or 'ADMIN' " });
         }
 
         console.log(`[PermissionController] Granting '${type}' to user ${userId} on item ${fileId}`);

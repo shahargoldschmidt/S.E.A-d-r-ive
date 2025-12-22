@@ -1,6 +1,6 @@
-// const userModel = require('../models/userModel'); // <-- Uncomment this after merging
+const userModel = require('../models/userModel'); 
 
-const validator = (req, res, next) => {
+const validator = async (req, res, next) => {
     const userId = req.headers['user-id'];
 
     console.log(`[Validator] Checking access for User ID: ${userId}`);
@@ -13,7 +13,7 @@ const validator = (req, res, next) => {
     }
 
     // Check Does the user exist in the system
-    const user = userModel.findById(userId);
+    const user = await userModel.getById(userId);
     if (!user) {
          return res.status(401).json({ error: "Access Denied. User not found." });
     }

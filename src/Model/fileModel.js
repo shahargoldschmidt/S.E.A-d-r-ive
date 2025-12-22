@@ -46,22 +46,35 @@ const update = async (fileId, updates) => {
     const file = filesMetadata.get(fileId);
     if (!file) return null;
 
-    // Check if we need to update content (Only for files)
-    if (file.type === 'file' && updates.content !== undefined) {
-        // DELETE from C++ Storage
+    // Get the current content from the C++ storage before making any changes
+    const oldContent = await getTcpContent(fileId);
+
+    try {
+        // Delete the existing file from the C++ storage server
         await tcpClient.sendCommand(`delete ${fileId}`);
-        // POST to C++ Storage
+
+        //  Attempt to upload the new content
         const response = await tcpClient.sendCommand(`post ${fileId} ${updates.content}`);
-        
+
+        //  Verify if the C++ server returned a "201 Created" success code
         if (!response.includes("201")) {
-            throw new Error(`TCP Content update failed: ${response}`);
+            throw new Error(`TCP Error: ${response}`);
         }
 
-        // Update size based on new content
+        // Success: Update local metadata like file size
         updates.size = updates.content.length;
-        
-        // Remove content from updates so it's not saved in the metadata Map
+        // Remove content from the updates object so it is not saved in the metadata Map
         delete updates.content;
+
+    } catch (e) {
+        //ROLLBACK: If the new upload fails, try to restore the original data
+        console.error(`[Rollback] Update failed, restoring old content: ${e.message}`);
+
+        // Send the original content back to the C++ server
+        await tcpClient.sendCommand(`post ${fileId} ${oldContent}`);
+
+        // Throw an error so the Controller can notify the user that the update failed
+        throw new Error(`Critical: Content update failed. Old content was restored.`);
     }
 
     // Update the metadata in the local Map 
@@ -78,7 +91,7 @@ const deleteFile = async (id) => {
     if (meta.type === 'file') {
         await tcpClient.sendCommand(`delete ${id}`);
     }
-    
+
     return filesMetadata.delete(id);
 };
 
