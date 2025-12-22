@@ -16,7 +16,7 @@ router.use(validator);
 router.route('/')
     // List all files
     .get(fileController.getFiles)   
-     // Create/Upload a new file
+     // Create/Upload a new file.
     .post(fileController.createFile);
 
 // Route: /api/files/:id

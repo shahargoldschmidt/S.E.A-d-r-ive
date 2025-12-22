@@ -10,7 +10,7 @@ const fileController = require('../Controllers/fileController');
 // Security
 router.use(validator);
 
-// Route: GET /api/search/:query
+// Route: GET /api/search/:query.
 router.get('/:query', fileController.searchFiles);
 
 module.exports = router;
