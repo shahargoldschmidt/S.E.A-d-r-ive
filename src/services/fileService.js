@@ -50,6 +50,7 @@ const getFileData = async (fileId) => {
     if (meta.type === 'folder') { //if folder get all its children from first level
         const all = await fileModel.getFiles();
         const children = all.filter(f => f.parentId === fileId);
+        
         return { ...meta, children };
     }
     //else get content of file
