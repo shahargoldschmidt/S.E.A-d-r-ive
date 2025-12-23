@@ -39,4 +39,12 @@ curl -i -X GET http://localhost:3000/api/files/<FILE_ID> \
 curl -i -X DELETE http://localhost:3000/api/files/<FILE_ID> \
   -H "user-id: <USER_ID>"
 
+8. Search content:
+curl -i -X GET http://localhost:3000/api/search/Hello \
+  -H "user-id: <USER_ID>"
+
+9. Get permissions of a file:
+curl -i -X GET http://localhost:3000/api/files/<FILE_ID>/permissions \
+  -H "user-id: <USER_ID>"
+
 **Note for Windows Users:** The examples follow Linux/WSL syntax. If using PowerShell or CMD, you may need to replace single quotes (`'`) with double quotes (`"`) and escape internal JSON quotes.
