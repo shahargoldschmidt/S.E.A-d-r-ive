@@ -48,9 +48,33 @@ const createPermission = async (fileId, targetUserId, type) => {
     return await permissionModel.createPermission(fileId, targetUserId, type);
 };
 
-//get all premisions for a file
+// get all permission objects for a file, including those inherited from parent folders
 const getPermissions = async (fileId) => {
-    return await permissionModel.getPermissions(fileId);
+    let currentFileId = fileId;
+    const allPermissions = [];
+    const seenUsers = new Set(); // To avoid duplicates if a user has permissions in multiple levels
+
+    while (currentFileId != null) {
+        // Get the file/folder object to find its parent
+        const file = await fileModel.getById(currentFileId);
+        if (!file) break;
+
+        // Get permissions defined at this specific level
+        const currentLevelPermissions = await permissionModel.getPermissions(currentFileId);
+
+        // Add permissions to the list if we haven't seen this user yet
+        for (const perm of currentLevelPermissions) {
+            if (!seenUsers.has(perm.userId)) {
+                allPermissions.push(perm); // Returns the original object without extra fields
+                seenUsers.add(perm.userId);
+            }
+        }
+
+        // Move up to the parent folder
+        currentFileId = file.parentId;
+    }
+
+    return allPermissions;
 };
 
 //update an existing premision
