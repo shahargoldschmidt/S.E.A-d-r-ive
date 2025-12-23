@@ -56,13 +56,14 @@ const updateFile = async (req, res) => {
         if (!updated) return res.status(404).json({ error: "File or Folder not found" });
         res.status(204).send();
     } catch (e) {
-        if (e.message.includes("Only files can have content")) {
-            return res.status(400).json({ error: e.message });
-        }
+        if (e.message.includes("Only files can have content") || e.message.includes("Invalid parent folder")) {
+        return res.status(400).json({ error: e.message }); //
+        }   
         // if you cant move a file to a diffrent folder
         if (e.message.includes("Permission Denied")) {
             return res.status(403).json({ error: e.message });
         }
+        
         res.status(500).json({ error: e.message });
     }
 };
