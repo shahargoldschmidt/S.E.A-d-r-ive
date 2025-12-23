@@ -1,7 +1,7 @@
 ## Installation & Run
 Start the server and storage containers: docker-compose up --build
 
-## Examples
+## Examples - for linux 
 1. Create a User: 
 curl -i -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
@@ -39,3 +39,4 @@ curl -i -X GET http://localhost:3000/api/files/<FILE_ID> \
 curl -i -X DELETE http://localhost:3000/api/files/<FILE_ID> \
   -H "user-id: <USER_ID>"
 
+**Note for Windows Users:** The examples follow Linux/WSL syntax. If using PowerShell or CMD, you may need to replace single quotes (`'`) with double quotes (`"`) and escape internal JSON quotes.
