@@ -1,3 +1,4 @@
+**Note that for exercise 3 the correct branch is - Ex 3 - main branch**
 ## Installation & Run
 Start the server and storage containers: docker-compose up --build
 
