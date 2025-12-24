@@ -21,6 +21,10 @@ const requirePermission = (actionType) => {
 
             next();
         } catch (error) {
+            if (error.name === "NOT_FOUND") {
+                console.warn(`[Security] File lookup failed: ${error.message}`);
+                return res.status(404).json({ error: "File Not Found" });
+            }
             console.error(`[PermissionMiddleware] Error: ${error.message}`);
             res.status(500).json({ error: "Permission check failed" });
         }

@@ -13,7 +13,7 @@ const hasPermission = async (userId, fileId, actionType) => {
 
     while (currentFileId != null) { 
         const file = await fileModel.getById(currentFileId);
-        if (!file) return false;
+        if (!file) throw Object.assign(new Error("File not found"), { name: "NOT_FOUND" });
 
         if (file.owner === userId) { // if user is the owner permission is granted automaticaly
             return true;
