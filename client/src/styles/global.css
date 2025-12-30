@@ -1,0 +1,93 @@
+/* =========================================
+   1. GLOBAL VARIABLES (:root)
+   Defining the color palette based on the "S.E.A D(R)IVE" theme.
+   ========================================= */
+:root {
+  /* Default Theme (Light Mode) */
+  --color-deep-navy: #052e4a;   /* Dark Blue */
+  --color-ocean-blue: #2c8fb5;  /* Light Blue / Teal */
+  --color-cream-card: #fbf9f2;  /* Card Background */
+  --color-text-dark: #37474f;   /* Main Text Color */
+  --color-text-light: #ffffff;  /* Text for dark backgrounds */
+  --color-input-bg: #eceae4;    /* Input fields background */
+}
+
+/* =========================================
+   2. DARK MODE OVERRIDES
+   active when the body/container has the .dark-mode class
+   ========================================= */
+.dark-mode {
+  --color-deep-navy: #000000;       /* Pitch Black */
+  --color-cream-card: #102a43;      /* Dark Blue Card */
+  --color-text-dark: #ffffff;       /* Text becomes white */
+  --color-input-bg: #243b53;        /* Inputs become dark blue */
+  --color-ocean-blue: #00e5ff;      /* Neon Blue highlights */
+}
+
+/* =========================================
+   3. BASIC RESET & TYPOGRAPHY
+   ========================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* =========================================
+   4. MAIN LAYOUT & BACKGROUNDS
+   ========================================= */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease; /* Smooth transition for theme switch */
+  
+  /* Gradient for Light Mode */
+  background: linear-gradient(135deg, var(--color-deep-navy) 0%, #0a4568 100%);
+}
+
+/* Gradient for Dark Mode */
+.dark-mode.app-container {
+  background: linear-gradient(135deg, #000000 0%, #0f2027 100%);
+}
+
+/* Abstract Wave Background Effect */
+.wave-background {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; /* Behind everything */
+  opacity: 0.4;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(44, 143, 181, 0.4) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(44, 143, 181, 0.4) 0%, transparent 20%);
+  pointer-events: none;
+}
+
+/* =========================================
+   5. THEME TOGGLE BUTTON (Sun/Moon)
+   ========================================= */
+.theme-toggle-btn {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 45px; height: 45px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 20;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(15deg) scale(1.1);
+}
