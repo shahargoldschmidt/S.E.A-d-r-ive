@@ -22,7 +22,7 @@ const createToken = async (req, res) => {
             const token = jwt.sign(
                 { id: user.id },    // Payload
                 JWT_SECRET,         // Secret Key
-                { expiresIn: '1h' } // Expiration - Check 
+                { expiresIn: '1h' } // Expiration
             );
 
             res.status(200).json({ token });
