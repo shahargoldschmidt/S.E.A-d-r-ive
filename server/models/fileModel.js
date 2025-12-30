@@ -15,13 +15,13 @@ const getById = async (fileId) => {
 };
 
 // create file/folder and add to metadata. 
-const create = async (userId, fileId, fileData) => {
+const create = async (email, fileId, fileData) => {
     const isFile = fileData.type === 'file';
     const content = fileData.content || "";
 
     const newFileMeta = {
         id: fileId,
-        owner: userId,
+        owner: email,
         name: fileData.name,
         type: fileData.type,
         parentId: fileData.parentId || null,

@@ -1,6 +1,7 @@
 const fileModel = require('../models/fileModel');
 const permissionService = require('./permissionService');
 const permissionModel = require('../models/permissionModel');
+const userService = require('../services/userService');
 const crypto = require('crypto');
 
 
@@ -32,8 +33,9 @@ const createFile = async (userId, fileData) => {
         const canWrite = await permissionService.hasPermission(userId, fileData.parentId, 'WRITE');
         if (!canWrite) throw new Error("Permission Denied: Cannot write to this folder");
     }
-
-    const newItem = await fileModel.create(userId, fileId, fileData);
+    const userEmail = await userService.getUser(userId);
+    const email = userEmail.email;
+    const newItem = await fileModel.create(email, fileId, fileData);
     await permissionService.createPermission(newItem.id, userId, 'ADMIN'); //add admin permission for owner
     return newItem;
 };

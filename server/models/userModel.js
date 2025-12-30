@@ -6,15 +6,6 @@ const getById = async (userId) => {
     return usersStorage.get(userId) || null;
 };
 
-// Finds a user by username
-const getByUsername = async (username) => {
-    for (const user of usersStorage.values()) {
-        if (user.username === username) {
-            return user;
-        }
-    }
-    return null;
-};
 
 // The user have a email, and two users cant have the same email
 const getByEmail = async (email) => {
@@ -44,7 +35,6 @@ const createUser = async (userId, userData) => {
 
 module.exports = {
     getById,
-    getByUsername,
     getByEmail,
     createUser 
 };

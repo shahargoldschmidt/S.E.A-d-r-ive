@@ -1,16 +1,11 @@
 const userModel = require('../models/userModel');
 const crypto = require('crypto'); 
 
- // generates a unique ID using crypto, and instructs the model to create the record
+// Generates a unique ID and coordinates user creation
+const createUser = async (userData) => { 
+    // Multiple users can have the username "john" if their emails are different.
 
-const createUser = async (userData) => {
-    // Ensure the username is unique before proceeding 
-    const existingUser = await userModel.getByUsername(userData.username);
-    if (existingUser) {
-        throw new Error('Username already exists');
-    }
-
-    // Ensure the email is unique before proceeding 
+    // Ensure the email is unique before proceeding
     const existingEmail = await userModel.getByEmail(userData.email);
     if (existingEmail) {
         throw new Error('Email already exists'); 
@@ -18,15 +13,15 @@ const createUser = async (userData) => {
 
     const userId = crypto.randomUUID();
     
-    // Delegate the object building and persistence to the Model 
+    // Delegate persistence to the Model 
     const newUser = await userModel.createUser(userId, userData);
     
-    //  Redact the password from the return object 
+    // Redact the password from the returned object 
     const { password, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
 };
 
- //Fetches a user by ID and prepares data for the controller
+// Fetches a user by ID and prepares data for the controller
 const getUser = async (userId) => {
     const user = await userModel.getById(userId);
     if (!user) return null;
@@ -37,13 +32,13 @@ const getUser = async (userId) => {
 };
 
 // Validates login credentials against stored data
-const validateLogin = async (username, password) => {
-    const user = await userModel.getByUsername(username);
+const validateLogin = async (email, password) => {
+    // Logic Change: Find user by Email instead of Username
+    const user = await userModel.getByEmail(email);
     
-    // Validate plain-text password for this assignment phase 
+    // Validate password (plain-text for now, bcrypt recommended for production)
     if (user && user.password === password) {
-        // Return only the user ID upon successful authentication 
-        return { id: user.id };
+        return user;
     }
     return null;
 };

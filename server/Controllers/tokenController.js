@@ -1,27 +1,36 @@
 const userService = require('../services/userService');
+const jwt = require('jsonwebtoken');
 
+// Use environment variable for the secret key, fallback to a dev key if not defined
+const JWT_SECRET = process.env.JWT_SECRET || 'default_dev_secret'; 
 
 // User login via POST /api/tokens
 const createToken = async (req, res) => {
     try {
-        // Extract credentials from request body
-        const { username, password } = req.body;
+        // Change: Extract email instead of username
+        const { email, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ error: "Username and password are required" });
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password are required" });
         }
 
-        const result = await userService.validateLogin(username, password);
+        // Validate credentials against the database
+        const user = await userService.validateLogin(email, password);
 
-        if (result) {
-            // Successful login:
-            res.status(200).json(result);
+        if (user) {
+            // Successful login: Generate a JWT
+            const token = jwt.sign(
+                { id: user.id },    // Payload
+                JWT_SECRET,         // Secret Key
+                { expiresIn: '1h' } // Expiration - Check 
+            );
+
+            res.status(200).json({ token });
         } else {
-            // Authentication failed: invalid username or password
-            res.status(404).json({ error: "Invalid username or password" });
+            // Authentication failed
+            res.status(401).json({ error: "Invalid email or password" });
         }
     } catch (error) {
-        // Handle unexpected server errors
         res.status(500).json({ error: error.message });
     }
 };
