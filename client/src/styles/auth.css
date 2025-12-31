@@ -1,18 +1,18 @@
 /* client/src/styles/auth.css */
 
-/* --- כפתור הטוגל (החלפת מצב) - דבוק לפינה השמאלית העליונה --- */
+/* --- כפתור הטוגל (ללא שינוי) --- */
 .theme-toggle-btn {
-  position: fixed; /* דבוק למסך ולא בתוך הכרטיס */
+  position: fixed;
   top: 30px;
   left: 30px;
   width: 50px;
   height: 50px;
-  border-radius: 50%; /* עיגול מושלם */
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.4);
   font-size: 1.5rem;
   cursor: pointer;
-  z-index: 1000; /* שיהיה מעל הכל */
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,52 +25,44 @@
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* התאמת צבע הכפתור במצב יום שיהיה בולט */
 .light-mode .theme-toggle-btn {
     background: #003366; 
     color: white;
     border: none;
 }
 
-/* --- עיצוב הכרטיס המרכזי (הקופסה) --- */
+/* --- עיצוב הכרטיס המרכזי (הגדלנו אותו!) --- */
 .glass-card {
   position: relative;
-  width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  border-radius: 25px; /* פינות עגולות */
+  width: 90%;          /* שיתפוס רוחב יפה במסכים קטנים */
+  max-width: 500px;    /* שינוי: הגדלתי מ-400 ל-500 פיקסלים */
+  padding: 50px;       /* שינוי: הגדלתי את הרווח הפנימי */
+  border-radius: 30px; /* פינות קצת יותר עגולות */
   text-align: center;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   z-index: 10;
   transition: all 0.3s ease;
-  margin-top: 50px; /* רווח מלמעלה */
+  margin-top: 50px;
 }
 
-/* === מצב לילה (Dark Mode) === */
+/* === מצב לילה === */
 .dark-mode .glass-card {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* === מצב יום (Light Mode) - חזרה לקרם המקורי === */
+/* === מצב יום === */
 .light-mode .glass-card {
-  /* צבע קרם/שמנת עדין (הקודם) */
   background: rgba(253, 250, 240, 0.98); 
-  
-  /* טקסט כחול עמוק */
   color: #003366; 
-  
-  /* מסגרת עדינה יותר */
   border: 1px solid rgba(189, 168, 126, 0.3); 
-  
-  /* צל כחלחל עדין */
   box-shadow: 0 10px 40px rgba(0, 51, 102, 0.15); 
 }
 
 /* --- כותרות ולוגו --- */
 .sea-logo {
-  font-size: 3rem;
+  font-size: 3.5rem; /* הגדלתי קצת את הלוגו */
   margin-bottom: 10px;
   filter: drop-shadow(0 0 10px rgba(0, 168, 255, 0.6));
 }
@@ -81,76 +73,70 @@
   letter-spacing: 2px;
   margin-bottom: 5px;
   text-transform: uppercase;
+  font-size: 1.8rem; /* כותרת גדולה יותר */
 }
 
+/* ה-Subtitle המוגדל ממקודם */
 .subtitle {
-  /* שינוי פונט: כתב נטוי ואלגנטי */
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-style: italic; 
-  font-size: 1rem;
+  font-style: italic;
+  font-size: 1.3rem; 
+  font-weight: 500;
   opacity: 0.9;
-  margin-bottom: 30px;
-  color: #00a8ff; /* הדגשה קלה בצבע תכלת */
-  letter-spacing: 1px;
+  margin-bottom: 35px;
+  color: #00a8ff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* כדי שייראה טוב גם במצב לילה וגם ביום */
-.light-mode .subtitle {
-    color: #0077b6;
-}
-.dark-mode .subtitle {
-    color: #4fc3f7;
+.light-mode .subtitle { color: #0077b6; }
+.dark-mode .subtitle { 
+    color: #4fc3f7; 
+    text-shadow: 0 0 10px rgba(79, 195, 247, 0.4); 
 }
 
-/* --- שדות הקלט (Inputs) --- */
+/* --- שדות הקלט --- */
 .sea-input {
   width: 100%;
-  padding: 15px 25px;
-  margin-bottom: 15px;
-  border-radius: 50px; /* Pill Shape */
+  padding: 18px 25px; /* שדות גדולים יותר ונוחים ללחיצה */
+  margin-bottom: 20px;
+  border-radius: 50px;
   border: none;
   outline: none;
-  font-size: 1rem;
+  font-size: 1.1rem; /* טקסט גדול יותר בתוך השדה */
   transition: all 0.3s ease;
-  box-sizing: border-box; /* שלא יחרוג מהרוחב */
+  box-sizing: border-box;
 }
 
-/* עיצוב שדות במצב לילה */
 .dark-mode .sea-input {
   background: rgba(255, 255, 255, 0.15);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.dark-mode .sea-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
+.dark-mode .sea-input::placeholder { color: rgba(255, 255, 255, 0.6); }
 
-/* עיצוב שדות במצב יום */
 .light-mode .sea-input {
-  background: #ffffff; /* לבן על רקע החול */
+  background: #ffffff; 
   color: #003366;
   border: 1px solid #ccc;
 }
 
-.light-mode .sea-input::placeholder {
-  color: #8fa1b3;
-}
+.light-mode .sea-input::placeholder { color: #8fa1b3; }
 
-/* אפקט פוקוס לשדות */
 .sea-input:focus {
   transform: scale(1.02);
   box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
 }
 
-/* --- כפתור ראשי (Dive In) --- */
+/* --- כפתור ראשי --- */
 .btn-primary {
   width: 100%;
-  padding: 15px;
-  margin-top: 10px;
+  padding: 18px; /* כפתור בשרני יותר */
+  margin-top: 15px;
   border-radius: 50px;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -173,8 +159,8 @@
 
 /* --- לינקים --- */
 .auth-footer {
-  margin-top: 20px;
-  font-size: 0.9rem;
+  margin-top: 25px;
+  font-size: 1rem;
 }
 
 .link-text {
@@ -184,13 +170,11 @@
   transition: color 0.3s;
 }
 
-.link-text:hover {
-  color: #00a8ff;
-}
+.link-text:hover { color: #00a8ff; }
 
-/* --- תיקון לתיבת הוולידציה (העיגולים) --- */
+/* --- תיקון לתיבת הוולידציה --- */
 .validation-box {
-    text-align: left; /* יישור לשמאל */
+    text-align: left;
     margin-top: 10px;
     margin-bottom: 20px;
     padding: 15px;
@@ -198,7 +182,6 @@
     border-radius: 15px;
 }
 
-/* התאמה לרקע הבהיר */
 .light-mode .validation-box {
     background: rgba(255,255,255,0.5);
     color: #003366;
@@ -207,13 +190,12 @@
 .validation-item {
     display: flex;
     align-items: center;
-    gap: 10px; /* רווח בין העיגול לטקסט */
+    gap: 10px;
     margin-bottom: 8px;
-    font-size: 0.9rem;
+    font-size: 0.95rem; /* טקסט קריא יותר */
     transition: all 0.3s ease;
 }
 
-/* העיגול הצבעוני (Dot) */
 .status-dot {
     width: 12px;
     height: 12px;
@@ -222,17 +204,15 @@
     flex-shrink: 0;
 }
 
-/* צבעי העיגול */
 .status-dot.valid { 
-    background-color: #2ecc71; /* ירוק */
+    background-color: #2ecc71; 
     box-shadow: 0 0 8px rgba(46, 204, 113, 0.6); 
 } 
 
 .status-dot.invalid { 
-    background-color: #e74c3c; /* אדום */
+    background-color: #e74c3c; 
     opacity: 0.6; 
 }
 
-/* טקסט */
 .validation-item.valid { opacity: 1; font-weight: bold; }
 .validation-item.invalid { opacity: 0.8; }

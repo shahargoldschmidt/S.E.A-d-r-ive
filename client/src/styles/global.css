@@ -4,8 +4,12 @@
    1. GLOBAL VARIABLES
    ========================================= */
 :root {
-  /* כחול ים עמוק ורגוע (בדיוק כמו שרצית) */
-  --color-deep-navy: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%); 
+  /* --- מצב יום: שמש + ים --- */
+  /* שכבה 1 (עליונה): אור שמש לבן/צהבהב מלמעלה (Radial Gradient) */
+  /* שכבה 2 (תחתונה): הים הכחול (Linear Gradient) */
+  --color-deep-navy: 
+    radial-gradient(circle at 50% -10%, rgba(255, 255, 240, 0.8) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 70%),
+    linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%); 
   
   --color-ocean-blue: #00acc1;   
   --color-cream-card: rgba(253, 250, 240, 0.95); 
@@ -19,7 +23,10 @@
    2. DARK MODE OVERRIDES
    ========================================= */
 .dark-mode {
-  --color-deep-navy: linear-gradient(135deg, #141e30 0%, #243b55 100%);    
+  /* --- מצב לילה: ירח + ים עמוק --- */
+  /* הילה עדינה מאוד וכהה מלמעלה */
+  --color-deep-navy: radial-gradient(circle at 50% -20%, #1c3a4a 0%, #0f2027 50%, #000000 100%);
+  
   --color-cream-card: rgba(255, 255, 255, 0.05); 
   --color-ocean-blue: #00e5ff;   
   --color-text-dark: #e0f7fa;    
@@ -54,14 +61,20 @@ body {
   overflow: hidden; 
 }
 
-/* --- הגדרת האנימציה --- */
+/* --- אנימציית גלים --- */
 @keyframes moveWave {
     0% { background-position-x: 0; }
-    /* חייב להיות זהה בדיוק לרוחב ה-SVG (1440px) */
     100% { background-position-x: 1440px; } 
 }
 
-/* --- הגלים (המתוקנים) --- */
+/* --- אנימציית בועות --- */
+@keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    20% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+
+/* --- הגלים (Sine Wave - עגולים וחלקים) --- */
 .wave-background {
   position: absolute;
   bottom: 0;
@@ -69,16 +82,35 @@ body {
   width: 100%;
   height: 320px; 
   z-index: 0;
-  
-  /* SVG חדש שמתחבר בצורה מושלמת (התחלה וסוף באותו גובה) */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.2' d='M0,160 C320,300 420,300 720,160 C1020,20 1120,20 1440,160 V320 H0 Z'%3E%3C/path%3E%3C/svg%3E");
-  
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.08' d='M0,192 C320,320 420,320 720,192 C1020,64 1120,64 1440,192 V320 H0 Z' /%3E%3C/svg%3E");
   background-repeat: repeat-x; 
-  background-size: 1440px 320px; /* קיבוע גודל */
+  background-size: 1440px 320px; 
   background-position: bottom left;
-  
   pointer-events: none;
-  
-  /* אנימציה איטית וחלקה */
-  animation: moveWave 20s linear infinite;
+  animation: moveWave 12s linear infinite;
 }
+
+/* --- עיצוב הבועות --- */
+.bubble {
+    position: absolute;
+    bottom: -50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    /* ברירת מחדל: מוסתר */
+    display: none; 
+}
+
+/* הבועות מופיעות רק במצב יום */
+.light-mode .bubble {
+    display: block;
+    animation: floatUp 8s infinite linear;
+}
+
+/* וריאציות לגודל ומהירות הבועות */
+.bubble:nth-child(1) { left: 10%; width: 20px; height: 20px; animation-duration: 8s; animation-delay: 0s; }
+.bubble:nth-child(2) { left: 30%; width: 35px; height: 35px; animation-duration: 12s; animation-delay: 2s; }
+.bubble:nth-child(3) { left: 55%; width: 15px; height: 15px; animation-duration: 6s; animation-delay: 4s; }
+.bubble:nth-child(4) { left: 70%; width: 25px; height: 25px; animation-duration: 10s; animation-delay: 1s; }
+.bubble:nth-child(5) { left: 85%; width: 30px; height: 30px; animation-duration: 14s; animation-delay: 3s; }
