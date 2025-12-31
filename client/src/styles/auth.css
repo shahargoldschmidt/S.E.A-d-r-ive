@@ -2,16 +2,30 @@
    1. CARD & CONTAINER STYLES
    ========================================= */
 .glass-card {
-  background-color: var(--color-cream-card);
-  width: 100%;
-  max-width: 400px;
-  padding: 2.5rem;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  /* Frosted glass effect using backdrop-filter */
+  background: var(--color-cream-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  /* Thin light border for the glass edge */
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  padding: 3rem;
+  border-radius: 28px;
+  /* Deep shadow for floating effect */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
+  color: var(--color-text-dark);
   text-align: center;
-  z-index: 10; /* Above waves */
-  position: relative;
-  transition: background-color 0.3s ease;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+}
+
+.app-title {
+  color: var(--color-ocean-blue);
+  /* Bio-luminescent glow for the title */
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); 
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
 /* =========================================
@@ -19,44 +33,33 @@
    ========================================= */
 /* Primary Action Button */
 .btn-primary {
-  width: 100%;
-  padding: 12px;
-  border-radius: 50px;
-  border: none;
-  background: var(--color-ocean-blue);
+  /* Transparent button with neon border */
+  background: transparent;
+  border: 2px solid var(--color-ocean-blue);
   color: white;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 15px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
+  /* Fill button with light on hover */
+  background: var(--color-ocean-blue);
+  box-shadow: 0 0 20px var(--color-ocean-blue);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(44, 143, 181, 0.4);
 }
 
 /* Text Input Fields */
 .sea-input {
-  width: 100%;
-  padding: 12px 20px;
-  margin-bottom: 15px;
-  border-radius: 50px;
-  border: 1px solid transparent;
-  background-color: var(--color-input-bg);
+  background: var(--color-input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--color-text-dark);
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s ease;
 }
 
 /* FIX: Ensure text is visible when input is focused in Dark Mode */
 .sea-input:focus {
+  /* Glow effect when user interacts with inputs */
   border-color: var(--color-ocean-blue);
-  background-color: #ffffff;
-  color: #37474f !important; /* Force dark text on white background */
-  box-shadow: 0 0 10px rgba(44, 143, 181, 0.3);
+  box-shadow: 0 0 15px var(--color-ocean-blue); 
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* =========================================
