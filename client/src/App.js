@@ -10,8 +10,8 @@ import './styles/global.css';
 import './styles/auth.css';
 
 // We will create these files in the next steps!
-import LoginPage from './components/Auth/LoginPage';
-import RegisterPage from './components/Auth/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 //import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {

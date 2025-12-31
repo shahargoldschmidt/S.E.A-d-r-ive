@@ -1,210 +1,238 @@
-/* =========================================
-   1. CARD & CONTAINER STYLES
-   ========================================= */
-.glass-card {
-  /* Frosted glass effect using backdrop-filter */
-  background: var(--color-cream-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  /* Thin light border for the glass edge */
-  border: 1px solid rgba(255, 255, 255, 0.1); 
-  padding: 3rem;
-  border-radius: 28px;
-  /* Deep shadow for floating effect */
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
-  color: var(--color-text-dark);
-  text-align: center;
-  z-index: 10;
-  width: 100%;
-  max-width: 420px;
-}
+/* client/src/styles/auth.css */
 
-.app-title {
-  color: var(--color-ocean-blue);
-  /* Bio-luminescent glow for the title */
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); 
-  font-weight: 800;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-
-/* =========================================
-   2. BUTTONS & INPUTS
-   ========================================= */
-/* Primary Action Button */
-.btn-primary {
-  /* Transparent button with neon border */
-  background: transparent;
-  border: 2px solid var(--color-ocean-blue);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  /* Fill button with light on hover */
-  background: var(--color-ocean-blue);
-  box-shadow: 0 0 20px var(--color-ocean-blue);
-  transform: translateY(-2px);
-}
-
-/* Text Input Fields */
-.sea-input {
-  background: var(--color-input-bg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--color-text-dark);
-}
-
-/* FIX: Ensure text is visible when input is focused in Dark Mode */
-.sea-input:focus {
-  /* Glow effect when user interacts with inputs */
-  border-color: var(--color-ocean-blue);
-  box-shadow: 0 0 15px var(--color-ocean-blue); 
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* =========================================
-   3. REGISTRATION PAGE SPECIFICS
-   ========================================= */
-/* Avatar Upload Circle */
-.avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.avatar-preview {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background-color: var(--color-input-bg);
-  border: 3px solid var(--color-ocean-blue);
+/* --- כפתור הטוגל (החלפת מצב) - דבוק לפינה השמאלית העליונה --- */
+.theme-toggle-btn {
+  position: fixed; /* דבוק למסך ולא בתוך הכרטיס */
+  top: 30px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* עיגול מושלם */
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-size: 1.5rem;
   cursor: pointer;
+  z-index: 1000; /* שיהיה מעל הכל */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.avatar-preview:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(44, 143, 181, 0.5);
+.theme-toggle-btn:hover {
+  transform: rotate(180deg) scale(1.1);
+  background: rgba(255, 255, 255, 0.4);
 }
 
-.camera-icon { font-size: 2rem; opacity: 0.5; }
-
-.upload-label { 
-  font-size: 0.8rem; 
-  color: var(--color-ocean-blue); 
-  margin-top: 5px; 
-  font-weight: bold; 
+/* התאמת צבע הכפתור במצב יום שיהיה בולט */
+.light-mode .theme-toggle-btn {
+    background: #003366; 
+    color: white;
+    border: none;
 }
 
-/* Error Message Bubble Animation */
-.error-bubble {
-  background-color: rgba(255, 82, 82, 0.15);
-  color: #ff5252;
-  border: 1px solid rgba(255, 82, 82, 0.4);
-  padding: 10px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
+/* --- עיצוב הכרטיס המרכזי (הקופסה) --- */
+.glass-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  border-radius: 25px; /* פינות עגולות */
   text-align: center;
-  animation: shake 0.4s ease-in-out; 
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: all 0.3s ease;
+  margin-top: 50px; /* רווח מלמעלה */
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25%, 75% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
+/* === מצב לילה (Dark Mode) === */
+.dark-mode .glass-card {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Footer Links */
-.link-text {
-  color: var(--color-ocean-blue);
-  text-decoration: none;
-  font-weight: bold;
-  margin-left: 5px;
+/* === מצב יום (Light Mode) - חזרה לקרם המקורי === */
+.light-mode .glass-card {
+  /* צבע קרם/שמנת עדין (הקודם) */
+  background: rgba(253, 250, 240, 0.98); 
+  
+  /* טקסט כחול עמוק */
+  color: #003366; 
+  
+  /* מסגרת עדינה יותר */
+  border: 1px solid rgba(189, 168, 126, 0.3); 
+  
+  /* צל כחלחל עדין */
+  box-shadow: 0 10px 40px rgba(0, 51, 102, 0.15); 
 }
 
-.auth-footer {
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: var(--color-text-dark);
-}
-
-.dark-mode .auth-footer { color: var(--color-text-light); }
-
-/* =========================================
-   4. LOGIN PAGE SPECIFICS
-   ========================================= */
-.login-header { margin-bottom: 2rem; }
-
-/* Animated Logo */
+/* --- כותרות ולוגו --- */
 .sea-logo {
-  font-size: 3.5rem;
-  margin-bottom: 0.5rem;
-  display: inline-block;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  font-size: 3rem;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px rgba(0, 168, 255, 0.6));
 }
 
 .app-title {
-  color: var(--color-ocean-blue);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 800;
   letter-spacing: 2px;
-  text-transform: uppercase;
-  font-size: 1.5rem;
   margin-bottom: 5px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  color: var(--color-text-dark);
-  font-size: 0.9rem;
-  opacity: 0.7;
+  /* שינוי פונט: כתב נטוי ואלגנטי */
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-style: italic; 
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 30px;
+  color: #00a8ff; /* הדגשה קלה בצבע תכלת */
   letter-spacing: 1px;
 }
 
-.dark-mode .subtitle { color: var(--color-text-light); }
+/* כדי שייראה טוב גם במצב לילה וגם ביום */
+.light-mode .subtitle {
+    color: #0077b6;
+}
+.dark-mode .subtitle {
+    color: #4fc3f7;
+}
 
-/* =========================================
-   PASSWORD STRENGTH VALIDATION
-   ========================================= */
-.validation-box {
-  background: rgba(255, 255, 255, 0.5);
-  padding: 10px;
-  border-radius: 10px;
+/* --- שדות הקלט (Inputs) --- */
+.sea-input {
+  width: 100%;
+  padding: 15px 25px;
   margin-bottom: 15px;
-  text-align: left;
-  font-size: 0.85rem;
+  border-radius: 50px; /* Pill Shape */
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* שלא יחרוג מהרוחב */
+}
+
+/* עיצוב שדות במצב לילה */
+.dark-mode .sea-input {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .sea-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* עיצוב שדות במצב יום */
+.light-mode .sea-input {
+  background: #ffffff; /* לבן על רקע החול */
+  color: #003366;
+  border: 1px solid #ccc;
+}
+
+.light-mode .sea-input::placeholder {
+  color: #8fa1b3;
+}
+
+/* אפקט פוקוס לשדות */
+.sea-input:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
+}
+
+/* --- כפתור ראשי (Dive In) --- */
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #00a8ff;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
+}
+
+.btn-primary:hover {
+  background: #0097e6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 168, 255, 0.6);
+}
+
+.btn-primary:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- לינקים --- */
+.auth-footer {
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.link-text {
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.link-text:hover {
+  color: #00a8ff;
+}
+
+/* --- תיקון לתיבת הוולידציה (העיגולים) --- */
+.validation-box {
+    text-align: left; /* יישור לשמאל */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 15px;
+}
+
+/* התאמה לרקע הבהיר */
+.light-mode .validation-box {
+    background: rgba(255,255,255,0.5);
+    color: #003366;
 }
 
 .validation-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-  color: #666;
-  transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* רווח בין העיגול לטקסט */
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-/* When the rule is met (Green) */
-.validation-item.valid {
-  color: #2e7d32; /* Green */
-  font-weight: bold;
+/* העיגול הצבעוני (Dot) */
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
 }
 
-/* When the rule is NOT met (Gray/Red) */
-.validation-item.invalid {
-  color: #c62828; /* Red */
+/* צבעי העיגול */
+.status-dot.valid { 
+    background-color: #2ecc71; /* ירוק */
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6); 
+} 
+
+.status-dot.invalid { 
+    background-color: #e74c3c; /* אדום */
+    opacity: 0.6; 
 }
 
-.validation-icon {
-  margin-right: 8px;
-  font-size: 1rem;
-}
+/* טקסט */
+.validation-item.valid { opacity: 1; font-weight: bold; }
+.validation-item.invalid { opacity: 0.8; }

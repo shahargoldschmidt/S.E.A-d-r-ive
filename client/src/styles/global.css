@@ -1,38 +1,34 @@
+/* client/src/styles/global.css */
+
 /* =========================================
-   1. GLOBAL VARIABLES (:root)
-   Theme colors for "Shallow Water" (Light Mode)
+   1. GLOBAL VARIABLES
    ========================================= */
 :root {
-  /* Background: Light turquoise to teal */
-  --color-deep-navy: #e0f2f1;    
+  /* כחול ים עמוק ורגוע (בדיוק כמו שרצית) */
+  --color-deep-navy: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%); 
+  
   --color-ocean-blue: #00acc1;   
-  /* Glassmorphism: White frosted glass effect */
-  --color-cream-card: rgba(255, 255, 255, 0.7); 
+  --color-cream-card: rgba(253, 250, 240, 0.95); 
   --color-text-dark: #004d40;    
   --color-text-light: #ffffff;
   --color-input-bg: rgba(255, 255, 255, 0.9);
-  /* Depth blur for the glass effect */
   --glass-blur: blur(10px);
 }
 
 /* =========================================
    2. DARK MODE OVERRIDES
-   active when the body/container has the .dark-mode class
    ========================================= */
 .dark-mode {
-  /* Background: Deep midnight blue */
-  --color-deep-navy: #001219;    
-  /* Highlights: Neon cyan/bio-luminescence */
-  --color-ocean-blue: #00e5ff;   
-  /* Glassmorphism: Dark semi-transparent glass */
+  --color-deep-navy: linear-gradient(135deg, #141e30 0%, #243b55 100%);    
   --color-cream-card: rgba(255, 255, 255, 0.05); 
+  --color-ocean-blue: #00e5ff;   
   --color-text-dark: #e0f7fa;    
   --color-input-bg: rgba(0, 0, 0, 0.2);
   --glass-blur: blur(15px);
 }
 
 /* =========================================
-   3. BASIC RESET & TYPOGRAPHY
+   3. BASIC RESET & LAYOUT
    ========================================= */
 * {
   box-sizing: border-box;
@@ -42,12 +38,10 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  margin: 0;
 }
 
-/* =========================================
-   4. MAIN LAYOUT & BACKGROUNDS
-   ========================================= */
 .app-container {
   min-height: 100vh;
   width: 100%;
@@ -55,61 +49,36 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  
-  /* Smooth transition when switching between Light and Dark mode  */
-  transition: all 0.8s ease-in-out; 
-  
-  /* VISUAL VISION: 
-     Instead of a flat linear gradient, we use a radial gradient.
-     #005f73 is the 'light beam' in the center of the ocean.
-     var(--color-deep-navy) is the 'dark water' at the edges.
-  */
+  transition: background 0.8s ease-in-out; 
   background: var(--color-deep-navy);
-  
-  /* Ensure nothing spills out of the sea floor */
   overflow: hidden; 
 }
 
+/* --- הגדרת האנימציה --- */
+@keyframes moveWave {
+    0% { background-position-x: 0; }
+    /* חייב להיות זהה בדיוק לרוחב ה-SVG (1440px) */
+    100% { background-position-x: 1440px; } 
+}
 
-
-
+/* --- הגלים (המתוקנים) --- */
 .wave-background {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 45%; /* Slightly lowered to keep focus on the center card */
+  height: 320px; 
   z-index: 0;
   
-
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2300e5ff' fill-opacity='0.15' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  /* SVG חדש שמתחבר בצורה מושלמת (התחלה וסוף באותו גובה) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.2' d='M0,160 C320,300 420,300 720,160 C1020,20 1120,20 1440,160 V320 H0 Z'%3E%3C/path%3E%3C/svg%3E");
   
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: bottom;
+  background-repeat: repeat-x; 
+  background-size: 1440px 320px; /* קיבוע גודל */
+  background-position: bottom left;
+  
   pointer-events: none;
   
-  /* Added a slight blur to create depth in the water */
-  filter: blur(2px); 
-}
-
-/* =========================================
-   5. THEME TOGGLE BUTTON (Sun/Moon)
-   ========================================= */
-.theme-toggle-btn {
-  position: absolute;
-  top: 20px; right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  width: 45px; height: 45px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 20;
-  color: white;
-  transition: transform 0.3s ease;
-}
-
-.theme-toggle-btn:hover {
-  transform: rotate(15deg) scale(1.1);
+  /* אנימציה איטית וחלקה */
+  animation: moveWave 20s linear infinite;
 }
