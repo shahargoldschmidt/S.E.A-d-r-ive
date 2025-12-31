@@ -64,7 +64,7 @@ body {
      #005f73 is the 'light beam' in the center of the ocean.
      var(--color-deep-navy) is the 'dark water' at the edges.
   */
-  background: radial-gradient(circle at center, #005f73 0%, var(--color-deep-navy) 100%);
+  background: var(--color-deep-navy);
   
   /* Ensure nothing spills out of the sea floor */
   overflow: hidden; 
