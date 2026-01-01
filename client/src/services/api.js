@@ -11,6 +11,26 @@ const getAuthHeaders = () => {
     };
 };
 
+// --- Helper for consistent Error Handling & Auto-Logout ---
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        // אם הטוקן לא תקף או שאין הרשאות - ננתק את המשתמש
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            window.location.href = '/login'; // העברה למסך ההתחברות
+            throw new Error('Session expired. Please login again.');
+        }
+
+        // שגיאות אחרות (למשל ולידציה)
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || 'Request failed');
+    }
+    return response;
+};
+
+// --- AUTH FUNCTIONS ---
+
 // login 
 export const loginUser = async (email, password) => {
     try {
@@ -20,6 +40,7 @@ export const loginUser = async (email, password) => {
             body: JSON.stringify({ email, password })
         });
 
+        // בלוגין אנחנו מטפלים ידנית כי אין עדיין טוקן שיכול לפוג
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Login failed');
@@ -60,9 +81,7 @@ export const registerUser = async (userData) => {
 // --- קבלת פרטי משתמש (Get User) ---
 export const getUser = async (userId) => {
     try {
-        // אם לא הועבר ID, ננסה לקחת מהזכרון
         const idToFetch = userId || localStorage.getItem('userId');
-
         if (!idToFetch) return null;
 
         const response = await fetch(`${API_URL}/users/${idToFetch}`, {
@@ -70,17 +89,50 @@ export const getUser = async (userId) => {
             headers: getAuthHeaders() 
         });
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('userId');
-            }
-            throw new Error('Failed to fetch user');
-        }
+        // כאן נשתמש ב-handleResponse כדי לטפל בטוקן פג תוקף
+        await handleResponse(response);
 
         return await response.json();
     } catch (error) {
-        console.warn(error);
+        console.warn("Get User Error:", error);
         return null;
+    }
+};
+
+// --- FILE FUNCTIONS (החלק החדש) ---
+
+// 1. קבלת כל הקבצים (GET)
+export const fetchFiles = async () => {
+    try {
+        const response = await fetch(`${API_URL}/files`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        // בדיקת שגיאות וטיפול ב-401/403
+        await handleResponse(response); 
+        
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
+// 2. יצירת קובץ או תיקייה (POST)
+export const createFile = async (fileData) => {
+    try {
+        const response = await fetch(`${API_URL}/files`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(fileData)
+        });
+
+        // בדיקת שגיאות וטיפול ב-401/403
+        await handleResponse(response);
+
+        // השרת מחזיר 201 Created (לפעמים בלי גוף), אז נחזיר true
+        return true;
+    } catch (error) {
+        throw error;
     }
 };

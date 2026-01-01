@@ -1,0 +1,93 @@
+/* client/src/styles/sidebar.css */
+
+.sidebar-container {
+    width: 290px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- כפתור New Dive --- */
+.new-dive-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.new-dive-btn {
+    display: flex; align-items: center; gap: 15px;
+    padding: 18px 28px;
+    border-radius: 20px;
+    border: none;
+    font-size: 1.15rem; font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 28px;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+}
+
+.light-mode .new-dive-btn { background: white; color: #023e8a; }
+.dark-mode .new-dive-btn { background: #4facfe; color: white; box-shadow: 0 0 15px rgba(79, 172, 254, 0.4); }
+.new-dive-btn:hover { transform: scale(1.02); }
+
+/* --- תפריט נפתח של New Dive --- */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 8px 0;
+    z-index: 200;
+    border: 1px solid rgba(0,0,0,0.1);
+    margin-top: 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+.dark-mode .dropdown-menu {
+    background: #1e3a4a;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    color: inherit;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover { background: rgba(0,0,0,0.05); }
+.dark-mode .dropdown-item:hover { background: rgba(255,255,255,0.1); }
+
+/* --- פריטי תפריט (רשימה) --- */
+.sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+
+.menu-item {
+    display: flex; align-items: center; gap: 18px;
+    padding: 14px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    color: inherit;
+}
+
+.menu-icon-svg { width: 26px; height: 26px; fill: currentColor; opacity: 0.8; }
+
+.menu-item:hover { background: rgba(128, 128, 128, 0.1); }
+.menu-item.active { font-weight: 700; }
+.light-mode .menu-item.active { background: #dbeafe; color: #001d35; }
+.dark-mode .menu-item.active { background: rgba(79, 172, 254, 0.3); color: #4facfe; }
+.light-mode .menu-item.active .menu-icon-svg, .dark-mode .menu-item.active .menu-icon-svg { opacity: 1; }

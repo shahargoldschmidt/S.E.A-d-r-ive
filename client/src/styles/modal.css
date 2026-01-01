@@ -1,0 +1,61 @@
+/* client/src/styles/modal.css */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #fbf9f2;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: scaleIn 0.3s ease;
+}
+
+.dark-mode .modal-content {
+    background: #102a43;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-content h3 { margin-top: 0; margin-bottom: 20px; text-align: center; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.btn-cancel {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    font-weight: bold;
+}
+
+.btn-create {
+    padding: 10px 25px;
+    border-radius: 8px;
+    border: none;
+    background: #2c8fb5;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
