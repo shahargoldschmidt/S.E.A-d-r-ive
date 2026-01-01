@@ -25,7 +25,7 @@ const createToken = async (req, res) => {
                 { expiresIn: '1h' } // Expiration
             );
 
-            res.status(200).json({ token });
+            res.status(200).json({ token, userId: user.id });
         } else {
             // Authentication failed
             res.status(401).json({ error: "Invalid email or password" });

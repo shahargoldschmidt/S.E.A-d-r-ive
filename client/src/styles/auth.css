@@ -1,0 +1,330 @@
+/* client/src/styles/auth.css */
+
+/* --- כפתור הטוגל (ללא שינוי) --- */
+.theme-toggle-btn {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(180deg) scale(1.1);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.light-mode .theme-toggle-btn {
+    background: #003366; 
+    color: white;
+    border: none;
+}
+
+/* --- עיצוב הכרטיס המרכזי (הגדלנו אותו!) --- */
+.glass-card {
+  position: relative;
+  width: 90%;          /* שיתפוס רוחב יפה במסכים קטנים */
+  max-width: 500px;    /* שינוי: הגדלתי מ-400 ל-500 פיקסלים */
+  padding: 50px;       /* שינוי: הגדלתי את הרווח הפנימי */
+  border-radius: 30px; /* פינות קצת יותר עגולות */
+  text-align: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: all 0.3s ease;
+  margin-top: 50px;
+  backdrop-filter: blur(25px);
+}
+
+/* === מצב לילה === */
+.dark-mode .glass-card {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === מצב יום === */
+.light-mode .glass-card {
+  background: rgba(253, 250, 240, 0.98); 
+  color: #003366; 
+  border: 1px solid rgba(189, 168, 126, 0.3); 
+  box-shadow: 0 10px 40px rgba(0, 51, 102, 0.15); 
+}
+
+/* --- כותרות ולוגו --- */
+.sea-logo {
+  font-size: 3.5rem; /* הגדלתי קצת את הלוגו */
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px rgba(0, 168, 255, 0.6));
+}
+
+.app-title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-size: 1.8rem; /* כותרת גדולה יותר */
+}
+
+/* ה-Subtitle המוגדל ממקודם */
+.subtitle {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-style: italic;
+  font-size: 1.3rem; 
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 35px;
+  color: #00a8ff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.light-mode .subtitle { color: #0077b6; }
+.dark-mode .subtitle { 
+    color: #4fc3f7; 
+    text-shadow: 0 0 10px rgba(79, 195, 247, 0.4); 
+}
+
+/* --- שדות הקלט --- */
+.sea-input {
+  width: 100%;
+  padding: 18px 25px; /* שדות גדולים יותר ונוחים ללחיצה */
+  margin-bottom: 20px;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  font-size: 1.1rem; /* טקסט גדול יותר בתוך השדה */
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.dark-mode .sea-input {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .sea-input::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+.light-mode .sea-input {
+  background: #ffffff; 
+  color: #003366;
+  border: 1px solid #ccc;
+}
+
+.light-mode .sea-input::placeholder { color: #8fa1b3; }
+
+.sea-input:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
+}
+
+/* --- כפתור ראשי --- */
+.btn-primary {
+  width: 100%;
+  padding: 18px; /* כפתור בשרני יותר */
+  margin-top: 15px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #00a8ff;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
+}
+
+.btn-primary:hover {
+  background: #0097e6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 168, 255, 0.6);
+}
+
+.btn-primary:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- לינקים --- */
+.auth-footer {
+  margin-top: 25px;
+  font-size: 1rem;
+}
+
+.link-text {
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.link-text:hover { color: #00a8ff; }
+
+/* --- תיקון לתיבת הוולידציה --- */
+.validation-box {
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 15px;
+}
+
+.light-mode .validation-box {
+    background: rgba(255,255,255,0.5);
+    color: #003366;
+}
+
+.validation-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 0.95rem; /* טקסט קריא יותר */
+    transition: all 0.3s ease;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.status-dot.valid { 
+    background-color: #2ecc71; 
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6); 
+} 
+
+.status-dot.invalid { 
+    background-color: #e74c3c; 
+    opacity: 0.6; 
+}
+
+.validation-item.valid { opacity: 1; font-weight: bold; }
+.validation-item.invalid { opacity: 0.8; }
+
+.image-upload-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.image-preview-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* מבטיח שהתמונה לא תצא מהעיגול */
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.image-preview-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* שומר על יחס התמונה בתוך העיגול */
+}
+
+.custom-file-upload {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+}
+
+.custom-file-upload:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.custom-file-upload input[type="file"] {
+    display: none; /* מסתיר את כפתור ה-Input המכוער של הדפדפן */
+}
+
+.clickable-circle {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.clickable-circle:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #4facfe;
+    box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
+}
+
+.upload-placeholder-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.clickable-circle:hover .upload-placeholder-content {
+    opacity: 1;
+}
+
+/* client/src/styles/auth.css */
+
+/* client/src/styles/auth.css */
+
+/* עיצוב כללי לאווטאר (האות או העוגן) */
+.letter-avatar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.8rem; /* הגדלתי מעט את העוגן */
+    font-weight: bold;
+    transition: all 0.4s ease;
+}
+
+/* --- התאמה למצב יום (Light Mode) --- */
+.light-mode .letter-avatar {
+    /* רקע בהיר וקורן שגורם לעוגן הכהה לבלוט */
+    background: radial-gradient(circle, #ffffff 0%, #e3f2fd 100%);
+    color: #003366; /* צבע האות אם תוקלד */
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 51, 102, 0.1);
+}
+
+/* --- התאמה למצב לילה (Dark Mode) --- */
+.dark-mode .letter-avatar {
+    background: linear-gradient(135deg, #0f2027, #203a43);
+    color: #4facfe;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* הוספת זוהר לעוגן בתוך הים העמוק */
+    text-shadow: 0 0 15px rgba(79, 195, 247, 0.6);
+}
+
+/* אפקט במעבר עכבר */
+.clickable-circle:active .letter-avatar {
+    transform: scale(0.95); /* אפקט "לחיצה" קטן כשלוחצים בפועל */
+}
