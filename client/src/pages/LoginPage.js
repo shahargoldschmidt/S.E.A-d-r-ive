@@ -27,20 +27,20 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
         }
     };
 
-    return (
-        <div className="glass-card">
-            {/* --- Toggle Button (Top Left) --- */}
-            <button 
-                className="theme-toggle-btn" 
-                onClick={toggleTheme} 
-                title="Switch Theme"
-            >
-                {isDarkMode ? '☀️' : '🌙'}
-            </button>
+   return (
+    <>
+        {/* הוצאנו את הכפתור מחוץ ל-glass-card כדי שיהיה חופשי להיצמד לפינה */}
+        <button 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme} 
+            title="Switch Theme"
+        >
+            {isDarkMode ? '☀️' : '🌙'}
+        </button>
 
+        <div className="glass-card">
             <div className="login-header">
                 <div className="sea-logo">🌊</div>
-                {/* עדכון הטקסט לפי התמונה ששלחת */}
                 <h2 className="app-title">S.E.A. D(R)IVE</h2>
                 <p className="subtitle">Sail to Success</p>
             </div>
@@ -53,7 +53,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
                     type="email" 
                     onChange={(e) => setEmail(e.target.value)}
                     required 
-                    placeholder="Email Address" // בתמונה כתוב Username אבל בדרך כלל במערכת זה אימייל. תחליט מה עדיף לך.
+                    placeholder="Email Address"
                 />
                 
                 <input 
@@ -78,7 +78,8 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
                 Don't have an account? <span className="link-text" onClick={() => navigate('/register')}>Register</span>
             </div>
         </div>
-    );
+    </>
+);
 };
 
 export default LoginPage;
