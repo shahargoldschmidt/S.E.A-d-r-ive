@@ -41,7 +41,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
         if (formData.name && formData.name.trim() !== '') {
             return formData.name.trim().charAt(0).toUpperCase();
         }
-        return "?";
+        return "👤";
     };
 
     useEffect(() => {
