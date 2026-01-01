@@ -73,7 +73,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
             </button>
 
             <div className="glass-card">
-                <h2 className="card-title">The Deep Sea Archive</h2>
+                <h2 className="card-title">Join The Crew</h2>
                 <p className="subtitle" style={{marginBottom: '20px'}}>Create your secure profile</p>
                 
                 {error && <div className="error-bubble">{error}</div>}
