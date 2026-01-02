@@ -45,8 +45,8 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                                 style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '1rem'}}
                             >
                                 <option value="txt">.txt</option>
-                                <option value="json">.json</option>
-                                <option value="js">.js</option>
+                                <option value="doc">.doc</option>
+                                <option value="pdf">.pdf</option>
                             </select>
                         </div>
                     </div>
