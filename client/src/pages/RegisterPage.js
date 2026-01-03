@@ -16,7 +16,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [error, setError] = useState('');
     
-    const fileInputRef = useRef(null); // Ref לשליטה בבחירת הקובץ
+    const fileInputRef = useRef(null); 
     const navigate = useNavigate();
 
     const handleImageChange = (e) => {
@@ -31,12 +31,19 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
         }
     };
 
-    // פונקציה שמפעילה את בחירת הקובץ בלחיצה על העיגול
+    const handleRemoveImage = (e) => {
+        e.stopPropagation(); 
+        setImagePreview(null);
+        setFormData(prev => ({ ...prev, image: '' }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     const triggerFileInput = () => {
         fileInputRef.current.click();
     };
 
-    // פונקציית עזר לקבלת האות הראשונה
     const getInitial = () => {
         if (formData.name && formData.name.trim() !== '') {
             return formData.name.trim().charAt(0).toUpperCase();
@@ -67,7 +74,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
     };
 
     return (
-        <>
+        <div className="auth-container"> 
             <button className="theme-toggle-btn" onClick={toggleTheme}>
                 {isDarkMode ? '☀️' : '🌙'}
             </button>
@@ -80,17 +87,27 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                 
                 <form onSubmit={(e) => { e.preventDefault(); registerUser(formData).then(() => navigate('/login')).catch(err => setError(err.message)); }}>
                     <div className="image-upload-wrapper">
-                        {/* העיגול עצמו הוא כפתור הלחיצה */}
                         <div className="image-preview-circle clickable-circle" onClick={triggerFileInput} title="Click to upload">
                             {imagePreview ? (
                                 <img src={imagePreview} alt="Profile" />
                             ) : (
-                                /* תצוגת האות הראשונה אם אין תמונה */
                                 <div className="letter-avatar">
                                     {getInitial()}
                                 </div>
                             )}
                         </div>
+                        
+                        {imagePreview && (
+                            <button 
+                                type="button" 
+                                className="remove-image-btn" 
+                                onClick={handleRemoveImage}
+                                title="Remove photo"
+                            >
+                                ✕
+                            </button>
+                        )}
+
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
                         <p style={{fontSize: '0.75rem', marginTop: '5px', opacity: 0.7}}>Click to add photo (Optional)</p>
                     </div>
@@ -119,7 +136,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                     Already have an account? <span className="link-text" onClick={() => navigate('/login')}>Log In</span>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

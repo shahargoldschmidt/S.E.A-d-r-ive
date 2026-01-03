@@ -1,6 +1,16 @@
 /* client/src/styles/auth.css */
 
-/* --- כפתור הטוגל (ללא שינוי) --- */
+/* --- Container Setup --- */
+.auth-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
+}
+
+/* --- Theme Toggle Button --- */
 .theme-toggle-btn {
   position: fixed;
   top: 30px;
@@ -31,29 +41,31 @@
     border: none;
 }
 
-/* --- עיצוב הכרטיס המרכזי (הגדלנו אותו!) --- */
+/* --- Glass Card Design (חזרנו לגודל המקורי והמרשים) --- */
 .glass-card {
   position: relative;
-  width: 90%;          /* שיתפוס רוחב יפה במסכים קטנים */
-  max-width: 500px;    /* שינוי: הגדלתי מ-400 ל-500 פיקסלים */
-  padding: 50px;       /* שינוי: הגדלתי את הרווח הפנימי */
-  border-radius: 30px; /* פינות קצת יותר עגולות */
+  width: 90%;          
+  
+  /* חזרנו לגודל המקורי */
+  max-width: 500px;    
+  padding: 40px;       
+  
+  border-radius: 30px; 
   text-align: center;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   z-index: 10;
   transition: all 0.3s ease;
-  margin-top: 50px;
   backdrop-filter: blur(25px);
 }
 
-/* === מצב לילה === */
+/* === Dark Mode === */
 .dark-mode .glass-card {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* === מצב יום === */
+/* === Light Mode === */
 .light-mode .glass-card {
   background: rgba(253, 250, 240, 0.98); 
   color: #003366; 
@@ -61,9 +73,9 @@
   box-shadow: 0 10px 40px rgba(0, 51, 102, 0.15); 
 }
 
-/* --- כותרות ולוגו --- */
+/* --- Typography --- */
 .sea-logo {
-  font-size: 3.5rem; /* הגדלתי קצת את הלוגו */
+  font-size: 3.5rem; /* לוגו גדול כמו במקור */
   margin-bottom: 10px;
   filter: drop-shadow(0 0 10px rgba(0, 168, 255, 0.6));
 }
@@ -74,17 +86,16 @@
   letter-spacing: 2px;
   margin-bottom: 5px;
   text-transform: uppercase;
-  font-size: 1.8rem; /* כותרת גדולה יותר */
+  font-size: 1.8rem; 
 }
 
-/* ה-Subtitle המוגדל ממקודם */
 .subtitle {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-style: italic;
   font-size: 1.3rem; 
   font-weight: 500;
   opacity: 0.9;
-  margin-bottom: 35px;
+  margin-bottom: 30px; 
   color: #00a8ff;
   letter-spacing: 1.5px;
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -96,15 +107,15 @@
     text-shadow: 0 0 10px rgba(79, 195, 247, 0.4); 
 }
 
-/* --- שדות הקלט --- */
+/* --- Inputs (חזרנו לגודל נוח ומרווח) --- */
 .sea-input {
   width: 100%;
-  padding: 18px 25px; /* שדות גדולים יותר ונוחים ללחיצה */
-  margin-bottom: 20px;
+  padding: 16px 24px; /* ריפוד מפנק כמו במקור */
+  margin-bottom: 18px; 
   border-radius: 50px;
   border: none;
   outline: none;
-  font-size: 1.1rem; /* טקסט גדול יותר בתוך השדה */
+  font-size: 1.05rem; 
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
@@ -130,10 +141,10 @@
   box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
 }
 
-/* --- כפתור ראשי --- */
+/* --- Primary Button --- */
 .btn-primary {
   width: 100%;
-  padding: 18px; /* כפתור בשרני יותר */
+  padding: 18px; /* כפתור גדול */
   margin-top: 15px;
   border-radius: 50px;
   border: none;
@@ -158,7 +169,7 @@
   transform: none;
 }
 
-/* --- לינקים --- */
+/* --- Links --- */
 .auth-footer {
   margin-top: 25px;
   font-size: 1rem;
@@ -173,14 +184,28 @@
 
 .link-text:hover { color: #00a8ff; }
 
-/* --- תיקון לתיבת הוולידציה --- */
+/* --- Validation Box (The Magic Trick) --- */
+/* כאן אנחנו חוסכים את המקום - סידור בשתי עמודות */
 .validation-box {
     text-align: left;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 20px;
-    padding: 15px;
+    padding: 10px 15px;
     background: rgba(0,0,0,0.05);
     border-radius: 15px;
+    
+    /* הגדרת גריד של 2 עמודות */
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 8px 10px; 
+}
+
+/* --- זה החלק החדש שעושה את הקסם --- */
+.validation-box > *:first-child {
+    grid-column: 1 / -1; /* גורם לכותרת לתפוס את כל הרוחב (שורה נפרדת) */
+    width: 100%;
+    margin-bottom: 5px; /* רווח קטן בין הכותרת לקריטריונים */
+    font-weight: bold;
 }
 
 .light-mode .validation-box {
@@ -191,15 +216,14 @@
 .validation-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    font-size: 0.95rem; /* טקסט קריא יותר */
+    gap: 8px;
+    font-size: 0.85rem; 
     transition: all 0.3s ease;
 }
 
 .status-dot {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
     flex-shrink: 0;
@@ -207,7 +231,7 @@
 
 .status-dot.valid { 
     background-color: #2ecc71; 
-    box-shadow: 0 0 8px rgba(46, 204, 113, 0.6); 
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.6); 
 } 
 
 .status-dot.invalid { 
@@ -215,55 +239,70 @@
     opacity: 0.6; 
 }
 
-.validation-item.valid { opacity: 1; font-weight: bold; }
-.validation-item.invalid { opacity: 0.8; }
+.validation-item.valid { opacity: 1; font-weight: bold; color: #2ecc71; }
+.light-mode .validation-item.valid { color: #2e7d32; }
+.validation-item.invalid { opacity: 0.7; }
 
+/* --- Image Upload & Blue Bubble Button --- */
 .image-upload-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 25px;
+    position: relative; 
 }
 
 .image-preview-circle {
-    width: 110px;
-    height: 110px;
+    width: 100px; /* עיגול גדול ויפה */
+    height: 100px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     border: 2px dashed rgba(255, 255, 255, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* מבטיח שהתמונה לא תצא מהעיגול */
-    margin-bottom: 12px;
+    overflow: hidden; 
+    margin-bottom: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .image-preview-circle img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* שומר על יחס התמונה בתוך העיגול */
+    object-fit: cover; 
 }
 
-.custom-file-upload {
+/* Blue Bubble Button (X) */
+.remove-image-btn {
+    position: absolute;
+    top: 0;
+    right: 50%; 
+    margin-right: -60px; /* התאמה לגודל העיגול החדש */
+    
+    background: #00a8ff; 
+    color: white;
+    border: 2px solid white; 
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    box-shadow: 0 0 10px rgba(0, 168, 255, 0.6);
+    transition: all 0.2s;
+    z-index: 20;
 }
 
-.custom-file-upload:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-1px);
-}
-
-.custom-file-upload input[type="file"] {
-    display: none; /* מסתיר את כפתור ה-Input המכוער של הדפדפן */
+.remove-image-btn:hover {
+    transform: scale(1.1);
+    background: #0097e6;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.9);
 }
 
 .clickable-circle {
@@ -279,52 +318,32 @@
     box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
 }
 
-.upload-placeholder-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0.7;
-}
-
-.clickable-circle:hover .upload-placeholder-content {
-    opacity: 1;
-}
-
-/* client/src/styles/auth.css */
-
-/* client/src/styles/auth.css */
-
-/* עיצוב כללי לאווטאר (האות או העוגן) */
+/* Avatar Letter */
 .letter-avatar {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.8rem; /* הגדלתי מעט את העוגן */
+    font-size: 2.5rem; /* אות גדולה */
     font-weight: bold;
     transition: all 0.4s ease;
 }
 
-/* --- התאמה למצב יום (Light Mode) --- */
 .light-mode .letter-avatar {
-    /* רקע בהיר וקורן שגורם לעוגן הכהה לבלוט */
     background: radial-gradient(circle, #ffffff 0%, #e3f2fd 100%);
-    color: #003366; /* צבע האות אם תוקלד */
+    color: #003366; 
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 51, 102, 0.1);
 }
 
-/* --- התאמה למצב לילה (Dark Mode) --- */
 .dark-mode .letter-avatar {
     background: linear-gradient(135deg, #0f2027, #203a43);
     color: #4facfe;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    /* הוספת זוהר לעוגן בתוך הים העמוק */
     text-shadow: 0 0 15px rgba(79, 195, 247, 0.6);
 }
 
-/* אפקט במעבר עכבר */
 .clickable-circle:active .letter-avatar {
-    transform: scale(0.95); /* אפקט "לחיצה" קטן כשלוחצים בפועל */
+    transform: scale(0.95); 
 }
