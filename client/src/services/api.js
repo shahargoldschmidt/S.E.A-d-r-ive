@@ -1,6 +1,6 @@
 /* client/src/services/api.js */
 
-const API_URL = "/api";
+const API_URL = "http://localhost:3000/api";
 
 // helper function for header with token 
 const getAuthHeaders = () => {
