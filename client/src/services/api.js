@@ -136,3 +136,49 @@ export const createFile = async (fileData) => {
         throw error;
     }
 };
+
+export const getFileById = async (fileId) => {
+    try {
+        const response = await fetch(`${API_URL}/files/${fileId}`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+
+        await handleResponse(response);
+        return await response.json(); 
+    } catch (error) {
+        throw error;
+    }
+};
+// 4. עדכון קובץ (שינוי שם, תוכן, או העברה לתיקייה) - PATCH
+export const updateFile = async (fileId, updates) => {
+    try {
+        const response = await fetch(`${API_URL}/files/${fileId}`, {
+            method: 'PATCH',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(updates)
+        });
+
+        // בדיקת שגיאות סטנדרטית
+        await handleResponse(response);
+
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};
+export const searchFiles = async (query) => {
+    try {
+        // שולחים את השאילתה ב-URL Query String
+        const response = await fetch(`${API_URL}/search/${encodeURIComponent(query)}`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+
+        await handleResponse(response);
+        return await response.json();
+    } catch (error) {
+        console.error("Search error:", error);
+        return []; // במקרה שגיאה נחזיר רשימה ריקה
+    }
+};
