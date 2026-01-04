@@ -4,7 +4,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files first (to utilize Docker cache for faster builds)
-COPY package.json ./
+COPY server/package.json ./
 
 # Install dependencies
 RUN npm install
@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the server
-CMD ["node", "src/app.js"]
+CMD ["node", "server/app.js"]

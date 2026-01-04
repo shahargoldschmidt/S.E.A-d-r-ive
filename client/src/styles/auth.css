@@ -347,3 +347,47 @@
 .clickable-circle:active .letter-avatar {
     transform: scale(0.95); 
 }
+
+/* עוטף את שדה הסיסמה כדי שנוכל למקם את העין בפנים */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 18px; /* שומר על הרווח המקורי של sea-input */
+}
+
+/* ביטול הרווח של האינפוט עצמו כשהוא בתוך הראפר (כדי שלא יהיה רווח כפול) */
+.password-wrapper .sea-input {
+    margin-bottom: 0;
+    padding-right: 45px; /* מפנה מקום לאייקון מצד ימין */
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    /* הגדרות חדשות לאייקון */
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5; /* צבע אפור עדין */
+    transition: opacity 0.3s;
+    z-index: 10;
+    
+    /* יישור מושלם לאייקון ה-SVG */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #003366; /* צבע האייקון (כחול כהה) */
+}
+
+/* שיראו טוב גם במצב חשוך */
+.dark-mode .password-toggle-icon {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.password-toggle-icon:hover {
+    opacity: 1;
+}
