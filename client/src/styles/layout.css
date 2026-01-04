@@ -72,7 +72,7 @@
     width: 100%;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 15px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     margin-top: 20px;
 }
@@ -128,8 +128,11 @@
 
 .actions-cell {
     display: flex;
-    gap: 8px; /* רווח בין הכפתורים */
-    align-items: center; /* יישור אנכי */
+    gap: 8px; 
+    align-items: center; 
+    /* הוספנו ריפוד משמעותי מימין כדי להרחיק את הכפתור מהקצה */
+    padding-right: 30px !important; 
+    justify-content: flex-end; /* מוודא שהם מיושרים לצד, אבל עם הריפוד */
 }
 
 .action-btn {
@@ -137,20 +140,29 @@
     background: transparent;
     cursor: pointer;
     
-    /* הגדרות קריטיות לעיגול מושלם */
-    width: 40px;  /* רוחב קבוע */
-    height: 40px; /* גובה קבוע */
+    /* תיקון לעיגול מושלם */
+    width: 38px;       /* רוחב קבוע */
+    height: 38px;      /* גובה קבוע */
+    min-width: 38px;   /* מונע מהפלקס למעוך אותו */
+    border-radius: 50%; 
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;   /* ביטול ריפוד שמעוות את הצורה */
-    border-radius: 50%; /* הופך את הריבוע לעיגול */
+    padding: 0;   
     
     font-size: 1.2rem;
     transition: all 0.2s;
     color: inherit;
+    line-height: 1; /* חשוב למרכוז הכוכב */
 }
 
+/* ביטול שוליים מיותרים לכוכב עצמו אם יש */
+.action-btn span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .action-btn:hover {
     background-color: rgba(0, 0, 0, 0.08); /* רקע אפור בעיגול מושלם */
     transform: scale(1.1);

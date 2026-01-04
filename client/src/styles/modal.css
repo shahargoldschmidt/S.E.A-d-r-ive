@@ -59,3 +59,151 @@
     font-weight: bold;
     cursor: pointer;
 }
+/* --- Move File Modal Styles --- */
+.folders-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;             /* תופס את כל הרוחב */
+    box-sizing: border-box;  /* מוודא שפאדינג לא מוסיף לרוחב */
+    padding: 2px;            /* מונע חיתוך של הפוקוס */
+    overflow-x: hidden;      /* מסתיר גלילה רוחבית */
+}
+
+.folder-select-item {
+    padding: 12px 15px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    width: 100%;             /* מוודא שלא חורג */
+    box-sizing: border-box;  /* קריטי */
+}
+
+.folder-select-item:hover {
+    background: #e3f2fd;
+    border-color: #4facfe;
+    transform: translateX(5px);
+}
+
+.folder-select-item.home {
+    background: rgba(79, 172, 254, 0.1);
+    color: #023e8a;
+    border: 1px dashed #4facfe;
+    margin-bottom: 10px;
+}
+
+.dark-mode .folder-select-item {
+    background: rgba(255,255,255,0.05);
+    color: #eee;
+}
+
+.dark-mode .folder-select-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* --- Permissions Modal Styles --- */
+
+.permissions-add-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.permission-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+}
+
+.permission-select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: white;
+    font-size: 0.95rem;
+}
+
+.btn-add-user {
+    background: #0077b6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.error-bubble-small {
+    background: #ffebee;
+    color: #c62828;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    border: 1px solid #ef9a9a;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+.collaborators-list h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.collaborator-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.collab-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.collab-email { font-weight: 500; color: #333; }
+.collab-badge { font-size: 0.75rem; color: #888; margin-top: 2px; }
+
+.collab-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.permission-select-small {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+    background: transparent;
+    cursor: pointer;
+}
+
+.btn-remove-user {
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-remove-user:hover { color: red; }

@@ -115,31 +115,38 @@ const searchFiles = async (userId, query) => {
     return finalResults;
 };
 
-//update folder only by name or filr by name and content
-const updateFile = async (userId,fileId, updates) => {
+// Update folder only by name or file by name and content
+const updateFile = async (userId, fileId, updates) => {
     const file = await fileModel.getById(fileId); 
     if (!file) return null;
-    //cant update a folders content
+
+    // 1. בדיקת הרשאה כללית (תופס גם לעריכת תוכן וגם לשינוי שם)
+    const canWrite = await permissionService.hasPermission(userId, fileId, 'WRITE');
+    if (!canWrite) {
+        throw new Error("Permission Denied: You do not have write access to this file");
+    }
+
+    // cant update a folders content
     if (file.type === 'folder' && updates.content !== undefined) {
         throw new Error("Invalid Operation: Only files can have content");
     }
-    // move file to a diffrent folder
+
+    // move file to a different folder
     if (updates.parentId) {
-        //check that it's a folder
+        // check that it's a folder
         const newParent = await fileModel.getById(updates.parentId);
         if (!newParent || newParent.type !== 'folder') {
             throw new Error("Invalid parent folder: Target does not exist or is not a folder");
         }
 
-        // Does the user have Permission to write in the folder
-        const hasWriteAccess = await permissionService.hasPermission(userId, updates.parentId, 'WRITE');
-        if (!hasWriteAccess) {
+        // Does the user have Permission to write in the target folder
+        const hasWriteAccessToFolder = await permissionService.hasPermission(userId, updates.parentId, 'WRITE');
+        if (!hasWriteAccessToFolder) {
             throw new Error("Permission Denied: You do not have write access to the target folder");
         }
     }
 
     return await fileModel.update(fileId, updates);
-    
 };
 
 module.exports = {

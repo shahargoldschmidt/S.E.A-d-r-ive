@@ -62,15 +62,54 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px; /* רווח גדול יותר בין הכפתורים */
+}
+/* עיצוב חדש לכפתורים עם טקסט (Pill Shape) */
+.action-pill-btn {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(0, 168, 255, 0.2);
+    border-radius: 50px; /* עיגול מלא בצדדים */
+    padding: 8px 20px;   /* ריפוד רחב לטקסט */
+    display: flex;
+    align-items: center;
+    gap: 8px;            /* רווח בין האייקון לטקסט */
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #005f73;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
+.action-pill-btn:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: #00a8ff;
+}
+
+/* צבעים ספציפיים */
+.action-pill-btn.save {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+}
+.action-pill-btn.save:hover { background: #c8e6c9; }
+
+.action-pill-btn.cancel {
+    background: #ffebee;
+    color: #c62828;
+    border-color: #ef9a9a;
+}
+.action-pill-btn.cancel:hover { background: #ffcdd2; }
+
 .action-icon-btn {
+    /* ... (העיצוב המקורי של העיגולים נשאר למי שצריך) ... */
     background: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,6 +118,10 @@
     transition: all 0.2s;
 }
 
+.action-icon-btn.star {
+    font-size: 1.4rem;
+    padding-bottom: 2px;
+}
 .action-icon-btn:hover {
     transform: scale(1.1);
     background: rgba(255,255,255,0.4);
