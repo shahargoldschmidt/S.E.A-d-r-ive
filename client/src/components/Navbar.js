@@ -36,7 +36,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
 
     useEffect(() => {
         const timer = setTimeout(async () => {
-            if (query.length > 1) {
+            if (query.length > 0) {
                 setIsSearching(true);
                 setShowSearchDropdown(true);
                 try {

@@ -285,7 +285,11 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
 
     return (
         <div className={`dashboard-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+            <Navbar 
+                toggleTheme={toggleTheme} 
+                isDarkMode={isDarkMode} 
+                onFileClick={handleItemClick} 
+            />
             
             <div className="dashboard-body">
                 <Sidebar 
