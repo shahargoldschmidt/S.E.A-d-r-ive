@@ -220,3 +220,16 @@ export const removePermission = async (fileId, permissionId) => {
         throw error;
     }
 };
+
+export const deleteFileApi = async (fileId) => {
+    const response = await fetch(`${API_URL}/files/${fileId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to delete');
+    }
+    return true;
+};

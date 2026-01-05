@@ -8,7 +8,7 @@ import FileEditor from '../components/FileEditor';
 import ActionMenu from '../components/ActionMenu'; 
 import MoveFileModal from '../components/MoveFileModal';
 import PermissionsModal from '../components/PermissionsModal';
-import { fetchFiles, createFile, getFileById, updateFile, getUser } from '../services/api'; 
+import { fetchFiles, createFile, getFileById, updateFile, getUser, deleteFileApi } from '../services/api'; 
 import '../styles/layout.css';
 import '../styles/actionMenu.css'; 
 
@@ -143,7 +143,22 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         if (selectedFile && selectedFile.id === fileId) setSelectedFile(null);
     };
     const handleRestore = (fileId) => { setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); };
-    const handlePermanentDelete = (fileId) => { if(window.confirm("Delete permanently?")) console.log("Deleted", fileId); };
+    const handlePermanentDelete = async (fileId) => { if(window.confirm("Are you sure you want to delete this file permanently? This cannot be undone.")) {
+            try {
+                await deleteFileApi(fileId);
+                // הסרה מהרשימה של "סל המיחזור" (Trash)
+                setTrashedIds(prev => { 
+                    const n = new Set(prev); 
+                    n.delete(fileId); 
+                    return n; 
+                });
+                // טעינה מחדש של הקבצים כדי שהקובץ ייעלם מהמסך
+                loadFiles();
+            } catch (error) {
+                alert("Error deleting file: " + error.message);
+            }
+        } 
+    };
     const handleToggleStar = (fileId) => { setStarredIds(prev => { const n = new Set(prev); if(n.has(fileId)) n.delete(fileId); else n.add(fileId); return n; }); };
 
    // --- לוגיקת שמירה מתוקנת ---
