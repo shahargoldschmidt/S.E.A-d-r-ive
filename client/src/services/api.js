@@ -189,3 +189,34 @@ export const updatePermission = async (fileId, permissionId, newType) => {
         return await response.json();
     } catch (error) { throw error; }
 };
+
+export const getPermissions = async (fileId) => {
+    try {
+        const response = await fetch(`${API_URL}/files/${fileId}/permissions`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        await handleResponse(response);
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch permissions", error);
+        return [];
+    }
+};
+
+export const removePermission = async (fileId, permissionId) => {
+    try {
+        const response = await fetch(`${API_URL}/files/${fileId}/permissions/${permissionId}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+        
+        // 204 No Content זה הצלחה
+        if (response.status === 204) return true;
+
+        await handleResponse(response);
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+};

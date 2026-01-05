@@ -1,40 +1,41 @@
+/* client/src/components/CreateFolderModal.js */
 import React, { useState } from 'react';
-import '../styles/modal.css'; // משתמשים ב-CSS הראשי
+import '../styles/modal.css';
 
 const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
     const [folderName, setFolderName] = useState('');
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (folderName.trim()) {
             onCreate(folderName);
-            setFolderName(''); // איפוס
+            setFolderName('');
+            onClose();
         }
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>Create New Folder</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input 
-                            type="text" 
-                            value={folderName} 
-                            onChange={(e) => setFolderName(e.target.value)} 
-                            placeholder="Folder name..."
-                            autoFocus
-                            required
-                        />
-                    </div>
-                    <div className="modal-actions">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="btn-create">Create</button>
-                    </div>
-                </form>
+                
+                <label style={{marginBottom:'8px', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
+                <input 
+                    type="text" 
+                    placeholder="e.g. Finance, Photos..." 
+                    value={folderName}
+                    onChange={(e) => setFolderName(e.target.value)}
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                />
+
+                {/* כפתור יחיד ורחב */}
+                <div className="modal-actions">
+                    <button className="btn-primary" onClick={handleSubmit}>
+                        Create
+                    </button>
+                </div>
             </div>
         </div>
     );

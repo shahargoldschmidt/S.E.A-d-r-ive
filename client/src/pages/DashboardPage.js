@@ -216,7 +216,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
 
         const canEdit = role === 'ADMIN' || role === 'EDITOR';
         const canManagePermissions = role === 'ADMIN'; 
-        const canDelete = role === 'ADMIN';
+        const canDelete = role === 'ADMIN' || role === 'EDITOR';
 
         if (isInTrash) {
             return [

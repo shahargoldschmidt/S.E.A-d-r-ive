@@ -4,67 +4,63 @@ import '../styles/modal.css';
 
 const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
     const [fileName, setFileName] = useState('');
-    const [fileType, setFileType] = useState('txt'); 
+    const [fileType, setFileType] = useState('txt');
     const [content, setContent] = useState('');
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         if (fileName.trim()) {
-            const finalName = `${fileName}.${fileType}`;
+            const finalName = fileName.includes('.') ? fileName : `${fileName}.${fileType}`;
             onCreate(finalName, content);
             setFileName('');
             setContent('');
-            setFileType('txt');
+            onClose();
         }
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content" style={{width: '500px'}}>
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" style={{width: '550px'}} onClick={(e) => e.stopPropagation()}>
                 <h3>Create New File</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group" style={{display: 'flex', gap: '10px'}}>
-                        <div style={{flex: 2}}>
-                            <label>File Name</label>
-                            <input 
-                                type="text" 
-                                value={fileName} 
-                                onChange={(e) => setFileName(e.target.value)} 
-                                placeholder="Name..."
-                                autoFocus
-                                required
-                            />
-                        </div>
-                        <div style={{flex: 1}}>
-                            <label>Type</label>
-                            <select 
-                                value={fileType} 
-                                onChange={(e) => setFileType(e.target.value)}
-                                style={{width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '1rem'}}
-                            >
-                                <option value="txt">.txt</option>
-                                <option value="doc">.doc</option>
-                                <option value="pdf">.pdf</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label>Content</label>
-                        <textarea 
-                            rows="8"
-                            value={content} 
-                            onChange={(e) => setContent(e.target.value)} 
-                            placeholder="Write content..."
-                            style={{width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', fontFamily: 'monospace'}}
+
+                <div style={{display:'flex', gap:'15px', width: '100%'}}>
+                    <div style={{flex: 3}}>
+                        <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
+                        <input 
+                            type="text" 
+                            placeholder="File name..." 
+                            value={fileName}
+                            onChange={(e) => setFileName(e.target.value)}
+                            autoFocus
                         />
                     </div>
-                    <div className="modal-actions">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="btn-create">Create</button>
+                    <div style={{flex: 1}}>
+                        <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Type</label>
+                        <select value={fileType} onChange={(e) => setFileType(e.target.value)}>
+                            <option value="txt">.txt</option>
+                            <option value="md">.md</option>
+                            <option value="js">.js</option>
+                            <option value="py">.py</option>
+                            <option value="html">.html</option>
+                        </select>
                     </div>
-                </form>
+                </div>
+
+                <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Content</label>
+                <textarea 
+                    rows="5" 
+                    placeholder="Start typing content..." 
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    style={{resize: 'vertical', minHeight: '100px'}}
+                />
+
+                <div className="modal-actions">
+                    <button className="btn-primary" onClick={handleSubmit}>
+                        Create
+                    </button>
+                </div>
             </div>
         </div>
     );
