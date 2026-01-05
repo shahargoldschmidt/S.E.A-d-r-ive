@@ -263,7 +263,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         }
 
         if (canDelete) {
-             actions.push({ label: 'Delete', icon: '🗑️', onClick: () => handleSoftDelete(file.id), danger: true });
+             actions.push({ label: 'Move to trash', icon: '🗑️', onClick: () => handleSoftDelete(file.id), danger: true });
         }
 
         return actions;
