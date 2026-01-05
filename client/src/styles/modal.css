@@ -133,19 +133,19 @@
 
 /* הגדרות משותפות לשני הכפתורים כדי להבטיח גובה זהה */
 .btn-primary, .btn-cancel {
-    height: 54px;               /* גובה קבוע וברור לשניהם */
-    box-sizing: border-box;     /* קריטי: הגובה כולל את הגבולות והריפוד */
-    border-radius: 14px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    height: 52px;               /* גובה אחיד וברור */
+    box-sizing: border-box;     
+    border-radius: 12px;        /* פינות מעוגלות */
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     
-    /* מירכוז הטקסט בצורה מושלמת */
+    /* מירכוז הטקסט */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 20px;            /* ריפוד רק בצדדים */
+    padding: 0 24px;
 }
 
 /* Create - 2/3 */
@@ -162,16 +162,30 @@
 }
 
 /* Cancel - 1/3 */
+/* === עדכון: כפתור הביטול הספציפי === */
 .btn-cancel {
-    flex: 1;
     background: transparent;
-    border: 2px solid #e2e8f0;  /* גבול עבה שנכלל בחישוב הגובה */
-    color: #64748b;
+    border: 2px solid #cbd5e1;  /* גבול אפור בהיר יותר */
+    color: #475569;             /* טקסט כהה וקריא */
+    margin-top: 20px;           /* 👇 התיקון: רווח מלמעלה כדי שלא יהיה צפוף */
+    width: 100%;                /* שיתפוס את כל הרוחב במודאל הזה */
 }
+
 .btn-cancel:hover { 
     background: #f1f5f9; 
-    color: #334155; 
-    border-color: #cbd5e1;
+    border-color: #94a3b8;
+    color: #1e293b; 
+}
+
+.dark-mode .btn-cancel { 
+    border-color: #475569;      /* גבול נראה לעין בכהה */
+    color: #cbd5e1;             /* טקסט בהיר וקריא */
+}
+
+.dark-mode .btn-cancel:hover { 
+    background: #334155; 
+    border-color: #94a3b8;
+    color: #ffffff; 
 }
 
 /* Dark Mode fixes */
