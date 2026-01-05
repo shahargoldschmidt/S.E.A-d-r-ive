@@ -127,11 +127,17 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         switch (activeTab) {
             case 'Trash': return inTrash;
             case 'Starred': return notInTrash.filter(f => starredIds.has(f.id));
-            case 'Shared with me': 
+            case 'Shared With Me': 
                 return notInTrash.filter(f => {
-                    const role = getUserRole(f);
-                    return role !== 'ADMIN'; 
-                });
+                // הגנה למקרה שהמשתמש עדיין לא נטען
+                if (!currentUser) return false;
+
+                // בדיקה ישירה: האם האימייל או ה-ID שלי תואמים לבעלים של הקובץ?
+                const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
+                
+                // אנחנו רוצים להציג את הקובץ רק אם אני **לא** הבעלים שלו
+                return !isOwner; 
+            });
             default: return notInTrash;
         }
     };
@@ -214,11 +220,30 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     };
     const handleUpload = async (fileObj) => {
         if (!fileObj) return;
+        
         const reader = new FileReader();
+        
         reader.onload = async (e) => {
-            try { await createFile({ name: fileObj.name, type: fileObj.type.startsWith('image/') ? 'image' : 'file', parentId: currentFolder ? currentFolder.id : null, content: e.target.result }); loadFiles(); } catch (error) { alert(error.message); }
+            try { 
+                await createFile({ 
+                    name: fileObj.name, 
+                    // קובע את הסוג לפי ה-MIME type של הקובץ
+                    type: fileObj.type.startsWith('image/') ? 'image' : 'file', 
+                    parentId: currentFolder ? currentFolder.id : null, 
+                    content: e.target.result 
+                }); 
+                loadFiles(); 
+            } catch (error) { 
+                alert(error.message); 
+            }
         };
-        reader.readAsText(fileObj); 
+
+        // 👇 התיקון הקריטי: בדיקה האם זו תמונה
+        if (fileObj.type.startsWith('image/')) {
+            reader.readAsDataURL(fileObj); // קורא תמונות כ-Base64 שדפדפן יודע להציג
+        } else {
+            reader.readAsText(fileObj);    // קורא קבצים רגילים כטקסט
+        }
     };
 
     const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('he-IL') : '-';

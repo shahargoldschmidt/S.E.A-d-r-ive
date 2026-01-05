@@ -23,7 +23,7 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
     const menuItems = [
         { id: 'My Drive', icon: <Icons.Home />, label: 'Home' },
         { id: 'Starred', icon: <Icons.Starred />, label: 'Starred' },
-        { id: 'Shared', icon: <Icons.Shared />, label: 'Shared with me' },
+        { id: 'Shared With Me', icon: <Icons.Shared />, label: 'Shared With Me' },
         { id: 'Trash', icon: <Icons.Trash />, label: 'Trash' }
     ];
 
