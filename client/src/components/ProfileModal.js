@@ -35,7 +35,7 @@ const ProfileModal = ({ user, onClose }) => {
                     <div className="detail-item">
                         <span className="detail-label">User ID</span>
                         <span className="detail-value" style={{fontSize: '0.8rem', opacity: 0.7}}>
-                            {localStorage.getItem('userId') || 'Unknown'}
+                            {sessionStorage.getItem('userId') || 'Unknown'}
                         </span>
                     </div>
                 </div>
