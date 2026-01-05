@@ -1,3 +1,4 @@
+/* server/models/fileModel.js */
 const tcpClient = require('../services/tcpClientService');
 const crypto = require('crypto');
 
@@ -16,8 +17,15 @@ const getById = async (fileId) => {
 
 // create file/folder and add to metadata. 
 const create = async (email, fileId, fileData) => {
-    const isFile = fileData.type === 'file';
-    const content = fileData.content || "";
+    const isFile = fileData.type === 'file' || fileData.type === 'image';
+    
+    // --- התיקון: שיניתי ל-let כדי שלא תהיה שגיאה ---
+    let content = fileData.content || "";
+    const isImage = fileData.type === 'image';
+
+    if (isImage && content) {
+        content = content.replace(/[\n\r]/g, '');
+    }
 
     const newFileMeta = {
         id: fileId,
@@ -48,6 +56,12 @@ const update = async (fileId, updates) => {
 
     // if there is a change in the content 
     if (updates.content !== undefined) {
+        
+        // הוספתי את הניקוי גם כאן ליתר ביטחון (לא זורק שגיאה כי זה שדה באובייקט)
+        const isImage = file.type === 'image';
+        if (isImage) {
+            updates.content = updates.content.replace(/[\n\r]/g, '');
+        }
         
         // Get the current content from the C++ storage before making any changes
         const oldContent = await getTcpContent(fileId);
@@ -92,7 +106,7 @@ const deleteFile = async (id) => {
     const meta = filesMetadata.get(id);
     if (!meta) return false;
     //if its a file delte also from TCP
-    if (meta.type === 'file') {
+    if (meta.type === 'file' || meta.type === 'image') {
         await tcpClient.sendCommand(`delete ${id}`);
     }
 

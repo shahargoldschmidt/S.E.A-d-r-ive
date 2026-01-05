@@ -41,7 +41,7 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
     return (
         <aside className="sidebar-container">
             {/* אינפוטים נסתרים להעלאה */}
-            <input type="file" ref={fileInputRef} style={{display: 'none'}} onChange={(e) => handleFileChange(e, 'file')} />
+            <input type="file" ref={fileInputRef} style={{display: 'none'}} accept=".txt" onChange={(e) => handleFileChange(e, 'file')} />
             <input type="file" ref={photoInputRef} accept="image/*" style={{display: 'none'}} onChange={(e) => handleFileChange(e, 'photo')} />
 
             {/* כפתור הוספה ראשי */}

@@ -11,7 +11,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
 
     const handleSubmit = () => {
         if (fileName.trim()) {
-            const finalName = fileName.includes('.') ? fileName : `${fileName}.${fileType}`;
+            const finalName = fileName.includes('.') ? fileName : `${fileName}.txt`;
             onCreate(finalName, content);
             setFileName('');
             setContent('');
@@ -25,7 +25,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                 <h3>Create New File</h3>
 
                 <div style={{display:'flex', gap:'15px', width: '100%'}}>
-                    <div style={{flex: 3}}>
+                    <div style={{flex: 1}}>
                         <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
                         <input 
                             type="text" 
@@ -35,16 +35,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                             autoFocus
                         />
                     </div>
-                    <div style={{flex: 1}}>
-                        <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Type</label>
-                        <select value={fileType} onChange={(e) => setFileType(e.target.value)}>
-                            <option value="txt">.txt</option>
-                            <option value="md">.md</option>
-                            <option value="js">.js</option>
-                            <option value="py">.py</option>
-                            <option value="html">.html</option>
-                        </select>
-                    </div>
+
                 </div>
 
                 <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Content</label>
@@ -59,6 +50,9 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                 <div className="modal-actions">
                     <button className="btn-primary" onClick={handleSubmit}>
                         Create
+                    </button>
+                    <button className="btn-cancel" onClick={onClose}>
+                        Cancel
                     </button>
                 </div>
             </div>

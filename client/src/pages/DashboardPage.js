@@ -245,31 +245,55 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const handleCreateTextFile = async (fileName, content) => {
         try { await createFile({ name: fileName, type: 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); }
     };
+    // גרסה סופית: משתמשת ב-api.js המקורי (בשביל הטוקנים) אבל שולחת JSON
+// גרסה סופית ונקייה - שולחת Base64 נקי ללא Headers
     const handleUpload = async (fileObj) => {
         if (!fileObj) return;
-        
-        const reader = new FileReader();
-        
-        reader.onload = async (e) => {
-            try { 
-                await createFile({ 
-                    name: fileObj.name, 
-                    // קובע את הסוג לפי ה-MIME type של הקובץ
-                    type: fileObj.type.startsWith('image/') ? 'image' : 'file', 
-                    parentId: currentFolder ? currentFolder.id : null, 
-                    content: e.target.result 
-                }); 
-                loadFiles(); 
-            } catch (error) { 
-                alert(error.message); 
-            }
-        };
 
-        // 👇 התיקון הקריטי: בדיקה האם זו תמונה
-        if (fileObj.type.startsWith('image/')) {
-            reader.readAsDataURL(fileObj); // קורא תמונות כ-Base64 שדפדפן יודע להציג
-        } else {
-            reader.readAsText(fileObj);    // קורא קבצים רגילים כטקסט
+        // המרה ל-Base64
+        const toBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // המרה לטקסט
+        const toText = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        try {
+            let content;
+            const isImage = fileObj.type.startsWith('image/');
+
+            if (isImage) {
+                const fullBase64 = await toBase64(fileObj);
+                // === התיקון: ניקוי ההקדמה (data:image/...) ===
+                // אנחנו שולחים לשרת רק את הקוד נטו. זה מונע תקלות בתצוגה.
+                content = fullBase64.split(',')[1]; 
+            } else {
+                content = await toText(fileObj);
+            }
+
+            // שליחה דרך api.js המקורי שלך
+            await createFile({
+                name: fileObj.name,
+                type: isImage ? 'image' : 'file',
+                parentId: currentFolder ? currentFolder.id : null,
+                content: content 
+            });
+
+            // רענון
+            await loadFiles();
+
+        } catch (error) {
+            console.error("Upload error:", error);
+            const msg = error.response?.data?.message || error.message;
+            alert("שגיאה בהעלאה: " + msg);
         }
     };
 
