@@ -8,6 +8,7 @@ import FileEditor from '../components/FileEditor';
 import ActionMenu from '../components/ActionMenu'; 
 import MoveFileModal from '../components/MoveFileModal';
 import PermissionsModal from '../components/PermissionsModal';
+import RenameModal from '../components/RenameModal'; // הוסף את הייבוא
 import { fetchFiles, createFile, getFileById, updateFile, getUser, deleteFileApi } from '../services/api'; 
 import '../styles/layout.css';
 import '../styles/actionMenu.css'; 
@@ -21,6 +22,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [fileToManagePerms, setFileToManagePerms] = useState(null); 
     const [fileToMove, setFileToMove] = useState(null);
+    const [fileToRename, setFileToRename] = useState(null);
 
     const fileInputRef = useRef(null);
     const [currentFolder, setCurrentFolder] = useState(null);
@@ -85,7 +87,10 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         return 'none';
     };
 
-    useEffect(() => { loadFiles(); }, [currentFolder, activeTab]); 
+   useEffect(() => { 
+        loadFiles(); 
+    }, [currentFolder, activeTab]);
+
 
     const handleItemClick = async (file) => {
         if (file.type === 'folder') {
@@ -212,6 +217,25 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         } catch (e) { alert(e.message); }
     };
 
+    // הוסף את הפונקציה הזו בתוך DashboardPage (למשל ליד handleMoveConfirm)
+    const handleRenameFile = async (fileId, newName) => {
+        try {
+            // שליחה לשרת (עובד גם לקבצים וגם לתיקיות)
+            await updateFile(fileId, { name: newName });
+            
+            // עדכון ה-UI המקומי
+            setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f));
+            
+            // אם במקרה הקובץ פתוח כרגע, נעדכן גם את הכותרת שלו
+            if (selectedFile && selectedFile.id === fileId) {
+                setSelectedFile(prev => ({ ...prev, name: newName }));
+            }
+            setActiveModal(null);
+        } catch (error) {
+            alert("Failed to rename: " + error.message);
+        }
+    };
+
     const handleCreateFolder = async (folderName) => {
         try { await createFile({ name: folderName, type: 'folder', parentId: currentFolder ? currentFolder.id : null }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); }
     };
@@ -269,10 +293,19 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         
         // תיקון: אייקון עיפרון וטקסט View / Edit
         if (!isInsideEditor) {
-            actions.push({ label: 'View / Edit', icon: '✏️', onClick: () => handleItemClick(file) });
+            actions.push({ label: 'View / Edit', icon: '✏️', onClick: () => handleItemClick(file) }, );
         }
 
         if (canEdit) {
+            // הוספת Rename (החלק החדש)
+            actions.push({ 
+                label: 'Rename', 
+                icon: '✏️', 
+                onClick: () => {
+                    setFileToRename(file); 
+                    setActiveModal('rename'); 
+                }
+            });
             actions.push({ label: 'Move', icon: '📂', onClick: () => openMoveModal(file) });
         }
 
@@ -397,7 +430,12 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                     )}
                 </main>
             </div>
-            
+            <RenameModal 
+                isOpen={activeModal === 'rename'} 
+                onClose={() => setActiveModal(null)} 
+                onRename={handleRenameFile} 
+                currentFile={fileToRename} 
+            />
             <CreateFolderModal isOpen={activeModal === 'folder'} onClose={() => setActiveModal(null)} onCreate={handleCreateFolder} />
             <CreateFileModal isOpen={activeModal === 'textFile'} onClose={() => setActiveModal(null)} onCreate={handleCreateTextFile} />
             <MoveFileModal isOpen={activeModal === 'move'} onClose={() => setActiveModal(null)} onMove={handleMoveConfirm} currentFile={fileToMove} />
