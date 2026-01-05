@@ -21,7 +21,7 @@ const hasPermission = async (userId, fileId, actionType) => {
         //get all premision for a file
         const permissions = await permissionModel.getPermissions(currentFileId);
         //search for users premision in that file
-        const userPerm = permissions.find(p => p.userId === userId); 
+        const userPerm = permissions.find(p => String(p.userId) === String(userId)); 
 
         if (userPerm) { //search for users authorities in his premision
             const allowedActions = ROLE_PERMISSIONS[userPerm.type] || [];
