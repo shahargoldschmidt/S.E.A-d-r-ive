@@ -8,17 +8,50 @@ const crypto = require('crypto');
 //  Get root items the user has premission to  root level
 const getFiles = async (userId) => {
     const allFiles = await fileModel.getFiles();
-    const accessible = []; // array to store all accesible items
+    const user = await userService.getUser(userId);
+    const userEmail = user.email;
 
+    const accessibleIds = new Set();
+    const accessibleFiles = [];
+    
     for (const file of allFiles) {
-        if (file.parentId === null) { //check for root items only
-            const hasAccess = await permissionService.hasPermission(userId, file.id, 'READ');
-            if (hasAccess) accessible.push(file); //if item acccesible to user add to array
+        let hasAccess = false;
+        
+        const isOwner = String(file.owner) === String(userId) || file.owner === userEmail;
+        if (isOwner) {
+            hasAccess = true;
+        } else {
+            hasAccess = await permissionService.hasPermission(userId, file.id, 'READ');
+        }
+
+        if (hasAccess) {
+            accessibleIds.add(file.id); 
+            accessibleFiles.push(file);   
         }
     }
-    return accessible;
-};
 
+    const resultList = [];
+
+    for (const file of accessibleFiles) { 
+        const isOwner = String(file.owner) === String(userId) || file.owner === userEmail;
+        let shouldInclude = false;
+
+        if (isOwner) {
+            if (file.parentId === null) shouldInclude = true;
+        } else {
+            const isParentAccessible = file.parentId && accessibleIds.has(file.parentId);
+            
+            if (!isParentAccessible) shouldInclude = true;
+        }
+
+        if (shouldInclude) {
+            const perms = await permissionService.getPermissions(file.id);
+            resultList.push({ ...file, permissions: perms });
+        }
+    }
+
+    return resultList;
+};
 
  // Validate parent folder and initialize permissions.
 const createFile = async (userId, fileData) => {
@@ -45,12 +78,21 @@ const getFileData = async (fileId) => {
     const meta = await fileModel.getById(fileId);
     if (!meta) return null;
 
+    const selfPermissions = await permissionService.getPermissions(fileId);
+    const metaWithPerms = { ...meta, permissions: selfPermissions };
+
     if (meta.type === 'folder') { //if folder get all its children from first level
         const all = await fileModel.getFiles();
         const children = all.filter(f => f.parentId === fileId);
         
-        return { ...meta, children };
+        const childrenWithPermissions = await Promise.all(children.map(async (child) => {
+            const perms = await permissionService.getPermissions(child.id);
+                return { ...child, permissions: perms };
+        }));
+                
+        return { ...metaWithPerms, children: childrenWithPermissions };  
     }
+
     //else get content of file
     const content = await fileModel.getTcpContent(fileId);
     return { ...meta, content };
@@ -110,7 +152,10 @@ const searchFiles = async (userId, query) => {
     const finalResults = [];
     for (const item of resultsMap.values()) {
         const hasAccess = await permissionService.hasPermission(userId, item.id, 'READ');
-        if (hasAccess) finalResults.push(item);
+        if (hasAccess) {
+            const perms = await permissionService.getPermissions(item.id);
+            finalResults.push({ ...item, permissions: perms });
+        }
     }
     return finalResults;
 };
@@ -120,7 +165,6 @@ const updateFile = async (userId, fileId, updates) => {
     const file = await fileModel.getById(fileId); 
     if (!file) return null;
 
-    // 1. בדיקת הרשאה כללית (תופס גם לעריכת תוכן וגם לשינוי שם)
     const canWrite = await permissionService.hasPermission(userId, fileId, 'WRITE');
     if (!canWrite) {
         throw new Error("Permission Denied: You do not have write access to this file");

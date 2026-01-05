@@ -15,7 +15,7 @@ import '../styles/actionMenu.css';
 
 const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     // --- State ---
-    const [activeTab, setActiveTab] = useState('My Drive');
+    const [activeTab, setActiveTab] = useState('Home');
     const [files, setFiles] = useState([]); 
     const [activeModal, setActiveModal] = useState(null); 
     const [selectedFile, setSelectedFile] = useState(null);
@@ -130,20 +130,23 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         const inTrash = files.filter(f => trashedIds.has(f.id));
 
         switch (activeTab) {
-            case 'Trash': return inTrash;
-            case 'Starred': return notInTrash.filter(f => starredIds.has(f.id));
+            case 'Trash': 
+                return inTrash;
+            case 'Starred': 
+                return notInTrash.filter(f => starredIds.has(f.id));
+            case 'My Storage':
+                return notInTrash.filter(f => {
+                     const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
+                     return isOwner;
+                });
             case 'Shared With Me': 
                 return notInTrash.filter(f => {
-                // הגנה למקרה שהמשתמש עדיין לא נטען
-                if (!currentUser) return false;
-
-                // בדיקה ישירה: האם האימייל או ה-ID שלי תואמים לבעלים של הקובץ?
-                const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
-                
-                // אנחנו רוצים להציג את הקובץ רק אם אני **לא** הבעלים שלו
-                return !isOwner; 
-            });
-            default: return notInTrash;
+                    const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
+                    return !isOwner; 
+                });
+            case 'Home':
+            default: 
+                return notInTrash;
         }
     };
 

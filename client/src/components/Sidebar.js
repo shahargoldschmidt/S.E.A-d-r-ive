@@ -3,6 +3,7 @@ import '../styles/sidebar.css';
 
 const Icons = {
     Home: () => (<svg className="menu-icon-svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>),
+    Storage: () => (<svg className="menu-icon-svg" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.81 4.43l.59 1.62 1.72.19C21.38 12.39 22 13.12 22 14c0 1.66-1.34 3-3 3z"/></svg>),
     Starred: () => (<svg className="menu-icon-svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>),
     Shared: () => (<svg className="menu-icon-svg" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg>),
     Trash: () => (<svg className="menu-icon-svg" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>),
@@ -21,9 +22,10 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
     const photoInputRef = useRef(null);
 
     const menuItems = [
-        { id: 'My Drive', icon: <Icons.Home />, label: 'Home' },
-        { id: 'Starred', icon: <Icons.Starred />, label: 'Starred' },
+        { id: 'Home', icon: <Icons.Home />, label: 'Home' },
+        { id: 'My Storage', icon: <Icons.Storage />, label: 'My Storage' },
         { id: 'Shared With Me', icon: <Icons.Shared />, label: 'Shared With Me' },
+        { id: 'Starred', icon: <Icons.Starred />, label: 'Starred' },
         { id: 'Trash', icon: <Icons.Trash />, label: 'Trash' }
     ];
 
