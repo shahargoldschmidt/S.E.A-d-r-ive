@@ -37,7 +37,6 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
                 />
 
                 <div className="modal-actions">
-                    <button className="btn-cancel" onClick={onClose}>Cancel</button>
                     <button className="btn-primary" onClick={handleSubmit}>Save</button>
                 </div>
             </div>
