@@ -92,14 +92,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
             setFolderStack((prevStack) => [...prevStack, currentFolder]);
             setCurrentFolder(file); 
         } else {
-            // בדיקה האם הקובץ הוא תמונה (לפי type או סיומת)
-            const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
-
-            // מפעילים את הדג רק אם זו תמונה!
-            if (isImage) {
                 setIsFileLoading(true);
-            }
-
             try {
                 const fullFileData = await getFileById(file.id);
                 setSelectedFile({ ...file, ...fullFileData });
@@ -107,10 +100,8 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                 console.error("Error opening file", error);
                 alert("Error loading file content"); 
             } finally {
-                // מכבים את הדג רק אם הוא דלק
-                if (isImage) {
                     setIsFileLoading(false);
-                }
+                
             }
         }
     };
