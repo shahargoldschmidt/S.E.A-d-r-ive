@@ -8,20 +8,38 @@ using namespace std;
 
 TCPMenu::TCPMenu(int socket) : m_socket(socket) {}
 
+// 👇 זו הפונקציה החדשה שתתקן את קליטת התמונות 👇
 string TCPMenu::getInput() {
-    char buffer[4096];
-    memset(buffer, 0, sizeof(buffer));
+    string fullInput = "";  // משתנה דינמי שיאגור את כל המידע
+    char buffer[4096];      // באפר זמני לכל "ביס"
 
-    // reading from server until something is recieved
-    int bytesRead = recv(m_socket, buffer, sizeof(buffer) - 1, 0);
+    while (true) {
+        // ניקוי הבאפר לפני כל קריאה
+        memset(buffer, 0, sizeof(buffer));
 
-    if (bytesRead <= 0) {
-        return ""; // if client disconnectes
+        // קריאת חתיכה מהרשת
+        int bytesRead = recv(m_socket, buffer, sizeof(buffer) - 1, 0);
+
+        // אם יש שגיאה או שהלקוח התנתק
+        if (bytesRead <= 0) {
+            if (fullInput.length() > 0) {
+                // אם הספקנו לקרוא משהו לפני הניתוק, נחזיר אותו
+                return fullInput;
+            }
+            return ""; // ניתוק מלא
+        }
+
+        // הוספת החתיכה שקראנו למחרוזת הגדולה
+        fullInput.append(buffer, bytesRead);
+
+        // הבדיקה הקריטית: האם הגענו לסוף הפקודה? (ירידת שורה)
+        // Node.js שולח עכשיו \n בסוף כל פקודה
+        if (fullInput.find('\n') != string::npos) {
+            break; // סיימנו לקרוא!
+        }
     }
 
-    string input(buffer);
-
-    return input;
+    return fullInput;
 }
 
 void TCPMenu::respond(string message) {
