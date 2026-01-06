@@ -8,7 +8,7 @@ import FileEditor from '../components/FileEditor';
 import ActionMenu from '../components/ActionMenu'; 
 import MoveFileModal from '../components/MoveFileModal';
 import PermissionsModal from '../components/PermissionsModal';
-import RenameModal from '../components/RenameModal'; // הוסף את הייבוא
+import RenameModal from '../components/RenameModal'; 
 import { fetchFiles, createFile, getFileById, updateFile, getUser, deleteFileApi } from '../services/api'; 
 import '../styles/layout.css';
 import '../styles/actionMenu.css'; 
@@ -19,6 +19,10 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const [files, setFiles] = useState([]); 
     const [activeModal, setActiveModal] = useState(null); 
     const [selectedFile, setSelectedFile] = useState(null);
+    
+    // סטייט לטעינה
+    const [isFileLoading, setIsFileLoading] = useState(false);
+
     const [currentUser, setCurrentUser] = useState(null);
     const [fileToManagePerms, setFileToManagePerms] = useState(null); 
     const [fileToMove, setFileToMove] = useState(null);
@@ -65,44 +69,48 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         }
     };
 
-    // --- חישוב תפקיד (User Role) ---
     const getUserRole = (file) => {
         if (!currentUser || !file) return 'none';
-        
         const currentUserId = String(currentUser.id);
         const currentUserEmail = currentUser.email;
         const fileOwner = String(file.owner);
         const fileUserId = file.userId ? String(file.userId) : null;
 
-        if (fileOwner === currentUserEmail || fileOwner === currentUserId || fileUserId === currentUserId) {
-            return 'ADMIN'; 
-        }
-
+        if (fileOwner === currentUserEmail || fileOwner === currentUserId || fileUserId === currentUserId) return 'ADMIN'; 
         if (file.permissions && Array.isArray(file.permissions)) {
-            const perm = file.permissions.find(p => 
-                p.email === currentUserEmail || String(p.userId) === currentUserId
-            );
+            const perm = file.permissions.find(p => p.email === currentUserEmail || String(p.userId) === currentUserId);
             if (perm) return perm.type; 
         }
         return 'none';
     };
 
-   useEffect(() => { 
-        loadFiles(); 
-    }, [currentFolder, activeTab]);
+    useEffect(() => { loadFiles(); }, [currentFolder, activeTab]);
 
-
+    // --- השינוי כאן: בדיקה אם זה תמונה לפני הפעלת הלודינג ---
     const handleItemClick = async (file) => {
         if (file.type === 'folder') {
             setFolderStack((prevStack) => [...prevStack, currentFolder]);
             setCurrentFolder(file); 
         } else {
+            // בדיקה האם הקובץ הוא תמונה (לפי type או סיומת)
+            const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
+
+            // מפעילים את הדג רק אם זו תמונה!
+            if (isImage) {
+                setIsFileLoading(true);
+            }
+
             try {
                 const fullFileData = await getFileById(file.id);
                 setSelectedFile({ ...file, ...fullFileData });
             } catch (error) { 
                 console.error("Error opening file", error);
                 alert("Error loading file content"); 
+            } finally {
+                // מכבים את הדג רק אם הוא דלק
+                if (isImage) {
+                    setIsFileLoading(false);
+                }
             }
         }
     };
@@ -128,253 +136,51 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const getFilteredFiles = () => {
         const notInTrash = files.filter(f => !trashedIds.has(f.id));
         const inTrash = files.filter(f => trashedIds.has(f.id));
-
         switch (activeTab) {
-            case 'Trash': 
-                return inTrash;
-            case 'Starred': 
-                return notInTrash.filter(f => starredIds.has(f.id));
-            case 'My Storage':
-                return notInTrash.filter(f => {
-                     const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
-                     return isOwner;
-                });
-            case 'Shared With Me': 
-                return notInTrash.filter(f => {
-                    const isOwner = f.owner === currentUser.email || String(f.owner) === String(currentUser.id);
-                    return !isOwner; 
-                });
-            case 'Home':
-            default: 
-                return notInTrash;
+            case 'Trash': return inTrash;
+            case 'Starred': return notInTrash.filter(f => starredIds.has(f.id));
+            case 'My Storage': return notInTrash.filter(f => f.owner === currentUser.email || String(f.owner) === String(currentUser.id));
+            case 'Shared With Me': return notInTrash.filter(f => !(f.owner === currentUser.email || String(f.owner) === String(currentUser.id)));
+            case 'Home': default: return notInTrash;
         }
     };
-
     const displayFiles = getFilteredFiles();
 
-    const handleSoftDelete = (fileId) => { 
-        setTrashedIds(prev => { const n = new Set(prev); n.add(fileId); return n; }); 
-        if (selectedFile && selectedFile.id === fileId) setSelectedFile(null);
-    };
+    // ... שאר הפונקציות ללא שינוי ...
+    const handleSoftDelete = (fileId) => { setTrashedIds(prev => { const n = new Set(prev); n.add(fileId); return n; }); if (selectedFile && selectedFile.id === fileId) setSelectedFile(null); };
     const handleRestore = (fileId) => { setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); };
-    const handlePermanentDelete = async (fileId) => { if(window.confirm("Are you sure you want to delete this file permanently? This cannot be undone.")) {
-            try {
-                await deleteFileApi(fileId);
-                // הסרה מהרשימה של "סל המיחזור" (Trash)
-                setTrashedIds(prev => { 
-                    const n = new Set(prev); 
-                    n.delete(fileId); 
-                    return n; 
-                });
-                // טעינה מחדש של הקבצים כדי שהקובץ ייעלם מהמסך
-                loadFiles();
-            } catch (error) {
-                alert("Error deleting file: " + error.message);
-            }
-        } 
-    };
+    const handlePermanentDelete = async (fileId) => { if(window.confirm("Are you sure?")) { try { await deleteFileApi(fileId); setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); loadFiles(); } catch (error) { alert("Error: " + error.message); } } };
     const handleToggleStar = (fileId) => { setStarredIds(prev => { const n = new Set(prev); if(n.has(fileId)) n.delete(fileId); else n.add(fileId); return n; }); };
-
-   // --- לוגיקת שמירה מתוקנת ---
-    const handleSaveFile = async (fileId, updates) => {
-        try {
-            // תיקון קריטי: השרת מצפה לקבל את ה-ID כחלק מהאובייקט המעודכן
-            // אנחנו מאחדים את ה-ID ביחד עם השדות שהשתנו (name, content)
-            const payload = { 
-                id: fileId, 
-                ...updates 
-            };
-
-            // 1. שליחת העדכון לשרת (עכשיו הגוף מכיל גם את ה-ID)
-            await updateFile(fileId, payload);
-            
-            // 2. משיכה מחדש מהשרת כדי לוודא סנכרון מלא (חשוב מאוד לתוכן TCP)
-            const freshData = await getFileById(fileId);
-
-            // 3. עדכון הסטייט המקומי עם המידע האמיתי מהשרת
-            setFiles(prev => prev.map(f => f.id === fileId ? freshData : f));
-            
-            if (selectedFile && selectedFile.id === fileId) {
-                setSelectedFile(freshData);
-            }
-        } catch (e) { 
-            console.error("Save error:", e);
-            alert("Save failed: " + e.message); 
-        }
-    };
-    
-    const openMoveModal = (file) => {
-        setFileToMove(file);
-        setActiveModal('move');
-    };
-
-    const handleMoveConfirm = async (targetFolder) => {
-        if (!fileToMove) return;
-        const targetFolderId = targetFolder ? targetFolder.id : null; 
-        try {
-            await updateFile(fileToMove.id, { parentId: targetFolderId });
-            setActiveModal(null);
-            setFileToMove(null);
-            setSelectedFile(null); 
-            loadFiles(); 
-        } catch (e) { alert(e.message); }
-    };
-
-    // הוסף את הפונקציה הזו בתוך DashboardPage (למשל ליד handleMoveConfirm)
-    const handleRenameFile = async (fileId, newName) => {
-        try {
-            // שליחה לשרת (עובד גם לקבצים וגם לתיקיות)
-            await updateFile(fileId, { name: newName });
-            
-            // עדכון ה-UI המקומי
-            setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f));
-            
-            // אם במקרה הקובץ פתוח כרגע, נעדכן גם את הכותרת שלו
-            if (selectedFile && selectedFile.id === fileId) {
-                setSelectedFile(prev => ({ ...prev, name: newName }));
-            }
-            setActiveModal(null);
-        } catch (error) {
-            alert("Failed to rename: " + error.message);
-        }
-    };
-
-    const handleCreateFolder = async (folderName) => {
-        try { await createFile({ name: folderName, type: 'folder', parentId: currentFolder ? currentFolder.id : null }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); }
-    };
-    const handleCreateTextFile = async (fileName, content) => {
-        try { await createFile({ name: fileName, type: 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); }
-    };
-    // גרסה סופית: משתמשת ב-api.js המקורי (בשביל הטוקנים) אבל שולחת JSON
-// גרסה סופית ונקייה - שולחת Base64 נקי ללא Headers
-    const handleUpload = async (fileObj) => {
-        if (!fileObj) return;
-
-        // המרה ל-Base64
-        const toBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        // המרה לטקסט
-        const toText = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
-        try {
-            let content;
-            const isImage = fileObj.type.startsWith('image/');
-
-            if (isImage) {
-                const fullBase64 = await toBase64(fileObj);
-                // === התיקון: ניקוי ההקדמה (data:image/...) ===
-                // אנחנו שולחים לשרת רק את הקוד נטו. זה מונע תקלות בתצוגה.
-                content = fullBase64.split(',')[1]; 
-            } else {
-                content = await toText(fileObj);
-            }
-
-            // שליחה דרך api.js המקורי שלך
-            await createFile({
-                name: fileObj.name,
-                type: isImage ? 'image' : 'file',
-                parentId: currentFolder ? currentFolder.id : null,
-                content: content 
-            });
-
-            // רענון
-            await loadFiles();
-
-        } catch (error) {
-            console.error("Upload error:", error);
-            const msg = error.response?.data?.message || error.message;
-            alert("שגיאה בהעלאה: " + msg);
-        }
-    };
-
+    const handleSaveFile = async (fileId, updates) => { try { const payload = { id: fileId, ...updates }; await updateFile(fileId, payload); const freshData = await getFileById(fileId); setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); } catch (e) { alert("Save failed: " + e.message); } };
+    const openMoveModal = (file) => { setFileToMove(file); setActiveModal('move'); };
+    const handleMoveConfirm = async (targetFolder) => { if (!fileToMove) return; const targetFolderId = targetFolder ? targetFolder.id : null; try { await updateFile(fileToMove.id, { parentId: targetFolderId }); setActiveModal(null); setFileToMove(null); setSelectedFile(null); loadFiles(); } catch (e) { alert(e.message); } };
+    const handleRenameFile = async (fileId, newName) => { try { await updateFile(fileId, { name: newName }); setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(prev => ({ ...prev, name: newName })); setActiveModal(null); } catch (error) { alert("Failed: " + error.message); } };
+    const handleCreateFolder = async (folderName) => { try { await createFile({ name: folderName, type: 'folder', parentId: currentFolder ? currentFolder.id : null }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); } };
+    const handleCreateTextFile = async (fileName, content) => { try { await createFile({ name: fileName, type: 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); } };
+    const handleUpload = async (fileObj) => { if (!fileObj) return; const toBase64 = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsDataURL(f); reader.onload = () => r(reader.result); reader.onerror = j; }); const toText = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsText(f); reader.onload = () => r(reader.result); reader.onerror = j; }); try { let content; const isImage = fileObj.type.startsWith('image/'); if (isImage) { const fullBase64 = await toBase64(fileObj); content = fullBase64.split(',')[1]; } else { content = await toText(fileObj); } await createFile({ name: fileObj.name, type: isImage ? 'image' : 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); await loadFiles(); } catch (error) { alert("Upload error: " + (error.response?.data?.message || error.message)); } };
     const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('he-IL') : '-';
     const formatSize = (bytes) => bytes ? `${(bytes/1024).toFixed(1)} KB` : '-';
 
-    // --- עדכון אייקונים ושמות ---
     const getFileActions = (file, isInsideEditor = false) => {
         const role = getUserRole(file);
         const isInTrash = activeTab === 'Trash';
-
         const canEdit = role === 'ADMIN' || role === 'EDITOR';
         const canManagePermissions = role === 'ADMIN'; 
         const canDelete = role === 'ADMIN' || role === 'EDITOR';
 
-        if (isInTrash) {
-            return [
-                { label: 'Restore', icon: '♻️', onClick: () => handleRestore(file.id) },
-                { label: 'Delete Forever', icon: '❌', onClick: () => handlePermanentDelete(file.id), danger: true }
-            ];
-        }
-
+        if (isInTrash) return [{ label: 'Restore', icon: '♻️', onClick: () => handleRestore(file.id) }, { label: 'Delete Forever', icon: '❌', onClick: () => handlePermanentDelete(file.id), danger: true }];
         const actions = [];
-        
-        // תיקון: אייקון עיפרון וטקסט View / Edit
-        if (!isInsideEditor) {
-            actions.push({ label: 'View / Edit', icon: '✏️', onClick: () => handleItemClick(file) }, );
-        }
-
-        if (canEdit) {
-            // הוספת Rename (החלק החדש)
-            actions.push({ 
-                label: 'Rename', 
-                icon: '✏️', 
-                onClick: () => {
-                    setFileToRename(file); 
-                    setActiveModal('rename'); 
-                }
-            });
-            actions.push({ label: 'Move', icon: '📂', onClick: () => openMoveModal(file) });
-        }
-
-        if (canManagePermissions) {
-            actions.push({ 
-                label: 'Permissions', 
-                icon: '🔒', 
-                onClick: () => {
-                    setFileToManagePerms(file);
-                    setActiveModal('permissions');
-                }
-            });
-        }
-
-        if (canDelete) {
-             actions.push({ label: 'Move to trash', icon: '🗑️', onClick: () => handleSoftDelete(file.id), danger: true });
-        }
-
+        if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: '✏️', onClick: () => handleItemClick(file) });
+        if (canEdit) { actions.push({ label: 'Rename', icon: '✏️', onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); actions.push({ label: 'Move', icon: '📂', onClick: () => openMoveModal(file) }); }
+        if (canManagePermissions) actions.push({ label: 'Permissions', icon: '🔒', onClick: () => { setFileToManagePerms(file); setActiveModal('permissions'); } });
+        if (canDelete) actions.push({ label: 'Move to trash', icon: '🗑️', onClick: () => handleSoftDelete(file.id), danger: true });
         return actions;
     };
-
-    const handleSavePermissions = async (fileId, newPermissionsObj) => {
-        try {
-            await updateFile(fileId, newPermissionsObj);
-            // גם כאן, נמשוך מחדש ליתר ביטחון
-            const freshData = await getFileById(fileId);
-            setFiles(prev => prev.map(f => f.id === fileId ? freshData : f));
-            if (selectedFile && selectedFile.id === fileId) {
-                setSelectedFile(freshData);
-            }
-        } catch (error) {
-            alert('Failed to update permissions');
-        }
-    };
+    const handleSavePermissions = async (fileId, newPerms) => { try { await updateFile(fileId, newPerms); const freshData = await getFileById(fileId); setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); } catch (error) { alert('Failed to update permissions'); } };
 
     return (
         <div className={`dashboard-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-            <Navbar 
-                toggleTheme={toggleTheme} 
-                isDarkMode={isDarkMode} 
-                onFileClick={handleItemClick} 
-            />
+            <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} onFileClick={handleItemClick} />
             
             <div className="dashboard-body">
                 <Sidebar 
@@ -386,7 +192,34 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                     onUploadPhoto={handleUpload}
                 />
                 
-                <main className="main-content">
+                <main className="main-content" style={{ position: 'relative' }}>
+                    
+                    {/* הדג השוחה - מופיע רק אם isFileLoading === true */}
+                    {isFileLoading && (
+                        <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 50,
+                            backdropFilter: 'blur(2px)',
+                            borderRadius: '12px' 
+                        }}>
+                             <span style={{ fontSize: '4rem', animation: 'bounce 1s infinite' }}>🐡</span>
+                             <h3 style={{ 
+                                color: '#0284c7', 
+                                marginTop: '15px', 
+                                fontSize: '1.5rem',
+                                animation: 'pulse 1.5s infinite' 
+                            }}>
+                                Swimming to surface...
+                            </h3>
+                        </div>
+                    )}
+
                     {selectedFile ? (
                         <FileEditor 
                             file={selectedFile}
@@ -397,7 +230,6 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                             currentUser={currentUser}
                             onToggleStar={() => handleToggleStar(selectedFile.id)}
                             isStarred={starredIds.has(selectedFile.id)}
-                            // העברת הפעולות ללא כפתור ה-View / Edit
                             menuActions={getFileActions(selectedFile, true)} 
                         />
                     ) : (
@@ -432,15 +264,9 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                                                     <td>{file.owner || 'Me'}</td>
                                                     <td>{formatDate(file.createdAt)}</td>
                                                     <td>{formatSize(file.size)}</td>
-                                                    
                                                     <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
                                                         {activeTab !== 'Trash' && (
-                                                            <button 
-                                                                className="action-btn" 
-                                                                onClick={(e) => { e.stopPropagation(); handleToggleStar(file.id); }}
-                                                                style={{ color: isStarred ? '#f4b400' : '#ccc', marginRight: '5px' }}
-                                                                title={isStarred ? "Unstar" : "Star"}
-                                                            >
+                                                            <button className="action-btn" onClick={(e) => { e.stopPropagation(); handleToggleStar(file.id); }} style={{ color: isStarred ? '#f4b400' : '#ccc', marginRight: '5px' }}>
                                                                 {isStarred ? '★' : '☆'}
                                                             </button>
                                                         )}
@@ -457,12 +283,13 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                     )}
                 </main>
             </div>
-            <RenameModal 
-                isOpen={activeModal === 'rename'} 
-                onClose={() => setActiveModal(null)} 
-                onRename={handleRenameFile} 
-                currentFile={fileToRename} 
-            />
+            
+            <style>{`
+                @keyframes bounce { 0%, 100% { transform: translateY(-25%); } 50% { transform: translateY(0); } }
+                @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+            `}</style>
+
+            <RenameModal isOpen={activeModal === 'rename'} onClose={() => setActiveModal(null)} onRename={handleRenameFile} currentFile={fileToRename} />
             <CreateFolderModal isOpen={activeModal === 'folder'} onClose={() => setActiveModal(null)} onCreate={handleCreateFolder} />
             <CreateFileModal isOpen={activeModal === 'textFile'} onClose={() => setActiveModal(null)} onCreate={handleCreateTextFile} />
             <MoveFileModal isOpen={activeModal === 'move'} onClose={() => setActiveModal(null)} onMove={handleMoveConfirm} currentFile={fileToMove} />
