@@ -31,16 +31,27 @@ class TcpClientService {
             });
 
             // Receive Data
-            client.on('data', (data) => {
+           client.on('data', (data) => {
                 responseData += data.toString();
 
+                // ניקוי הטיימר הקודם כדי שלא יכבה לנו את החיבור באמצע
                 if (dataTimer) clearTimeout(dataTimer);
 
-                // השארתי את ההמתנה של ה-2 שניות כי זה עבד מצוין לזיהוי סוף התשובה
+                // --- התיקון: בדיקה מיידית ---
+                // אם לפי הפרוטוקול סיימנו לקבל את כל המידע (למשל יש \n בסוף)
+                // אין סיבה לחכות אפילו מילישנייה נוספת!
+                if (_isResponseComplete(responseData)) {
+                    console.log(`[TCP] Full response received (${responseData.length} bytes). Closing immediately.`);
+                    client.end();
+                    return; // יציאה כדי לא להפעיל את הטיימר למטה
+                }
+
+                // --- רשת ביטחון (Fallback) ---
+                // רק אם אנחנו לא בטוחים שזה הסוף (למשל באמצע תמונה גדולה),
+                // נפעיל טיימר שיסגור את החיבור אם יש "שקט" של 2 שניות.
                 dataTimer = setTimeout(() => {
-                    if (_isResponseComplete(responseData) || responseData.length > 0) {
-                        client.end();
-                    }
+                    console.log('[TCP] Silence detected, assuming end of stream.');
+                    client.end();
                 }, 2000); 
             });
 
