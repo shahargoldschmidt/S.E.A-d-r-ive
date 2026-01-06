@@ -17,21 +17,22 @@ const FileEditor = ({
     const [content, setContent] = useState(file.content || ''); 
     const [isEditing, setIsEditing] = useState(false);
     const [imageLoadError, setImageLoadError] = useState(false);
+    const [isReplacingImage, setIsReplacingImage] = useState(false); // סטייט לטעינת תמונה
     
     const contentRef = useRef(null);
+    const imageInputRef = useRef(null); // רפרנס לאינפוט הנסתר
 
-    // זיהוי אם הקובץ הוא תמונה
     const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
 
     useEffect(() => {
         setTitle(file.name || 'Untitled');
         setContent(file.content || '');
-        setImageLoadError(false); // איפוס שגיאה כשמחליפים קובץ
+        setImageLoadError(false);
+        setIsReplacingImage(false);
     }, [file]);
 
-    // --- בדיקת הרשאות פנימית ---
+    // --- בדיקת הרשאות ---
     let userRole = 'none';
-
     if (currentUser) {
         const currentUserId = String(currentUser.id);
         const currentUserEmail = currentUser.email;
@@ -48,8 +49,9 @@ const FileEditor = ({
         }
     }
 
-    // תנאי להצגת כפתור עריכה: (רק למנהלים/עורכים) וגם (רק אם זו לא תמונה)
-    const canEdit = (userRole === 'ADMIN' || userRole === 'EDITOR') && (!isImage || imageLoadError);
+    // 👇 שינוי 1: ביטלנו את החסימה לתמונות (!isImage נמחק)
+    // עכשיו מותר לערוך אם אתה אדמין/עורך, לא משנה איזה סוג קובץ
+    const canEdit = (userRole === 'ADMIN' || userRole === 'EDITOR');
     
     const execCmd = (command, value = null) => {
         document.execCommand(command, false, value);
@@ -64,28 +66,61 @@ const FileEditor = ({
         }
     };
 
+    // 👇 פונקציה חדשה להחלפת תמונה
+    const handleImageReplace = async (e) => {
+        const newFile = e.target.files[0];
+        if (!newFile) return;
+
+        setIsReplacingImage(true); // מפעיל אנימציית טעינה
+
+        const reader = new FileReader();
+        reader.readAsDataURL(newFile);
+        
+        reader.onload = () => {
+            const fullBase64 = reader.result;
+            // ניקוי הכותרת data:image/... כדי לשלוח לשרת נקי
+            const cleanContent = fullBase64.split(',')[1];
+            
+            // עדכון התצוגה מקומית מיד
+            setContent(cleanContent);
+            
+            // שליחה לשמירה בשרת
+            onSave(file.id, { content: cleanContent });
+            
+            setIsReplacingImage(false); // סיום טעינה
+        };
+
+        reader.onerror = () => {
+            alert("Failed to read file");
+            setIsReplacingImage(false);
+        };
+    };
+
+    // לוגיקה לכפתור העריכה
+    const handleEditClick = () => {
+        if (isImage && !imageLoadError) {
+            // אם זו תמונה - פתח חלון בחירת קובץ
+            imageInputRef.current.click();
+        } else {
+            // אם זה טקסט - כנס למצב עריכה
+            setIsEditing(true);
+        }
+    };
+
     const actionsToRender = menuActions && menuActions.length > 0 ? menuActions : null;
 
     const getIcon = () => {
         if (isImage && !imageLoadError) return '🖼️';
-        if (imageLoadError) return '⚠️'; // אייקון אזהרה אם התמונה שבורה
+        if (imageLoadError) return '⚠️';
         return '📄';
     };
-    // היא לוקחת את הסטרינג מהשרת והופכת אותו לתמונה תקינה
+
     const getCleanImageSrc = (rawContent) => {
         if (!rawContent) return '';
-        
-        // 1. מחיקת רווחים וירידות שורה ששוברות את התמונה
         let clean = rawContent.replace(/[\s\n\r]/g, '');
-        
-        // 2. אם יש כבר קידומת, מחזירים כמו שזה
         if (clean.startsWith('data:image')) return clean;
-
-        // 3. אם אין קידומת, בונים אותה לבד
         const ext = file.name.split('.').pop().toLowerCase();
-        // מנסים לנחש סוג, ברירת מחדל png
         const mimeType = ext === 'svg' ? 'svg+xml' : ext === 'jpg' ? 'jpeg' : 'png';
-        
         return `data:image/${mimeType};base64,${clean}`;
     };
     
@@ -110,11 +145,22 @@ const FileEditor = ({
                          {isStarred ? '★' : '☆'}
                      </button>
  
-                     {/* אין כפתור הורדה - רק עריכה לטקסט */}
+                     {/* 👇 הכפתור החכם: מפעיל לוגיקה שונה לפי הסוג */}
                      {canEdit && !isEditing && (
-                         <button className="action-pill-btn" onClick={() => setIsEditing(true)}><span>✏️</span> Edit</button>
+                         <button className="action-pill-btn" onClick={handleEditClick}>
+                             <span>{isImage ? '🔄' : '✏️'}</span> {isImage ? 'Replace Image' : 'Edit'}
+                         </button>
                      )}
                      
+                     {/* אינפוט נסתר להחלפת תמונה */}
+                     <input 
+                        type="file" 
+                        accept="image/*" 
+                        ref={imageInputRef} 
+                        style={{display: 'none'}} 
+                        onChange={handleImageReplace}
+                     />
+
                      {isEditing && (
                          <>
                              <button className="action-pill-btn save" onClick={handleSave}><span>💾</span> Save</button>
@@ -143,7 +189,6 @@ const FileEditor = ({
  
              <div className="editor-content-wrapper">
                  {isImage && !imageLoadError ? (
-                     // === כאן התמונה מוצגת ===
                      <div style={{ 
                          display: 'flex', 
                          justifyContent: 'center', 
@@ -151,10 +196,17 @@ const FileEditor = ({
                          height: '100%', 
                          padding: '20px',
                          background: 'rgba(0,0,0,0.03)',
-                         borderRadius: '8px'
+                         borderRadius: '8px',
+                         position: 'relative' // בשביל הלואדר
                      }}>
+                         {/* 👇 תצוגת לואדר בזמן החלפה */}
+                         {isReplacingImage && (
+                             <div style={{position:'absolute', zIndex:10, background:'rgba(255,255,255,0.7)', padding:'20px', borderRadius:'10px'}}>
+                                 ⏳ Uploading...
+                             </div>
+                         )}
+                         
                          <img 
-                             // השימוש בפונקציית הניקוי הוא הקריטי כאן
                              src={getCleanImageSrc(content)} 
                              alt={title} 
                              onError={() => setImageLoadError(true)}
@@ -163,12 +215,12 @@ const FileEditor = ({
                                  maxHeight: '100%', 
                                  objectFit: 'contain', 
                                  borderRadius: '8px', 
-                                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)' 
+                                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                 opacity: isReplacingImage ? 0.5 : 1 // עמעום בזמן החלפה
                              }} 
                          />
                      </div>
                  ) : (
-                     // === תצוגת טקסט רגילה ===
                      <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                          {imageLoadError && (
                              <div style={{
