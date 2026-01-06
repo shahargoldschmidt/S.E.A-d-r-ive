@@ -1,0 +1,463 @@
+/* client/src/styles/navbar.css */
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+.navbar-glass {
+    height: 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+    position: relative; /* חייב להיות מוגדר כדי ש-z-index יעבוד */
+    z-index: 2000;
+}
+
+.light-mode .navbar-glass {
+    background: rgba(255, 255, 255, 0.65);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.dark-mode .navbar-glass {
+    background: rgba(15, 32, 39, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- אזורים --- */
+.nav-left { display: flex; align-items: center; gap: 15px; width: 320px; }
+.nav-middle { flex: 1; display: flex; justify-content: center; }
+.nav-right { display: flex; align-items: center; gap: 20px; width: 320px; justify-content: flex-end; }
+
+/* --- לוגו --- */
+.nav-logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+.nav-logo-icon { font-size: 2.8rem; filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.5)); }
+.nav-logo-text { font-size: 1.8rem; font-weight: 800; color: #0077b6; letter-spacing: 1px; }
+.dark-mode .nav-logo-text { color: #4facfe; }
+
+/* client/src/styles/navbar.css */
+
+.search-bar-wrapper {
+    position: relative;
+    width: 100%;
+    
+    /* 1. הרחבנו משמעותית את הרוחב המקסימלי */
+    max-width: 800px; 
+    
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50px; 
+    display: flex; 
+    align-items: center;
+    padding: 12px 25px; /* קצת יותר "אוויר" פנימי */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 2px solid rgba(79, 172, 254, 0.1); /* מסגרת כחולה עדינה */
+    transition: all 0.3s ease;
+}
+
+.search-bar-wrapper:focus-within {
+    box-shadow: 0 4px 25px rgba(79, 172, 254, 0.4); /* זוהר כחול בפוקוס */
+    border-color: #4facfe;
+    transform: scale(1.01); /* גדל ממש בקטנה */
+}
+
+.search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4facfe; 
+    margin-right: 15px; 
+    font-size: 1.4rem; /* אייקון קצת יותר גדול */
+}
+
+.search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 1.1rem; /* טקסט יותר גדול וקריא */
+    color: #0f3460; /* כחול עמוק לטקסט */
+    
+    /* 2. הגופן הימי החדש */
+    font-family: 'Varela Round', sans-serif; 
+    font-weight: 600; /* שיהיה בולט */
+}
+
+.search-input::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+/* --- Dropdown (התוצאות) --- */
+.search-dropdown {
+    position: absolute;
+    top: 125%; 
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 20px; /* פינות יותר עגולות */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    padding: 10px 0;
+    z-index: 1000;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+    z-index: 2001; /* שיהיה אפילו מעל ה-Navbar עצמו אם צריך */
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    
+    /* גם בתוצאות נשתמש בגופן הימי */
+    font-family: 'Varela Round', sans-serif; 
+}
+
+.search-result-item:hover {
+    background-color: #e3f2fd; /* רקע תכלת ימי בהובר */
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .search-bar-wrapper {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.dark-mode .search-input { color: #fff; }
+.dark-mode .search-dropdown {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.dark-mode .search-result-item:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+.dark-mode .result-name { color: #fff; }
+.dark-mode .result-meta { color: #94a3b8; }
+
+/* --- כפתורים ואווטר --- */
+.nav-theme-toggle {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+
+.nav-avatar-btn {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.nav-avatar-btn:hover { border-color: #4facfe; }
+.nav-avatar-initial { width: 100%; height: 100%; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem; }
+.nav-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- תפריט פרופיל --- */
+.profile-dropdown {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.dark-mode .profile-dropdown {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: white;
+}
+
+/* client/src/styles/navbar.css */
+
+/* ... (השאר את העיצובים של שורת החיפוש והלוגו כמו שהיו) ... */
+
+/* --- תפריט פרופיל ימי --- */
+.profile-dropdown {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    width: 220px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 50, 100, 0.2); /* צל כחלחל */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    animation: floatIn 0.2s ease-out;
+    z-index: 3000;
+}
+
+.profile-header-dropdown {
+    padding: 20px;
+    background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f8ff;
+    padding-left: 25px; /* אפקט תזוזה ימי */
+    color: #0077b6;
+}
+
+/* כפתור ההתנתקות - אדום ובולט */
+.logout-item {
+    margin-top: 5px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    color: #e63946 !important; /* אדום אלמוג */
+    background: rgba(230, 57, 70, 0.05);
+}
+
+.logout-item:hover {
+    background: rgba(230, 57, 70, 0.15);
+    color: #d62828 !important;
+}
+
+/* --- Profile Modal Styles (המודל שנפתח) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 20, 40, 0.6); /* כחול כהה שקוף */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+    backdrop-filter: blur(5px);
+}
+
+.profile-modal-glass {
+    background: rgba(255, 255, 255, 0.9);
+    width: 400px;
+    padding: 30px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+}
+
+.profile-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    position: relative;
+    border: 3px solid #4facfe;
+    box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+}
+
+.profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-placeholder { width: 100%; height: 100%; background: #e0f7fa; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #0077b6; }
+
+.avatar-edit-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    height: 30px;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.profile-input {
+    font-size: 1.5rem;
+    text-align: center;
+    border: none;
+    border-bottom: 2px solid #4facfe;
+    background: transparent;
+    outline: none;
+    width: 80%;
+    margin-bottom: 10px;
+}
+
+.btn-primary-sea, .btn-save {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    transition: transform 0.2s;
+}
+
+.btn-primary-sea:hover { transform: scale(1.05); }
+
+.btn-cancel {
+    background: transparent;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: transparent; border: none; font-size: 1.2rem; cursor: pointer;
+}
+
+/* Dark Mode Overrides */
+.dark-mode .profile-dropdown, 
+.dark-mode .profile-modal-glass {
+    background: #1e293b;
+    border-color: rgba(255,255,255,0.1);
+    color: white;
+}
+.dark-mode .profile-header-dropdown { background: #0f172a; border-bottom-color: rgba(255,255,255,0.1); }
+.dark-mode .dropdown-item { color: #ccc; }
+.dark-mode .dropdown-item:hover { background: rgba(255,255,255,0.05); color: white; }
+.dark-mode .profile-input { color: white; }
+
+/* --- Profile Modal (Read Only) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 20, 40, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.profile-modal-glass {
+    background: #ffffff;
+    width: 380px;
+    padding: 40px 30px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    position: relative;
+    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-avatar-large {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    border: 4px solid #4facfe; /* מסגרת כחולה יפה */
+    box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
+    background: #f0f9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-placeholder { font-size: 3rem; color: #4facfe; font-weight: bold; }
+
+.profile-badge {
+    background: #e0f2fe;
+    color: #0284c7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.profile-details-list {
+    text-align: left;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.detail-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.detail-label { font-size: 0.9rem; color: #64748b; font-weight: 500; }
+.detail-value { font-size: 0.95rem; color: #334155; font-weight: 600; }
+
+.btn-primary-sea {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    transition: transform 0.2s;
+}
+.btn-primary-sea:hover { transform: translateY(-2px); }
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #94a3b8;
+}
+.close-modal-btn:hover { color: #333; }
+
+/* --- Logout Button Style (בתוך הדרופדאון) --- */
+.logout-item {
+    margin-top: 8px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    color: #ef4444 !important; /* אדום חזק */
+    background: #fef2f2;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    transition: all 0.2s;
+}
+
+.logout-item:hover {
+    background: #fee2e2; /* אדום בהיר בהובר */
+    color: #b91c1c !important;
+}
+
+/* אנימציות */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Dark Mode */
+.dark-mode .profile-modal-glass { background: #1e293b; color: white; }
+.dark-mode .profile-details-list { background: #0f172a; }
+.dark-mode .detail-label { color: #94a3b8; }
+.dark-mode .detail-value { color: #e2e8f0; }
+.dark-mode .profile-header h2 { color: white !important; }
+.dark-mode .logout-item { background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; }
+.dark-mode .logout-item:hover { background: rgba(239, 68, 68, 0.2); }
+

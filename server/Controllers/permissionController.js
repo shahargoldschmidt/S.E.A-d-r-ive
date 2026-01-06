@@ -1,4 +1,5 @@
 const permissionService = require('../services/permissionService');
+const userModel = require('../models/userModel');
 
 // List all permissions for a specific file or folder
 const getPermissions = async (req, res) => {
@@ -19,24 +20,38 @@ const getPermissions = async (req, res) => {
 const createPermission = async (req, res) => {
     try {
         const fileId = req.params.id;
-        const { userId, type } = req.body; 
-        //validation check for request
-        if (!userId || !type) {
-            return res.status(400).json({ error: "Target userId and permission type are required" });
+        
+        // 2. שינוי: אנחנו מצפים לקבל 'email' במקום 'userId'
+        const { email, type } = req.body; 
+
+        // ולידציה בסיסית
+        if (!email || !type) {
+            return res.status(400).json({ error: "Target email and permission type are required" });
         }
 
         if (type !== 'VIEWER' && type !== 'EDITOR' && type !== 'ADMIN') {
-            return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER' or 'EDITOR' or 'ADMIN' " });
+            return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER', 'EDITOR' or 'ADMIN'" });
         }
 
-        console.log(`[PermissionController] Granting '${type}' to user ${userId} on item ${fileId}`);
+        // 3. מציאת המשתמש לפי האימייל (שימוש בפונקציה שכבר קיימת אצלך!)
+        const user = await userModel.getByEmail(email);
 
-        //create
+        if (!user) {
+            return res.status(404).json({ error: `User with email ${email} not found` });
+        }
+
+        const userId = user.id; // <--- הנה ה-ID שהיינו צריכים!
+
+        console.log(`[PermissionController] Granting '${type}' to user ${userId} (${email}) on item ${fileId}`);
+
+        // 4. שליחת ה-userId (שמצאנו כרגע) לשירות שיוצר את ההרשאה
         const newPermission = await permissionService.createPermission(fileId, userId, type);
         
         res.status(201).json(newPermission);
+
     } catch (error) {
         console.error(`[PermissionController] Error: ${error.message}`);
+        // טיפול בשגיאה אם למשתמש כבר יש הרשאה
         res.status(error.message.includes("already has") ? 409 : 500).json({ error: error.message });
     }
 };

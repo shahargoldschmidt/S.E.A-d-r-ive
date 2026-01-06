@@ -1,0 +1,26 @@
+# .dockerignore
+
+# התעלם מתיקיות ספריות כבדות (הן מותקנות מחדש בתוך הדוקר בכל מקרה)
+node_modules
+*/node_modules
+client/node_modules
+server/node_modules
+
+# התעלם מגיט
+.git
+.gitignore
+
+# התעלם מקבצי בנייה ותוצרים
+build
+dist
+cmake-build-debug
+.vscode
+.idea
+
+# התעלם מקבצים גדולים אחרים שאולי יש לך (כמו קבצי דאטה מקומיים)
+data_files/*
+!data_files/.keep
+
+# התעלם מקבצי דוקר עצמם (לא צריך להעתיק אותם פנימה)
+docker-compose.yml
+Dockerfile*

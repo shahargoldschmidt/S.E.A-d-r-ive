@@ -12,16 +12,24 @@ import './styles/auth.css';
 // We will create these files in the next steps!
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
 //import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {
   // STATE: Manage Theme (Light = false, Dark = true)
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // בודק אם יש משהו שמור בזיכרון בטעינה ראשונית
+    return localStorage.getItem('theme') === 'dark';
+});
 
-  // FUNCTION: Toggle the theme state
   const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
-  };
+    setIsDarkMode(prev => {
+        const newMode = !prev;
+        // שמירה בזיכרון של הדפדפן
+        localStorage.setItem('theme', newMode ? 'dark' : 'light'); 
+        return newMode;
+    });
+};
 
   return (
     // DYNAMIC CLASS: Adds 'dark-mode' or 'light-mode' to the main container based on state
@@ -44,6 +52,11 @@ function App() {
           <Route 
             path="/login" 
             element={<LoginPage toggleTheme={toggleTheme} isDarkMode={isDarkMode} />} 
+          />
+          {/* Route 3: DASHBOARD PAGE */}
+          <Route 
+            path="/dashboard" 
+            element={<DashboardPage toggleTheme={toggleTheme} isDarkMode={isDarkMode} />} 
           />
 
           {/* Default Redirect: Go to Login if URL is unknown */}
