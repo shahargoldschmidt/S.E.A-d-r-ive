@@ -119,26 +119,31 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         setSelectedFile(null);
     };
 
-    const isInsideStarredFolder = (file, allFiles, starredSet) => {
-            let currentParentId = file.parentId;
-            while (currentParentId) {
-                if (starredSet.has(currentParentId)) return true;
-                const parent = allFiles.find(f => f.id === currentParentId);
-                currentParentId = parent ? parent.parentId : null;
-                }
-         return false;
-        };
+    const isInsideContainer = (file, allFiles, idSet) => {
+        let currentParentId = file.parentId;
+    
+         while (currentParentId) {
+             if (idSet.has(currentParentId)) return true;
+        
+        // Find the parent object to continue upward traversal
+        const parent = allFiles.find(f => f.id === currentParentId);
+        currentParentId = parent ? parent.parentId : null;
+         }
+      return false;
+    };
+
+        
 
     const displayFiles = (() => {
-        const notInTrash = files.filter(f => !trashedIds.has(f.id));
-        const inTrash = files.filter(f => trashedIds.has(f.id));
+        const inTrash = files.filter(f => 
+            trashedIds.has(f.id) || isInsideContainer(f, files, trashedIds));
+        // Filter active items that are not in the trash (directly or inherited)
+        const notInTrash = files.filter(f => 
+            !trashedIds.has(f.id) && !isInsideContainer(f, files, trashedIds));
         switch (activeTab) {
             case 'Trash': return inTrash;
-            case 'Starred': return notInTrash.filter(f => {
-                                 const isDirectlyStarred = starredIds.has(f.id);
-                                 const isInheritedStarred = isInsideStarredFolder(f, files, starredIds);
-                                 return isDirectlyStarred || isInheritedStarred;
-                                 });
+            case 'Starred': return notInTrash.filter(f => 
+                starredIds.has(f.id) || isInsideContainer(f, files, starredIds));
             case 'My Storage': return notInTrash.filter(f => f.owner === currentUser?.email);
             case 'Shared With Me': return notInTrash.filter(f => f.owner !== currentUser?.email);
             case 'Recent': return notInTrash.filter(f => isToday(f.createdAt));
