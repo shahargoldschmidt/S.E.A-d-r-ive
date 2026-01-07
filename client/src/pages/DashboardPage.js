@@ -232,7 +232,7 @@ const displayFiles = (() => {
  */
 const handleDownload = async (file) => {
     let fileToProcess = file;
-
+ 
     try {
         // 1. Fetch full data if content is missing (Optimization for list views)
         if (!file.content && file.type !== 'folder') {
