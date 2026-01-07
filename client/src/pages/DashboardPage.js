@@ -129,10 +129,15 @@ const displayFiles = (() => {
 
     switch (activeTab) {
         case 'Trash': 
+            if (currentFolder) {
+                return files.filter(f => f.parentId === currentFolder.id);
+            }
             return inTrash;
 
         case 'Starred': 
-            // Only items that you personally clicked the star on
+            if (currentFolder) {
+                return notInTrash.filter(f => f.parentId === currentFolder.id);
+            }
             return notInTrash.filter(f => starredIds.has(f.id));
 
         case 'My Storage': 
@@ -231,7 +236,7 @@ const displayFiles = (() => {
         ];
 
         const actions = [
-            { label: 'Download', icon: <Icons.Download size={18} />, onClick: () => {/* handleDownload(file) */} }
+            { label: 'Download', icon: <Icons.Download size={18} />, onClick: () => {handleDownload(file)} }
         ];
         if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: <Icons.Eye size={18} />, onClick: () => handleItemClick(file) });
         if (role === 'ADMIN' || role === 'EDITOR') {
