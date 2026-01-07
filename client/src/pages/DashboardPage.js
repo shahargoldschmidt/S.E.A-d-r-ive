@@ -129,10 +129,15 @@ const displayFiles = (() => {
 
     switch (activeTab) {
         case 'Trash': 
+            if (currentFolder) {
+                return files.filter(f => f.parentId === currentFolder.id);
+            }
             return inTrash;
 
         case 'Starred': 
-            // Only items that you personally clicked the star on
+            if (currentFolder) {
+                return notInTrash.filter(f => f.parentId === currentFolder.id);
+            }
             return notInTrash.filter(f => starredIds.has(f.id));
 
         case 'My Storage': 
