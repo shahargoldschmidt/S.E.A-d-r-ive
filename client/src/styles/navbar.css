@@ -28,9 +28,9 @@
 .nav-right { display: flex; align-items: center; gap: 20px; width: 320px; justify-content: flex-end; }
 
 /* --- לוגו --- */
-.nav-logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+.nav-logo-container { display: flex; align-items: center; gap: 0px; cursor: pointer; }
 .nav-logo-icon { font-size: 2.8rem; filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.5)); }
-.nav-logo-text { font-size: 1.8rem; font-weight: 800; color: #0077b6; letter-spacing: 1px; }
+.nav-logo-text { font-size: 1.5rem; font-weight: 800; color: #0077b6; letter-spacing: 1px; }
 .dark-mode .nav-logo-text { color: #4facfe; }
 
 /* client/src/styles/navbar.css */
@@ -461,3 +461,10 @@
 .dark-mode .logout-item { background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; }
 .dark-mode .logout-item:hover { background: rgba(239, 68, 68, 0.2); }
 
+.nav-logo-img {
+    height: 80px; 
+    width: auto;   
+    margin-right: 15px; 
+    object-fit: contain;
+    max-height: 100%; 
+}

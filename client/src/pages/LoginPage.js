@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/api'; 
+import AppLogo from '../assets/Logo.PNG';
 
 
 const LoginPage = ({ toggleTheme, isDarkMode }) => {
@@ -39,7 +40,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
         <div className="glass-card">
             <div className="login-header">
-                <div className="sea-logo">🌊</div>
+                <img src={AppLogo} alt="Logo" className="nav-logo-img" />
                 <h2 className="app-title">S.E.A. D(R)IVE</h2>
                 <p className="subtitle">Sail to Success</p>
             </div>

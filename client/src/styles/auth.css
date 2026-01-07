@@ -453,3 +453,13 @@
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
 }
+
+.nav-logo-img {
+    height: 80px;  /* שנה מ-40 ל-80 (או אפילו 100 אם בא לך ממש גדול) */
+    width: auto;   
+    margin-right: 15px; /* הגדלתי קצת את הרווח מהטקסט שיהיה יפה */
+    object-fit: contain;
+    
+    /* אופציונלי: אם הלוגו חורג מהגובה של הבר העליון, אפשר להוסיף את זה: */
+    max-height: 100%; 
+}

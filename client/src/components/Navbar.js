@@ -5,6 +5,7 @@ import { searchFiles, getUser } from '../services/api';
 import ProfileModal from './ProfileModal'; 
 import { Icons } from '../utils/Icons'; 
 import '../styles/navbar.css';
+import AppLogo from '../assets/Logo.PNG';
 
 const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
     const [user, setUser] = useState({ name: 'Guest', email: '', image: '' });
@@ -91,7 +92,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
             <nav className="navbar-glass">
                 <div className="nav-left">
                     <div className="nav-logo-container" >
-                        <span className="nav-logo-icon">🌊</span>
+                        <img src={AppLogo} alt="Logo" className="nav-logo-img" />
                         <span className="nav-logo-text">S.E.A. D(R)IVE</span>
                     </div>
                 </div>
