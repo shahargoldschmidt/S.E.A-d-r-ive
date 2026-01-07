@@ -40,7 +40,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
         <div className="glass-card">
             <div className="login-header">
-                <img src={AppLogo} alt="Logo" className="nav-logo-img" />
+                <img src={AppLogo} alt="Logo" style={{ width: '150px', marginBottom: '0px' }} />
                 <h2 className="app-title">S.E.A. D(R)IVE</h2>
                 <p className="subtitle">Sail to Success</p>
             </div>
