@@ -216,6 +216,46 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
             setActiveModal(null); loadFiles(); 
         } catch (error) { alert(error.message); } 
     };
+    const handleDownload = async (file) => {
+    /* If it's a folder, recursively download all its children */
+    if (file.type === 'folder') {
+        const fullFolder = await getFileById(file.id);
+        if (fullFolder.children) {
+            fullFolder.children.forEach(child => handleDownload(child));
+        }
+        return;
+    }
+
+    /* Logic to trigger a browser download for files/images */
+    const element = document.createElement("a");
+    let blob;
+    
+    if (file.type === 'image') {
+        /* Convert Base64 back to Blob for images */
+        const byteCharacters = atob(file.content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], { type: 'image/png' }); // Or correct mime type
+    } else {
+        /* Safe Blob for text files including Hebrew support */
+        blob = new Blob([file.content || ''], { type: 'text/plain;charset=utf-8' });
+    }
+
+    const url = URL.createObjectURL(blob);
+    element.setAttribute("href", url);
+    element.setAttribute("download", file.name);
+    
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    
+    /* Cleanup memory */
+    document.body.removeChild(element);
+    URL.revokeObjectURL(url);
+    };
 
     /* Handle file uploads, converting binary data to Base64 for images or raw text for files */
     const handleUpload = async (fileObj) => { 
@@ -253,6 +293,8 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         ];
 
         const actions = [];
+        actions.push({ label: 'Download',  icon: <Icons.Download size={18} />, 
+        onClick: () => handleDownload(file) });
         if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: <Icons.Eye size={18} />, onClick: () => handleItemClick(file) });
         if (canEdit) { 
             actions.push({ label: 'Rename', icon: <Icons.Rename size={18} />, onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); 
