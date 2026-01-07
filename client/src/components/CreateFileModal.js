@@ -4,9 +4,8 @@ import '../styles/modal.css';
 
 const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
     const [fileName, setFileName] = useState('');
-    const [fileType, setFileType] = useState('txt');
     const [content, setContent] = useState('');
-
+    // If the modal is not open, do not render anything
     if (!isOpen) return null;
 
     const handleSubmit = () => {
@@ -16,6 +15,13 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
             setFileName('');
             setContent('');
             onClose();
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit();
         }
     };
 
@@ -29,9 +35,10 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                         <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
                         <input 
                             type="text" 
-                            placeholder="File name..." 
+                            placeholder="Enter file name..." 
                             value={fileName}
                             onChange={(e) => setFileName(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             autoFocus
                         />
                     </div>

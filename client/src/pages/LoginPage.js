@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/api'; 
 
-// מקבלים את הפונקציות לשינוי ערכת הנושא כ-props
+
 const LoginPage = ({ toggleTheme, isDarkMode }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,7 +29,6 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
    return (
     <>
-        {/* הוצאנו את הכפתור מחוץ ל-glass-card כדי שיהיה חופשי להיצמד לפינה */}
         <button 
             className="theme-toggle-btn" 
             onClick={toggleTheme} 

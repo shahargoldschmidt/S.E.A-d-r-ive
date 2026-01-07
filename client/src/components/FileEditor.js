@@ -1,6 +1,7 @@
 /* client/src/components/FileEditor.js */
 import React, { useState, useRef, useEffect } from 'react';
 import ActionMenu from './ActionMenu'; 
+import { Icons } from '../utils/Icons'; // Centralized icons
 import '../styles/editor.css';
 import '../styles/actionMenu.css'; 
 
@@ -17,10 +18,10 @@ const FileEditor = ({
     const [content, setContent] = useState(file.content || ''); 
     const [isEditing, setIsEditing] = useState(false);
     const [imageLoadError, setImageLoadError] = useState(false);
-    const [isReplacingImage, setIsReplacingImage] = useState(false); // סטייט לטעינת תמונה
+    const [isReplacingImage, setIsReplacingImage] = useState(false); 
     
     const contentRef = useRef(null);
-    const imageInputRef = useRef(null); // רפרנס לאינפוט הנסתר
+    const imageInputRef = useRef(null); 
 
     const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
 
@@ -31,7 +32,7 @@ const FileEditor = ({
         setIsReplacingImage(false);
     }, [file]);
 
-    // --- בדיקת הרשאות ---
+    // --- Permissions Check ---
     let userRole = 'none';
     if (currentUser) {
         const currentUserId = String(currentUser.id);
@@ -49,8 +50,6 @@ const FileEditor = ({
         }
     }
 
-    // 👇 שינוי 1: ביטלנו את החסימה לתמונות (!isImage נמחק)
-    // עכשיו מותר לערוך אם אתה אדמין/עורך, לא משנה איזה סוג קובץ
     const canEdit = (userRole === 'ADMIN' || userRole === 'EDITOR');
     
     const execCmd = (command, value = null) => {
@@ -66,53 +65,41 @@ const FileEditor = ({
         }
     };
 
-    // 👇 פונקציה חדשה להחלפת תמונה
     const handleImageReplace = async (e) => {
         const newFile = e.target.files[0];
         if (!newFile) return;
 
-        setIsReplacingImage(true); // מפעיל אנימציית טעינה
+        setIsReplacingImage(true);
 
         const reader = new FileReader();
         reader.readAsDataURL(newFile);
         
         reader.onload = () => {
             const fullBase64 = reader.result;
-            // ניקוי הכותרת data:image/... כדי לשלוח לשרת נקי
             const cleanContent = fullBase64.split(',')[1];
-            
-            // עדכון התצוגה מקומית מיד
             setContent(cleanContent);
-            
-            // שליחה לשמירה בשרת
             onSave(file.id, { content: cleanContent });
-            
-            setIsReplacingImage(false); // סיום טעינה
+            setIsReplacingImage(false);
         };
 
         reader.onerror = () => {
-            alert("Failed to read file");
+            console.error("Failed to read image file");
             setIsReplacingImage(false);
         };
     };
 
-    // לוגיקה לכפתור העריכה
     const handleEditClick = () => {
         if (isImage && !imageLoadError) {
-            // אם זו תמונה - פתח חלון בחירת קובץ
             imageInputRef.current.click();
         } else {
-            // אם זה טקסט - כנס למצב עריכה
             setIsEditing(true);
         }
     };
 
-    const actionsToRender = menuActions && menuActions.length > 0 ? menuActions : null;
-
-    const getIcon = () => {
-        if (isImage && !imageLoadError) return '🖼️';
-        if (imageLoadError) return '⚠️';
-        return '📄';
+    const getFileIcon = () => {
+        if (imageLoadError) return <span style={{color: '#e74c3c'}}>⚠️</span>;
+        if (isImage) return <Icons.Image size={30} color="#4facfe" />;
+        return <Icons.FileText size={30} color="#64748b" />;
     };
 
     const getCleanImageSrc = (rawContent) => {
@@ -129,30 +116,40 @@ const FileEditor = ({
              <div className="editor-header">
                  <div className="header-left">
                      <button className="back-circle-btn" onClick={onBack} title="Back">
-                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                         <Icons.BackArrow size={20} />
                      </button>
                      {isEditing ? (
-                         <input type="text" className="title-input-edit" value={title} onChange={(e) => setTitle(e.target.value)} style={{marginLeft: '15px'}} />
+                         <input 
+                            type="text" 
+                            className="title-input-edit" 
+                            value={title} 
+                            onChange={(e) => setTitle(e.target.value)} 
+                            style={{marginLeft: '15px'}} 
+                        />
                      ) : (
-                         <h2 className="file-title-display" style={{marginLeft: '15px', display:'flex', alignItems:'center', gap:'8px'}}>
-                             {getIcon()} {title}
+                         <h2 className="file-title-display" style={{marginLeft: '15px', display:'flex', alignItems:'center', gap:'10px'}}>
+                             {getFileIcon()} {title}
                          </h2>
                      )}
                  </div>
  
                  <div className="header-actions">
-                     <button className="action-icon-btn star" onClick={onToggleStar} style={{ color: isStarred ? '#f4b400' : 'inherit' }} title={isStarred ? "Unstar" : "Star"}>
-                         {isStarred ? '★' : '☆'}
+                     <button 
+                        className="action-icon-btn star" 
+                        onClick={onToggleStar} 
+                        style={{ color: isStarred ? '#f4b400' : 'inherit' }} 
+                        title={isStarred ? "Unstar" : "Star"}
+                    >
+                         <Icons.Star filled={isStarred} size={22} />
                      </button>
  
-                     {/* 👇 הכפתור החכם: מפעיל לוגיקה שונה לפי הסוג */}
                      {canEdit && !isEditing && (
                          <button className="action-pill-btn" onClick={handleEditClick}>
-                             <span>{isImage ? '🔄' : '✏️'}</span> {isImage ? 'Replace Image' : 'Edit'}
+                             {isImage ? <Icons.Camera size={22} /> : <Icons.Rename size={22} />}
+                             <span>{isImage ? 'Replace Image' : 'Edit'}</span>
                          </button>
                      )}
                      
-                     {/* אינפוט נסתר להחלפת תמונה */}
                      <input 
                         type="file" 
                         accept="image/*" 
@@ -163,20 +160,23 @@ const FileEditor = ({
 
                      {isEditing && (
                          <>
-                             <button className="action-pill-btn save" onClick={handleSave}><span>💾</span> Save</button>
-                             <button className="action-pill-btn cancel" onClick={() => { setIsEditing(false); setContent(file.content || ''); }}><span>✕</span> Cancel</button>
+                             <button className="action-pill-btn save" onClick={handleSave}>
+                                 <Icons.Save size={22} /> Save
+                             </button>
+                             <button className="action-pill-btn cancel" onClick={() => { setIsEditing(false); setContent(file.content || ''); }}>
+                                 <Icons.Close size={22} /> Cancel
+                             </button>
                          </>
                      )}
  
-                     {actionsToRender && (
+                     {menuActions && menuActions.length > 0 && (
                          <div style={{marginLeft: '10px'}}>
-                             <ActionMenu actions={actionsToRender} />
+                             <ActionMenu actions={menuActions} />
                          </div>
                      )}
                  </div>
              </div>
  
-             {/* סרגל כלים - רק אם זה טקסט */}
              {isEditing && (!isImage || imageLoadError) && (
                  <div className="editor-toolbar">
                      <button onMouseDown={(e) => {e.preventDefault(); execCmd('bold');}}><b>B</b></button>
@@ -189,20 +189,10 @@ const FileEditor = ({
  
              <div className="editor-content-wrapper">
                  {isImage && !imageLoadError ? (
-                     <div style={{ 
-                         display: 'flex', 
-                         justifyContent: 'center', 
-                         alignItems: 'center', 
-                         height: '100%', 
-                         padding: '20px',
-                         background: 'rgba(0,0,0,0.03)',
-                         borderRadius: '8px',
-                         position: 'relative' // בשביל הלואדר
-                     }}>
-                         {/* 👇 תצוגת לואדר בזמן החלפה */}
+                     <div className="image-display-box">
                          {isReplacingImage && (
-                             <div style={{position:'absolute', zIndex:10, background:'rgba(255,255,255,0.7)', padding:'20px', borderRadius:'10px'}}>
-                                 ⏳ Uploading...
+                             <div className="upload-overlay">
+                                 <span>Scanning the depths...</span>
                              </div>
                          )}
                          
@@ -210,34 +200,20 @@ const FileEditor = ({
                              src={getCleanImageSrc(content)} 
                              alt={title} 
                              onError={() => setImageLoadError(true)}
-                             style={{ 
-                                 maxWidth: '100%', 
-                                 maxHeight: '100%', 
-                                 objectFit: 'contain', 
-                                 borderRadius: '8px', 
-                                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                                 opacity: isReplacingImage ? 0.5 : 1 // עמעום בזמן החלפה
-                             }} 
+                             style={{ opacity: isReplacingImage ? 0.5 : 1 }} 
                          />
                      </div>
                  ) : (
-                     <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+                     <div className="text-editor-box">
                          {imageLoadError && (
-                             <div style={{
-                                 padding: '10px', 
-                                 background: '#fff3cd', 
-                                 color: '#856404', 
-                                 borderRadius: '8px', 
-                                 marginBottom: '15px',
-                                 fontSize: '0.9rem'
-                             }}>
-                                 ⚠️ <b>תצוגה לא זמינה:</b> הקובץ מכיל מידע שלא ניתן להציג כתמונה.
+                             <div className="error-alert">
+                                 <b>Preview Unavailable:</b> This file contains data that cannot be rendered as an image.
                              </div>
                          )}
                          
                          {(!content && !isEditing) ? (
                              <div className="empty-state-message">
-                                 <p>📄 This file is empty.</p>
+                                 <p>This file is empty.</p>
                              </div>
                          ) : (
                              <div 

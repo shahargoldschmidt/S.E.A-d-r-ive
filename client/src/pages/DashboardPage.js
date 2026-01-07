@@ -12,6 +12,7 @@ import RenameModal from '../components/RenameModal';
 import { fetchFiles, createFile, getFileById, updateFile, getUser, deleteFileApi } from '../services/api'; 
 import '../styles/layout.css';
 import '../styles/actionMenu.css'; 
+import {Icons} from '../utils/Icons';
 
 const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     // --- State ---
@@ -159,12 +160,12 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         const canManagePermissions = role === 'ADMIN'; 
         const canDelete = role === 'ADMIN' || role === 'EDITOR';
 
-        if (isInTrash) return [{ label: 'Restore', icon: '♻️', onClick: () => handleRestore(file.id) }, { label: 'Delete Forever', icon: '❌', onClick: () => handlePermanentDelete(file.id), danger: true }];
+        if (isInTrash) return [{ label: 'Restore', icon: <Icons.Restore size={18} />, onClick: () => handleRestore(file.id) }, { label: 'Delete Forever', icon: <Icons.Trash size={20} />, onClick: () => handlePermanentDelete(file.id), danger: true }];
         const actions = [];
-        if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: '✏️', onClick: () => handleItemClick(file) });
-        if (canEdit) { actions.push({ label: 'Rename', icon: '✏️', onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); actions.push({ label: 'Move', icon: '📂', onClick: () => openMoveModal(file) }); }
-        if (canManagePermissions) actions.push({ label: 'Permissions', icon: '🔒', onClick: () => { setFileToManagePerms(file); setActiveModal('permissions'); } });
-        if (canDelete) actions.push({ label: 'Move to trash', icon: '🗑️', onClick: () => handleSoftDelete(file.id), danger: true });
+        if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: <Icons.Eye size={18} />, onClick: () => handleItemClick(file) });
+        if (canEdit) { actions.push({ label: 'Rename', icon: <Icons.Rename size={18} />, onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); actions.push({ label: 'Move', icon: <Icons.Folder size={18} />, onClick: () => openMoveModal(file) }); }
+        if (canManagePermissions) actions.push({ label: 'Permissions', icon: <Icons.Lock size={18} />, onClick: () => { setFileToManagePerms(file); setActiveModal('permissions'); } });
+        if (canDelete) actions.push({ label: 'Move to trash', icon: <Icons.Delete size={18} />, onClick: () => handleSoftDelete(file.id), danger: true });
         return actions;
     };
     const handleSavePermissions = async (fileId, newPerms) => { try { await updateFile(fileId, newPerms); const freshData = await getFileById(fileId); setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); } catch (error) { alert('Failed to update permissions'); } };
@@ -249,7 +250,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                                             return (
                                                 <tr key={file.id} onClick={() => handleItemClick(file)} style={{cursor: 'pointer'}}>
                                                     <td className="file-name-cell">
-                                                        <span className="file-icon">{file.type === 'folder' ? '📁' : file.type === 'image' ? '🖼️' : '📄'}</span>
+                                                        <span className="file-icon">{file.type === 'folder' ? <Icons.Folder size={30} /> : file.type === 'image' ? <Icons.Image size={30} /> : <Icons.File size={30} />}</span>
                                                         {file.name}
                                                     </td>
                                                     <td>{file.owner || 'Me'}</td>

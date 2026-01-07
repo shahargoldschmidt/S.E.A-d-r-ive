@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchFiles, getUser } from '../services/api'; 
 import ProfileModal from './ProfileModal'; 
+import { Icons } from '../utils/Icons'; 
 import '../styles/navbar.css';
 
 const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
@@ -18,7 +19,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
     
     const searchRef = useRef(null);
 
-    // --- טעינה מ-sessionStorage ---
+    
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = sessionStorage.getItem('userId');
@@ -34,6 +35,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
         fetchUserData();
     }, []);
 
+    
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (query.length > 0) {
@@ -71,17 +73,24 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
     const renderAvatar = () => {
         if (user.image) return <img src={user.image} alt="Profile" className="nav-avatar-img" />;
         if (user.name && user.name !== 'Guest') return <div className="nav-avatar-initial">{user.name.charAt(0).toUpperCase()}</div>;
-        return <div className="nav-avatar-initial">⚓</div>;
+        return <div className="nav-avatar-initial"><Icons.User /></div>;
     };
 
     const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('he-IL');
     const formatSize = (bytes) => bytes ? (bytes/1024).toFixed(1) + ' KB' : '';
 
+
+    const getFileIcon = (type) => {
+        if (type === 'folder') return <Icons.Folder size={18} color="#ffb703" />; 
+        if (type === 'image') return <Icons.Image size={18} color="#4facfe" />;
+        return <Icons.FileText size={18} color="#64748b" />;
+    };
+
     return (
         <>
             <nav className="navbar-glass">
                 <div className="nav-left">
-                    <div className="nav-logo-container" onClick={() => navigate('/dashboard')}>
+                    <div className="nav-logo-container" >
                         <span className="nav-logo-icon">🌊</span>
                         <span className="nav-logo-text">S.E.A. D(R)IVE</span>
                     </div>
@@ -89,23 +98,36 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
 
                 <div className="nav-middle" ref={searchRef}>
                     <div className="search-bar-wrapper">
-                         <span className="search-icon">🔍</span>
+                         <span className="search-icon">
+                             <Icons.Search size={22} />
+                         </span>
                          <input 
                             type="text" 
-                            placeholder="Dive for files..." 
+                            placeholder="search the depths..." 
                             className="search-input" 
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            onFocus={() => query.length > 1 && setShowSearchDropdown(true)}
+                            onFocus={() => query.length > 0 && setShowSearchDropdown(true)}
                         />
 
                         {showSearchDropdown && (
                             <div className="search-dropdown">
-                                {isSearching && <div style={{padding:'15px', textAlign:'center', color:'#888', fontSize:'0.9rem'}}>Scanning... 🔭</div>}
-                                {!isSearching && results.length === 0 && <div style={{padding:'15px', textAlign:'center', color:'#888', fontSize:'0.9rem'}}>No treasures found 🦀</div>}
+                                {isSearching && (
+                                    <div style={{padding:'15px', textAlign:'center', color:'#888', fontSize:'0.9rem'}}>
+                                        Scanning... 🔭
+                                    </div>
+                                )}
+                                {!isSearching && results.length === 0 && (
+                                    <div style={{padding:'15px', textAlign:'center', color:'#888', fontSize:'0.9rem'}}>
+                                        No treasures found 🦀
+                                    </div>
+                                )}
+
                                 {!isSearching && results.map(file => (
                                     <div key={file.id} className="search-result-item" onClick={() => { if (onFileClick) onFileClick(file); setShowSearchDropdown(false); setQuery(''); }}>
-                                        <div className="result-icon" style={{fontSize: '1.2rem'}}>{file.type === 'folder' ? '📁' : file.type === 'image' ? '🖼️' : '📄'}</div>
+                                        <div className="result-icon">
+                                            {getFileIcon(file.type)}
+                                        </div>
                                         <div className="result-info" style={{flex: 1}}>
                                             <div className="result-name">{file.name}</div>
                                             <div className="result-meta" style={{fontSize:'0.75rem', opacity: 0.7}}>{formatDate(file.createdAt)} • {file.owner || 'Me'}</div>
@@ -119,20 +141,30 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
                 </div>
 
                 <div className="nav-right">
-                    <button className="nav-theme-toggle" onClick={toggleTheme}>{isDarkMode ? '☀️' : '🌙'}</button>
+                    <button className="nav-theme-toggle" onClick={toggleTheme}>
+                        {isDarkMode ? '☀️' : '🌙'}
+                    </button>
+                    
                     <div style={{position: 'relative'}}>
-                        <div className="nav-avatar-btn" onClick={() => setShowProfileMenu(!showProfileMenu)} title={user.name}>{renderAvatar()}</div>
+                        <div className="nav-avatar-btn" onClick={() => setShowProfileMenu(!showProfileMenu)} title={user.name}>
+                            {renderAvatar()}
+                        </div>
+                        
                         {showProfileMenu && (
                             <>
                                 <div style={{position: 'fixed', inset: 0, zIndex: 2999}} onClick={() => setShowProfileMenu(false)} />
                                 <div className="profile-dropdown">
                                     <div className="profile-header-dropdown">
-                                        <strong>{user.name}</strong>
-                                        <div style={{fontSize: '12px', opacity: 0.7}}>{user.email}</div>
+                                        <strong style={{fontSize: '20px'}}>{user.name}</strong>
+                                        <div style={{fontSize: '15px', opacity: 0.7}}>{user.email}</div>
                                     </div>
-                                    <div className="dropdown-item" onClick={() => { setShowProfileMenu(false); setShowProfileModal(true); }}><span>👤</span> My Profile</div>
+                                    
+                                    <div className="dropdown-item" onClick={() => { setShowProfileMenu(false); setShowProfileModal(true); }}>
+                                        <Icons.User size={18} /> <span>My Profile</span>
+                                    </div>
+                                    
                                     <div className="dropdown-item logout-item" onClick={handleLogout}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Logout
+                                        <Icons.Logout size={18} /> <span>Logout</span>
                                     </div>
                                 </div>
                             </>
@@ -144,4 +176,5 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
         </>
     );
 };
+
 export default Navbar;

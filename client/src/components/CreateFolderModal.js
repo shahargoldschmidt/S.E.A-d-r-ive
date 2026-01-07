@@ -23,7 +23,7 @@ const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
                 <label style={{marginBottom:'8px', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
                 <input 
                     type="text" 
-                    placeholder="e.g. Finance, Photos..." 
+                    placeholder="e.g. Ships, Fish..." 
                     value={folderName}
                     onChange={(e) => setFolderName(e.target.value)}
                     autoFocus
@@ -34,6 +34,10 @@ const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
                 <div className="modal-actions">
                     <button className="btn-primary" onClick={handleSubmit}>
                         Create
+                    </button>
+                    {/* Added a cancel button for better UX consistency across modals */}
+                    <button className="btn-cancel" onClick={onClose}>
+                        Cancel
                     </button>
                 </div>
             </div>

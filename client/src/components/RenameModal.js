@@ -1,6 +1,7 @@
 /* client/src/components/RenameModal.js */
 import React, { useState, useEffect } from 'react';
 import '../styles/modal.css';
+import { Icons } from '../utils/Icons';
 
 const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     const [newName, setNewName] = useState('');
@@ -25,7 +26,7 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <h3>✏️ Rename</h3>
+                <h3><Icons.Rename/> Rename</h3>
                 
                 <label style={{marginBottom:'8px', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>New Name</label>
                 <input 

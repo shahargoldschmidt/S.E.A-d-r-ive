@@ -1,11 +1,15 @@
+/* client/src/components/ActionMenu.js */
 import React, { useState, useRef, useEffect } from 'react';
+import { Icons } from '../utils/Icons'; // Centralized icons
 import '../styles/actionMenu.css';
 
 const ActionMenu = ({ actions }) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
 
-    // סגירה של התפריט כשלוחצים מחוץ לו
+    /**
+     * Closes the dropdown menu if a click is detected outside of the component area.
+     */
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -23,7 +27,8 @@ const ActionMenu = ({ actions }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 title="More actions"
             >
-                ⋮
+                {/* Replaced ASCII dots with specialized SVG icon */}
+                <Icons.MenuDots size={20} />
             </button>
 
             {isOpen && (
@@ -33,7 +38,8 @@ const ActionMenu = ({ actions }) => {
                             key={index} 
                             className={`action-menu-item ${action.danger ? 'danger' : ''}`}
                             onClick={(e) => {
-                                e.stopPropagation(); // מונע פתיחה של הקובץ כשלוחצים על כפתור בתפריט
+                                // Prevents the file from opening when an action item is clicked
+                                e.stopPropagation(); 
                                 action.onClick();
                                 setIsOpen(false);
                             }}

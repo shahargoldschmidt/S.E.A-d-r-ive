@@ -146,15 +146,16 @@
     align-items: center;
     justify-content: center;
     padding: 0 24px;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+
 }
 
 /* Create - 2/3 */
 .btn-primary {
-    flex: 2;
+    flex: 1;
     border: none;               /* אין גבול */
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    
     color: white;
-    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
 }
 .btn-primary:hover { 
     transform: translateY(-2px); 
@@ -169,17 +170,12 @@
     color: #475569;             /* טקסט כהה */
     margin-top: 20px;           /* רווח מהרכיבים שמעליו */
     width: 100%;
-    
-    /* מירכוז ועיצוב */
-    height: 52px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
+    flex: 1;
+    padding: 8px 24px;
     align-items: center;
     justify-content: center;
+    
+ 
 }
 
 .btn-cancel:hover { 

@@ -391,3 +391,65 @@
 .password-toggle-icon:hover {
     opacity: 1;
 }
+
+/* --- Avatar & Upload Styles (Rescued from App.css) --- */
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar-preview {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.1);
+  border: 3px solid #00acc1; /* Ocean Blue hardcoded or use var */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.avatar-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 172, 193, 0.5);
+}
+
+.camera-icon {
+  font-size: 2rem;
+  opacity: 0.5;
+  color: inherit;
+}
+
+.upload-label {
+  font-size: 0.8rem;
+  color: #00acc1;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* בועת שגיאה */
+.error-bubble {
+  background-color: rgba(255, 82, 82, 0.15);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
