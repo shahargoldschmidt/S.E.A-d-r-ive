@@ -18,8 +18,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
     }
     setError(''); /* Reset error state */
     /* Default to .txt extension if none is provided by the user */
-    const finalName = fileName.toLowerCase().endsWith('.txt') ? fileName : `${fileName}.txt`;
-    
+    const finalName = fileName.toLowerCase().endsWith('.txt') ? fileName : `${fileName}.txt`;    
     onCreate(finalName, content);
     setFileName('');
     setContent('');

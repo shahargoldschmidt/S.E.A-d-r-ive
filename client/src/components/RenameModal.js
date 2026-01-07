@@ -15,27 +15,17 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     }, [isOpen, currentFile]);
 
     const handleSubmit = () => {
-    if (!newName.trim()) {
-        setError('Please enter a valid name');
-        return;
-    }
-
-    const originalExtension = currentFile.name.includes('.') 
-        ? currentFile.name.split('.').pop() 
-        : '';
+    if (!newName.trim()) return;
+    
+    const parts = currentFile.name.split('.');
+    const originalTechExt = parts.length > 1 ? parts.pop() : '';
 
     let finalName = newName;
-    
-    if (originalExtension && !newName.toLowerCase().endsWith('.' + originalExtension.toLowerCase())) {
-        finalName = `${newName}.${originalExtension}`;
+
+    if (originalTechExt && !newName.toLowerCase().endsWith('.' + originalTechExt.toLowerCase())) {
+        finalName = `${newName}.${originalTechExt}`;
     }
 
-    if (finalName === currentFile.name) {
-        onClose();
-        return;
-    }
-
-    setError('');
     onRename(currentFile.id, finalName);
     onClose();
     };

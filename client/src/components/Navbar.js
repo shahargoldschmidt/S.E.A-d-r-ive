@@ -135,7 +135,11 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
                                             {getFileIcon(file.type)}
                                         </div>
                                         <div className="result-info" style={{flex: 1}}>
-                                            <div className="result-name">{file.name}</div>
+                                            <div className="result-name">
+                                                {file.name.split('.').length > 2 
+                                                    ? file.name.substring(0, file.name.lastIndexOf('.')) 
+                                                    : file.name}
+                                            </div>
                                             <div className="result-meta" style={{fontSize:'0.75rem', opacity: 0.7}}>{formatDate(file.createdAt)} • {file.owner || 'Me'}</div>
                                         </div>
                                         <div style={{fontSize:'0.75rem', opacity: 0.6}}>{formatSize(file.size)}</div>
