@@ -15,15 +15,12 @@ import '../styles/actionMenu.css';
 import {Icons} from '../utils/Icons';
 
 const DashboardPage = ({ toggleTheme, isDarkMode }) => {
-    // --- State ---
+    /* --- State Management --- */
     const [activeTab, setActiveTab] = useState('Home');
     const [files, setFiles] = useState([]); 
     const [activeModal, setActiveModal] = useState(null); 
     const [selectedFile, setSelectedFile] = useState(null);
-    
-    // סטייט לטעינה
     const [isFileLoading, setIsFileLoading] = useState(false);
-
     const [currentUser, setCurrentUser] = useState(null);
     const [fileToManagePerms, setFileToManagePerms] = useState(null); 
     const [fileToMove, setFileToMove] = useState(null);
@@ -33,6 +30,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const [currentFolder, setCurrentFolder] = useState(null);
     const [folderStack, setFolderStack] = useState([]);
 
+    /* Sync Starred and Trashed items with sessionStorage for persistence */
     const [starredIds, setStarredIds] = useState(() => {
         const saved = sessionStorage.getItem('starredFiles');
         return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -53,6 +51,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         loadUser();
     }, []);
 
+    /* Fetch files based on the current folder context or root directory */
     const loadFiles = async () => {
         try {
             let data = [];
@@ -70,6 +69,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         }
     };
 
+    /* Helper function to determine user access level for a specific file */
     const getUserRole = (file) => {
         if (!currentUser || !file) return 'none';
         const currentUserId = String(currentUser.id);
@@ -87,13 +87,13 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
 
     useEffect(() => { loadFiles(); }, [currentFolder, activeTab]);
 
-    // --- השינוי כאן: בדיקה אם זה תמונה לפני הפעלת הלודינג ---
+    /* Handle file opening or folder navigation */
     const handleItemClick = async (file) => {
         if (file.type === 'folder') {
             setFolderStack((prevStack) => [...prevStack, currentFolder]);
             setCurrentFolder(file); 
         } else {
-                setIsFileLoading(true);
+            setIsFileLoading(true);
             try {
                 const fullFileData = await getFileById(file.id);
                 setSelectedFile({ ...file, ...fullFileData });
@@ -101,12 +101,12 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                 console.error("Error opening file", error);
                 alert("Error loading file content"); 
             } finally {
-                    setIsFileLoading(false);
-                
+                setIsFileLoading(false);
             }
         }
     };
 
+    /* Navigate back to previous folder in the breadcrumb stack */
     const handleBack = () => {
         if (folderStack.length > 0) {
             const prevStack = [...folderStack];
@@ -125,6 +125,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         setSelectedFile(null);
     };
 
+    /* Filter files based on the active navigation tab (Trash, Starred, etc.) */
     const getFilteredFiles = () => {
         const notInTrash = files.filter(f => !trashedIds.has(f.id));
         const inTrash = files.filter(f => trashedIds.has(f.id));
@@ -138,21 +139,97 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     };
     const displayFiles = getFilteredFiles();
 
-    // ... שאר הפונקציות ללא שינוי ...
-    const handleSoftDelete = (fileId) => { setTrashedIds(prev => { const n = new Set(prev); n.add(fileId); return n; }); if (selectedFile && selectedFile.id === fileId) setSelectedFile(null); };
-    const handleRestore = (fileId) => { setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); };
-    const handlePermanentDelete = async (fileId) => { if(window.confirm("Are you sure?")) { try { await deleteFileApi(fileId); setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); loadFiles(); } catch (error) { alert("Error: " + error.message); } } };
-    const handleToggleStar = (fileId) => { setStarredIds(prev => { const n = new Set(prev); if(n.has(fileId)) n.delete(fileId); else n.add(fileId); return n; }); };
-    const handleSaveFile = async (fileId, updates) => { try { const payload = { id: fileId, ...updates }; await updateFile(fileId, payload); const freshData = await getFileById(fileId); setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); } catch (e) { alert("Save failed: " + e.message); } };
+    /* --- File Operations --- */
+    const handleSoftDelete = (fileId) => { 
+        setTrashedIds(prev => { const n = new Set(prev); n.add(fileId); return n; }); 
+        if (selectedFile && selectedFile.id === fileId) setSelectedFile(null); 
+    };
+    
+    const handleRestore = (fileId) => { 
+        setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); 
+    };
+    
+    const handlePermanentDelete = async (fileId) => { 
+        if(window.confirm("Are you sure?")) { 
+            try { 
+                await deleteFileApi(fileId); 
+                setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); 
+                loadFiles(); 
+            } catch (error) { alert("Error: " + error.message); } 
+        } 
+    };
+
+    const handleToggleStar = (fileId) => { 
+        setStarredIds(prev => { const n = new Set(prev); if(n.has(fileId)) n.delete(fileId); else n.add(fileId); return n; }); 
+    };
+
+    const handleSaveFile = async (fileId, updates) => { 
+        try { 
+            const payload = { id: fileId, ...updates }; 
+            await updateFile(fileId, payload); 
+            const freshData = await getFileById(fileId); 
+            setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); 
+            if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); 
+        } catch (e) { alert("Save failed: " + e.message); } 
+    };
+
     const openMoveModal = (file) => { setFileToMove(file); setActiveModal('move'); };
-    const handleMoveConfirm = async (targetFolder) => { if (!fileToMove) return; const targetFolderId = targetFolder ? targetFolder.id : null; try { await updateFile(fileToMove.id, { parentId: targetFolderId }); setActiveModal(null); setFileToMove(null); setSelectedFile(null); loadFiles(); } catch (e) { alert(e.message); } };
-    const handleRenameFile = async (fileId, newName) => { try { await updateFile(fileId, { name: newName }); setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(prev => ({ ...prev, name: newName })); setActiveModal(null); } catch (error) { alert("Failed: " + error.message); } };
-    const handleCreateFolder = async (folderName) => { try { await createFile({ name: folderName, type: 'folder', parentId: currentFolder ? currentFolder.id : null }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); } };
-    const handleCreateTextFile = async (fileName, content) => { try { await createFile({ name: fileName, type: 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); setActiveModal(null); loadFiles(); } catch (error) { alert(error.message); } };
-    const handleUpload = async (fileObj) => { if (!fileObj) return; const toBase64 = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsDataURL(f); reader.onload = () => r(reader.result); reader.onerror = j; }); const toText = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsText(f); reader.onload = () => r(reader.result); reader.onerror = j; }); try { let content; const isImage = fileObj.type.startsWith('image/'); if (isImage) { const fullBase64 = await toBase64(fileObj); content = fullBase64.split(',')[1]; } else { content = await toText(fileObj); } await createFile({ name: fileObj.name, type: isImage ? 'image' : 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); await loadFiles(); } catch (error) { alert("Upload error: " + (error.response?.data?.message || error.message)); } };
+    
+    const handleMoveConfirm = async (targetFolder) => { 
+        if (!fileToMove) return; 
+        const targetFolderId = targetFolder ? targetFolder.id : null; 
+        try { 
+            await updateFile(fileToMove.id, { parentId: targetFolderId }); 
+            setActiveModal(null); setFileToMove(null); setSelectedFile(null); loadFiles(); 
+        } catch (e) { alert(e.message); } 
+    };
+
+    const handleRenameFile = async (fileId, newName) => { 
+        try { 
+            await updateFile(fileId, { name: newName }); 
+            setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f)); 
+            if (selectedFile && selectedFile.id === fileId) setSelectedFile(prev => ({ ...prev, name: newName })); 
+            setActiveModal(null); 
+        } catch (error) { alert("Failed: " + error.message); } 
+    };
+
+    const handleCreateFolder = async (folderName) => { 
+        try { 
+            await createFile({ name: folderName, type: 'folder', parentId: currentFolder ? currentFolder.id : null }); 
+            setActiveModal(null); loadFiles(); 
+        } catch (error) { alert(error.message); } 
+    };
+
+    const handleCreateTextFile = async (fileName, content) => { 
+        try { 
+            await createFile({ name: fileName, type: 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); 
+            setActiveModal(null); loadFiles(); 
+        } catch (error) { alert(error.message); } 
+    };
+
+    /* Handle file uploads, converting binary data to Base64 for images or raw text for files */
+    const handleUpload = async (fileObj) => { 
+        if (!fileObj) return; 
+        const toBase64 = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsDataURL(f); reader.onload = () => r(reader.result); reader.onerror = j; }); 
+        const toText = (f) => new Promise((r, j) => { const reader = new FileReader(); reader.readAsText(f); reader.onload = () => r(reader.result); reader.onerror = j; }); 
+        try { 
+            let content; 
+            const isImage = fileObj.type.startsWith('image/'); 
+            if (isImage) { 
+                const fullBase64 = await toBase64(fileObj); 
+                content = fullBase64.split(',')[1]; 
+            } else { 
+                content = await toText(fileObj); 
+            } 
+            await createFile({ name: fileObj.name, type: isImage ? 'image' : 'file', parentId: currentFolder ? currentFolder.id : null, content: content }); 
+            await loadFiles(); 
+        } catch (error) { alert("Upload error: " + (error.response?.data?.message || error.message)); } 
+    };
+
     const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleDateString('he-IL') : '-';
     const formatSize = (bytes) => bytes ? `${(bytes/1024).toFixed(1)} KB` : '-';
 
+    /* Generate available actions for each file based on context and user permissions */
     const getFileActions = (file, isInsideEditor = false) => {
         const role = getUserRole(file);
         const isInTrash = activeTab === 'Trash';
@@ -160,15 +237,30 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         const canManagePermissions = role === 'ADMIN'; 
         const canDelete = role === 'ADMIN' || role === 'EDITOR';
 
-        if (isInTrash) return [{ label: 'Restore', icon: <Icons.Restore size={18} />, onClick: () => handleRestore(file.id) }, { label: 'Delete Forever', icon: <Icons.Trash size={20} />, onClick: () => handlePermanentDelete(file.id), danger: true }];
+        if (isInTrash) return [
+            { label: 'Restore', icon: <Icons.Restore size={18} />, onClick: () => handleRestore(file.id) }, 
+            { label: 'Delete Forever', icon: <Icons.Trash size={20} />, onClick: () => handlePermanentDelete(file.id), danger: true }
+        ];
+
         const actions = [];
         if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: <Icons.Eye size={18} />, onClick: () => handleItemClick(file) });
-        if (canEdit) { actions.push({ label: 'Rename', icon: <Icons.Rename size={18} />, onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); actions.push({ label: 'Move', icon: <Icons.Folder size={18} />, onClick: () => openMoveModal(file) }); }
+        if (canEdit) { 
+            actions.push({ label: 'Rename', icon: <Icons.Rename size={18} />, onClick: () => { setFileToRename(file); setActiveModal('rename'); } }); 
+            actions.push({ label: 'Move', icon: <Icons.Folder size={18} />, onClick: () => openMoveModal(file) }); 
+        }
         if (canManagePermissions) actions.push({ label: 'Permissions', icon: <Icons.Lock size={18} />, onClick: () => { setFileToManagePerms(file); setActiveModal('permissions'); } });
         if (canDelete) actions.push({ label: 'Move to trash', icon: <Icons.Delete size={18} />, onClick: () => handleSoftDelete(file.id), danger: true });
         return actions;
     };
-    const handleSavePermissions = async (fileId, newPerms) => { try { await updateFile(fileId, newPerms); const freshData = await getFileById(fileId); setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); } catch (error) { alert('Failed to update permissions'); } };
+
+    const handleSavePermissions = async (fileId, newPerms) => { 
+        try { 
+            await updateFile(fileId, newPerms); 
+            const freshData = await getFileById(fileId); 
+            setFiles(prev => prev.map(f => f.id === fileId ? freshData : f)); 
+            if (selectedFile && selectedFile.id === fileId) setSelectedFile(freshData); 
+        } catch (error) { alert('Failed to update permissions'); } 
+    };
 
     return (
         <div className={`dashboard-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -186,7 +278,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                 
                 <main className="main-content" style={{ position: 'relative' }}>
                     
-                    {/* הדג השוחה - מופיע רק אם isFileLoading === true */}
+                    {/* Visual loading indicator during file content retrieval */}
                     {isFileLoading && (
                         <div style={{
                             position: 'absolute',

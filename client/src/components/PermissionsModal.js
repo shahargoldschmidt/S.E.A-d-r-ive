@@ -10,6 +10,7 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
     const [errorMsg, setErrorMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    /* Sync permissions whenever the modal opens or the file context changes */
     useEffect(() => {
         if (isOpen && file) {
             loadPermissions();
@@ -24,6 +25,7 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
             const perms = await getPermissions(file.id);
             setCollaborators(perms);
         } catch (error) {
+            /* Fallback to local file permissions if API call fails */
             setCollaborators(file.permissions || []);
         } finally {
             setIsLoading(false);
@@ -50,6 +52,7 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
         }
     };
 
+    /* Smart action handles both adding a pending email and closing the modal */
     const handleSmartAction = async () => {
         if (newUserEmail.trim().length > 0) {
             const success = await handleAddUser();
@@ -65,10 +68,11 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
         try {
             await removePermission(file.id, userPerm.id);
             setCollaborators(prev => prev.filter(c => c.email !== email));
-        } catch (error) { setErrorMsg("Failed to remove user"); }
+        } catch (error) { 
+            setErrorMsg("Failed to remove user"); 
+        }
     };
     
-    // ...handleRoleChange... (אותו דבר כמו קודם)
     const handleRoleChange = async (email, newRole) => {
         const userPerm = collaborators.find(c => c.email === email);
         if (!userPerm || !userPerm.id) return;
@@ -79,9 +83,10 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
             );
             setCollaborators(updatedList);
             onSave(file.id, { permissions: updatedList });
-        } catch (err) { setErrorMsg("Failed to update role"); }
+        } catch (err) { 
+            setErrorMsg("Failed to update role"); 
+        }
     };
-
 
     if (!isOpen) return null;
     const hasUnsavedInput = newUserEmail.trim().length > 0;
@@ -91,7 +96,7 @@ const PermissionsModal = ({ isOpen, onClose, onSave, file, currentUser }) => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>🔒 Manage Access</h3>
                 
-                {/* זו הקפסולה היפה שתוקנה */}
+                {/* Input bar for adding new collaborators */}
                 <div className="permissions-bar">
                     <input 
                         type="email" 

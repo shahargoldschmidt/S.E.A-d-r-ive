@@ -1,12 +1,12 @@
 /* client/src/components/Sidebar.js */
 import React, { useState, useRef } from 'react';
-import { Icons } from '../utils/Icons'; // The new centralized icon source
+import { Icons } from '../utils/Icons'; 
 import '../styles/sidebar.css';
 
 const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileModal, onUploadFile, onUploadPhoto }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
-    // Refs for hidden file inputs
+    /* Refs to trigger hidden native file pickers */
     const fileInputRef = useRef(null);
     const photoInputRef = useRef(null);
 
@@ -24,12 +24,13 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
             else onUploadFile(e.target.files[0]);
         }
         setIsDropdownOpen(false);
-        e.target.value = ''; // Reset input so the same file can be selected again if needed
+        /* Clear input value to allow re-uploading the same file if needed */
+        e.target.value = ''; 
     };
 
     return (
         <aside className="sidebar-container">
-            {/* Hidden inputs for file/photo upload */}
+            {/* Hidden file inputs triggered via Ref */}
             <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -45,30 +46,26 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
                 onChange={(e) => handleFileChange(e, 'photo')} 
             />
 
-            {/* Main "New Dive" Button */}
             <div className="new-dive-wrapper">
                 <button className="new-dive-btn" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                     <Icons.Plus size={24} /> <span>New Dive</span>
                 </button>
 
+                {/* Create/Upload dropdown menu */}
                 {isDropdownOpen && (
                     <div className="dropdown-menu">
-                        {/* 1. Create New Folder */}
                         <div className="dropdown-item" onClick={() => { onOpenFolderModal(); setIsDropdownOpen(false); }}>
                             <Icons.Folder /> New Folder
                         </div>
                         
-                        {/* 2. Create New Text File */}
                         <div className="dropdown-item" onClick={() => { onOpenTextFileModal(); setIsDropdownOpen(false); }}>
                              <Icons.File /> New Text File
                         </div>
 
-                        {/* 3. Upload Existing File */}
                         <div className="dropdown-item" onClick={() => { fileInputRef.current.click(); setIsDropdownOpen(false); }}>
                             <Icons.UploadFile /> Upload File
                         </div>
 
-                        {/* 4. Upload Photo */}
                         <div className="dropdown-item" onClick={() => { photoInputRef.current.click(); setIsDropdownOpen(false); }}>
                             <Icons.UploadPhoto /> Upload Photo
                         </div>

@@ -1,59 +1,56 @@
 /* client/src/styles/global.css */
 
 /* =========================================
-   GLOBAL VARIABLES
+   1. GLOBAL VARIABLES & DESIGN TOKENS
    ========================================= */
 :root {
-  /*  Palette Definitions  */
+  /* Default Light Mode Palette */
   
-  /* Backgrounds */
+  /* Background gradients and solids */
   --color-deep-navy: radial-gradient(circle at 50% -10%, rgba(255, 255, 240, 0.8) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 70%),
                      linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
   --color-deep-navy-solid: #052e4a; 
   
-  /* Accents */
+  /* Accent colors for buttons and highlights */
   --color-ocean-blue: #00acc1;
   --color-ocean-blue-hover: #0097e6;
   
-  /* Cards & Inputs */
+  /* Surface colors for cards and inputs */
   --color-cream-card: rgba(253, 250, 240, 0.95);
   --color-cream-card-solid: #fbf9f2;
   --color-input-bg: rgba(255, 255, 255, 0.9);
   
-  /* Text */
+  /* Text colors */
   --color-text-dark: #374151;
   --color-text-light: #ffffff;
   
-  /* Effects */
+  /* Visual effects and elevations */
   --glass-blur: blur(10px);
   --shadow-soft: 0 4px 15px rgba(0,0,0,0.08);
   --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================
-   2. DARK MODE OVERRIDES
+   2. DARK MODE THEME OVERRIDES
    ========================================= */
 .dark-mode {
-  /* Backgrounds */
+  /* Overriding variables for a midnight aesthetic */
   --color-deep-navy: radial-gradient(circle at 50% -20%, #1c3a4a 0%, #0f2027 50%, #000000 100%);
   --color-deep-navy-solid: #000000;
   
-  /* Accents */
   --color-ocean-blue: #00e5ff;
   --color-ocean-blue-hover: #4facfe;
   
-  /* Cards & Inputs */
   --color-cream-card: rgba(255, 255, 255, 0.05);
   --color-cream-card-solid: #102a43;
   --color-input-bg: rgba(0, 0, 0, 0.2);
   
-  /* Text */
   --color-text-dark: #e0f7fa; 
   --glass-blur: blur(15px);
 }
 
 /* =========================================
-   3. BASIC RESET & LAYOUT
+   3. BASIC RESET & CORE LAYOUT
    ========================================= */
 * {
   box-sizing: border-box;
@@ -65,7 +62,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
   margin: 0;
-  color: var(--color-text-dark); /* Default text color */
+  color: var(--color-text-dark);
 }
 
 .dark-mode body {
@@ -84,12 +81,17 @@ body {
   overflow: hidden; 
 }
 
-/* --- Wave Animations (Preserved from original) --- */
+/* =========================================
+   4. DECORATIVE BACKGROUND ANIMATIONS
+   ========================================= */
+
+/* Moving wave animation in the background */
 @keyframes moveWave {
     0% { background-position-x: 0; }
     100% { background-position-x: 1440px; } 
 }
 
+/* Bubble floating animation for light mode */
 @keyframes floatUp {
     0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
     20% { opacity: 0.6; }
@@ -126,9 +128,11 @@ body {
     animation: floatUp 8s infinite linear;
 }
 
-/* --- Global UI Components (Moved from App.css) --- */
+/* =========================================
+   5. GLOBAL UI COMPONENTS
+   ========================================= */
 
-/* כפתור ראשי סטנדרטי לכל האפליקציה */
+/* Standard primary button style used across the application */
 .btn-primary {
   width: 100%;
   padding: 12px;
@@ -155,7 +159,7 @@ body {
   transform: none;
 }
 
-/* שדה קלט סטנדרטי */
+/* Reusable themed input field */
 .sea-input {
   width: 100%;
   padding: 12px 20px;
@@ -163,7 +167,7 @@ body {
   border-radius: 50px;
   border: 1px solid transparent;
   background-color: var(--color-input-bg);
-  color: var(--color-text-dark); /* משתמש במשתנה הגלובלי */
+  color: var(--color-text-dark); 
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
@@ -175,7 +179,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 172, 193, 0.3);
 }
 
-/* במצב חשוך - התאמה של האינפוט */
+/* Contextual input overrides for dark mode */
 .dark-mode .sea-input {
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--color-text-light);

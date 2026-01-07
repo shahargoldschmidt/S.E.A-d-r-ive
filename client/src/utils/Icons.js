@@ -1,7 +1,7 @@
 /* src/utils/Icons.js */
 import React from 'react';
 
-// קומפוננטת עזר בסיסית (Outline)
+/* Base helper component for Outline icons */
 const SvgIcon = ({ size = 24, className = "", children, ...props }) => (
     <svg 
         width={size} 
@@ -19,7 +19,7 @@ const SvgIcon = ({ size = 24, className = "", children, ...props }) => (
     </svg>
 );
 
-// קומפוננטת עזר לאייקונים מלאים (Solid)
+/* Base helper component for Solid icons */
 const SolidIcon = ({ size = 24, className = "", children, ...props }) => (
     <svg 
         width={size} 
@@ -34,7 +34,7 @@ const SolidIcon = ({ size = 24, className = "", children, ...props }) => (
 );
 
 export const Icons = {
-    // === ניווט ו-Sidebar ===
+    /* --- Navigation & Sidebar Icons --- */
     Home: (props) => (
         <SolidIcon {...props} viewBox="0 0 24 24">
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
@@ -55,7 +55,6 @@ export const Icons = {
             <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
         </SolidIcon>
     ),
-    // האייקון החסר שגרם לקריסה בחיפוש
     FileText: (props) => (
         <SvgIcon {...props}>
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -65,7 +64,6 @@ export const Icons = {
             <polyline points="10 9 9 9 8 9"></polyline>
         </SvgIcon>
     ),
-    // האייקון החסר לתמונות
     Image: (props) => (
         <SvgIcon {...props}>
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -109,7 +107,7 @@ export const Icons = {
         </SvgIcon>
     ),
 
-    // === פעולות ===
+    /* --- Action Icons --- */
     Plus: (props) => (
         <SvgIcon {...props}>
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -172,7 +170,7 @@ export const Icons = {
         </SvgIcon>
     ),
     
-    // === Auth & Permissions ===
+    /* --- Auth & Permissions Icons --- */
     Eye: (props) => (
         <SvgIcon {...props}>
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -211,7 +209,7 @@ export const Icons = {
     </svg>
 ),
 
-    // === אלו היו חסרים בקובץ הקודם: שמש וירח ===
+    /* --- Theme Icons --- */
     Sun: (props) => (
         <SvgIcon {...props}>
             <circle cx="12" cy="12" r="5"></circle>
@@ -231,4 +229,3 @@ export const Icons = {
         </SvgIcon>
     )
 };
-

@@ -13,6 +13,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
     
     const navigate = useNavigate();
 
+    /* Handle form submission and user authentication */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -20,6 +21,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
         try {
             await loginUser(email, password);
+            /* Redirect to dashboard upon successful login */
             navigate('/dashboard'); 
         } catch (err) {
             setError(err.message); 
@@ -64,6 +66,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
                     placeholder="Password"
                 />
 
+                {/* Disable button during API call to prevent multiple submissions */}
                 <button 
                     type="submit" 
                     className="btn-primary" 

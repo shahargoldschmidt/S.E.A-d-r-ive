@@ -10,7 +10,7 @@
 /* --- Header Section --- */
 .editor-header {
     display: flex;
-    justify-content: space-between; /* כותרת בשמאל, כפתורים בימין */
+    justify-content: space-between; /* Title on the left, action buttons on the right */
     align-items: center;
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -21,7 +21,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* צד שמאל: כפתור חזור + כותרת */
+/* Left side: Back button and File Title */
 .header-left {
     display: flex;
     align-items: center;
@@ -58,21 +58,22 @@
     width: 100%;
 }
 
-/* צד ימין: כפתורי פעולה */
+/* Right side: Action buttons container */
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px; /* רווח גדול יותר בין הכפתורים */
+    gap: 12px; 
 }
-/* עיצוב חדש לכפתורים עם טקסט (Pill Shape) */
+
+/* Rounded pill buttons for primary text actions */
 .action-pill-btn {
     background: rgba(255,255,255,0.5);
     border: 1px solid rgba(0, 168, 255, 0.2);
-    border-radius: 50px; /* עיגול מלא בצדדים */
-    padding: 10px 28px;   /* ריפוד רחב לטקסט */
+    border-radius: 50px; 
+    padding: 10px 28px;   
     display: flex;
     align-items: center;
-    gap: 8px;            /* רווח בין האייקון לטקסט */
+    gap: 8px;            
     font-size: 1.3rem;
     font-weight: 600;
     cursor: pointer;
@@ -88,7 +89,7 @@
     color: #00a8ff;
 }
 
-/* צבעים ספציפיים */
+/* Contextual colors for pill buttons */
 .action-pill-btn.save {
     background: #e8f5e9;
     color: #2e7d32;
@@ -103,8 +104,8 @@
 }
 .action-pill-btn.cancel:hover { background: #ffcdd2; }
 
+/* Circular icon buttons for secondary actions */
 .action-icon-btn {
-    /* ... (העיצוב המקורי של העיגולים נשאר למי שצריך) ... */
     background: rgba(255,255,255,0.2);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 50%;
@@ -131,7 +132,7 @@
 .action-icon-btn.danger:hover { background: #ffebee; border-color: red; }
 .action-icon-btn.save:hover { background: #e8f5e9; border-color: green; }
 
-/* --- Toolbar (Native) --- */
+/* --- Rich Text Toolbar --- */
 .editor-toolbar {
     display: flex;
     gap: 8px;
@@ -159,7 +160,7 @@
 
 .separator { margin: 0 5px; opacity: 0.3; }
 
-/* --- Main Content --- */
+/* --- Main Editor Content Area --- */
 .editor-content {
     flex: 1;
     overflow-y: auto;
@@ -168,10 +169,11 @@
     border-radius: 15px;
     line-height: 1.6;
     outline: none;
-    white-space: pre-wrap; /* שומר על ירידות שורה */
+    white-space: pre-wrap; 
     border: 1px solid transparent;
 }
 
+/* Styling for content editable state */
 .editor-content.editable {
     background: rgba(255,255,255,0.8);
     border: 2px dashed rgba(0, 168, 255, 0.4);
@@ -181,7 +183,7 @@
 .dark-mode .editor-content { background: rgba(0,0,0,0.2); }
 .dark-mode .editor-content.editable { background: rgba(0,0,0,0.4); }
 
-/* אנימציה חמודה לכניסה */
+/* Fade-in entrance animation */
 .fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }

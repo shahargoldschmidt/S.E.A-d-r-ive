@@ -21,6 +21,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
     const fileInputRef = useRef(null); 
     const navigate = useNavigate();
 
+    /* Handle profile image selection and convert to Base64 for storage */
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -40,11 +41,13 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
 
     const triggerFileInput = () => fileInputRef.current.click();
 
+    /* Generate fallback avatar initial based on the entered name */
     const getInitial = () => { 
         if (formData.name && formData.name.trim() !== '') return formData.name.trim().charAt(0).toUpperCase(); 
         return "👤"; 
     };
 
+    /* Effect to monitor form validity and password matching */
     useEffect(() => {
         const allCriteriaMet = Object.values(passwordCriteria).every(Boolean);
         const match = formData.password === formData.confirmPassword && formData.password !== '';
@@ -55,9 +58,15 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        
+        /* Validate password strength in real-time */
         if (name === 'password') {
             setPasswordCriteria({
-                length: value.length >= 8, upper: /[A-Z]/.test(value), lower: /[a-z]/.test(value), number: /[0-9]/.test(value), special: /[!@#$%^&*(),.?":{}|<>]/.test(value)
+                length: value.length >= 8, 
+                upper: /[A-Z]/.test(value), 
+                lower: /[a-z]/.test(value), 
+                number: /[0-9]/.test(value), 
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(value)
             });
         }
     };
@@ -82,7 +91,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                 
                 <form onSubmit={handleSubmit}>
                     
-                    {/* Image Upload Section */}
+                    {/* Profile Picture Upload Section */}
                     <div className="image-upload-wrapper">
                         <div className="image-preview-circle clickable-circle" onClick={triggerFileInput}>
                             {imagePreview ? (
@@ -105,7 +114,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                     <input className="sea-input" name="name" type="text" onChange={handleChange} required placeholder="Full Name" />
                     <input className="sea-input" name="email" type="email" onChange={handleChange} required placeholder="Email Address" />
                     
-                    {/* Password Field */}
+                    {/* Password Entry with visibility toggle */}
                     <div className="password-wrapper">
                         <input 
                             className="sea-input" name="password" 
@@ -120,7 +129,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
 
                     {formData.password && <PasswordCriteria criteria={passwordCriteria} />}
 
-                    {/* Confirm Password Field */}
+                    {/* Confirm Password with visual feedback for matching status */}
                     <div className="password-wrapper">
                         <input 
                             className="sea-input" name="confirmPassword" 

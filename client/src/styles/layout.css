@@ -1,6 +1,6 @@
 /* client/src/styles/layout.css */
 
-/*containr and fonts */
+/* Main dashboard container and core layout */
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -12,18 +12,19 @@
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* theme back ground */
+/* Light mode background gradient and text color */
 .light-mode .dashboard-container {
    background: linear-gradient(180deg, #e3f2fd 0%, #6dd5ed 60%, #2193b0 100%);
     color: #0d1b2a;
 }
 
+/* Dark mode background gradient and text color */
 .dark-mode .dashboard-container {
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     color: white;
 }
 
-/* main glass box body */
+/* Flex body wrapper for sidebar and main content */
 .dashboard-body { 
     display: flex; 
     flex: 1; 
@@ -31,7 +32,7 @@
     padding-top: 15px; 
 }
 
-/* main glass box with presented relevant files */
+/* Central glassmorphism container for file presentation */
 .main-content {
     flex: 1;
     margin: 0 24px 24px 0;
@@ -60,12 +61,11 @@
     letter-spacing: -0.5px;
 }
 
-/* אנימציות גלובליות */
+/* Global entry animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* files table*/
-
+/* Files table container styling */
 .files-table-container {
     width: 100%;
     background: rgba(255, 255, 255, 0.5);
@@ -81,7 +81,7 @@
     table-layout: fixed; 
 }
 
-/* table titles*/
+/* Table header column labels */
 .files-table th {
     text-align: left;
     padding: 20px 25px;
@@ -92,7 +92,7 @@
     border-bottom: 2px solid rgba(0,0,0,0.05);
 }
 
-/* files row */
+/* Table row data styling */
 .files-table td {
     padding: 20px 25px;
     border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -102,29 +102,28 @@
     vertical-align: middle;
 }
 
-
 .files-table tr:hover td {
     background-color: rgba(255, 255, 255, 0.8);
 }
 
-
+/* Cell containing file icon and name with flex alignment */
 .file-name-cell {
-    display: flex;          /* הופך את התא למכל גמיש */
-    align-items: center;    /* מיישר את האייקון והטקסט למרכז האנכי */
-    gap: 12px;              /* יוצר רווח קבוע ויפה בין האייקון לשם */
+    display: flex;          
+    align-items: center;    
+    gap: 12px;              
     font-weight: 600;
     color: #183b8d;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 10px 0;        /* מוסיף מעט ריווח פנימי למניעת צפיפות */
+    padding: 10px 0;        
 }
 
 .file-icon {
     font-size: 1.6rem; 
 }
 
-
+/* Alignment for action buttons on the right side of the row */
 .actions-cell {
     display: flex;
     gap: 8px; 
@@ -133,6 +132,7 @@
     justify-content: flex-end;
 }
 
+/* Circular action button styles */
 .action-btn {
     border: none;
     background: transparent;
@@ -166,11 +166,10 @@
     background-color: rgba(255, 255, 255, 0.15);
 }
 
+/* Dark mode overrides for table headers and rows */
 .dark-mode .files-table th {
     color: #ffffff; 
-    
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); 
-    
     border-bottom: 2px solid rgba(255, 255, 255, 0.2); 
     background-color: rgba(255, 255, 255, 0.05); 
     letter-spacing: 0.5px;

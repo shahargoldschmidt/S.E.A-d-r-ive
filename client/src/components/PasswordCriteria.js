@@ -1,7 +1,7 @@
 /* client/src/components/PasswordCriteria.js */
 import React from 'react';
 
-// Constant definition for validation rules to ensure maintainability
+/* Validation rules configuration for the password field */
 const PASSWORD_RULES = [
     { key: 'length', label: 'At least 8 characters' },
     { key: 'upper', label: 'Uppercase Letter (A-Z)' },
@@ -17,12 +17,12 @@ const PasswordCriteria = ({ criteria }) => {
                 Password Requirements:
             </p>
             
+            {/* Map through rules and apply dynamic styling based on validation state */}
             {PASSWORD_RULES.map((rule) => {
                 const isValid = criteria[rule.key];
                 
                 return (
                     <div key={rule.key} className={`validation-item ${isValid ? 'valid' : 'invalid'}`}>
-                        {/* Status indicator dot (styles controlled via auth.css) */}
                         <span className={`status-dot ${isValid ? 'valid' : 'invalid'}`}></span>
                         {rule.label}
                     </div>

@@ -6,6 +6,7 @@ import { Icons } from '../utils/Icons';
 const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     const [newName, setNewName] = useState('');
 
+    /* Populate the input field with the current name when the modal opens */
     useEffect(() => {
         if (isOpen && currentFile) {
             setNewName(currentFile.name);
@@ -13,6 +14,7 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     }, [isOpen, currentFile]);
 
     const handleSubmit = () => {
+        /* Only trigger rename if the name has changed and is not empty */
         if (newName.trim() && newName !== currentFile.name) {
             onRename(currentFile.id, newName);
             onClose();
@@ -25,6 +27,7 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
+            {/* stopPropagation prevents modal closure when clicking inside the content box */}
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3><Icons.Rename/> Rename</h3>
                 

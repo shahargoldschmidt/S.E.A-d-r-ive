@@ -1,7 +1,7 @@
 /* client/src/components/FileEditor.js */
 import React, { useState, useRef, useEffect } from 'react';
 import ActionMenu from './ActionMenu'; 
-import { Icons } from '../utils/Icons'; // Centralized icons
+import { Icons } from '../utils/Icons'; 
 import '../styles/editor.css';
 import '../styles/actionMenu.css'; 
 
@@ -23,6 +23,7 @@ const FileEditor = ({
     const contentRef = useRef(null);
     const imageInputRef = useRef(null); 
 
+    /* Check if the file is an image based on its type or extension */
     const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
 
     useEffect(() => {
@@ -32,7 +33,7 @@ const FileEditor = ({
         setIsReplacingImage(false);
     }, [file]);
 
-    // --- Permissions Check ---
+    /* Determine user permissions based on ownership or permission array */
     let userRole = 'none';
     if (currentUser) {
         const currentUserId = String(currentUser.id);
@@ -52,6 +53,7 @@ const FileEditor = ({
 
     const canEdit = (userRole === 'ADMIN' || userRole === 'EDITOR');
     
+    /* Utility for rich text editing commands */
     const execCmd = (command, value = null) => {
         document.execCommand(command, false, value);
     };
@@ -65,6 +67,7 @@ const FileEditor = ({
         }
     };
 
+    /* Handle image replacement by converting the new file to base64 */
     const handleImageReplace = async (e) => {
         const newFile = e.target.files[0];
         if (!newFile) return;
@@ -102,6 +105,7 @@ const FileEditor = ({
         return <Icons.FileText size={30} color="#64748b" />;
     };
 
+    /* Format raw base64 content into a proper data URL for image src */
     const getCleanImageSrc = (rawContent) => {
         if (!rawContent) return '';
         let clean = rawContent.replace(/[\s\n\r]/g, '');
@@ -177,6 +181,7 @@ const FileEditor = ({
                  </div>
              </div>
  
+             {/* Toolbar only visible during text editing */}
              {isEditing && (!isImage || imageLoadError) && (
                  <div className="editor-toolbar">
                      <button onMouseDown={(e) => {e.preventDefault(); execCmd('bold');}}><b>B</b></button>
@@ -192,7 +197,7 @@ const FileEditor = ({
                      <div className="image-display-box">
                          {isReplacingImage && (
                              <div className="upload-overlay">
-                                 <span>Scanning the depths...</span>
+                                 <span>Updating image...</span>
                              </div>
                          )}
                          
@@ -216,6 +221,7 @@ const FileEditor = ({
                                  <p>This file is empty.</p>
                              </div>
                          ) : (
+                             /* dangerouslySetInnerHTML used to render stored HTML content */
                              <div 
                                  className={`editor-content ${isEditing ? 'editable' : 'read-only'}`} 
                                  contentEditable={isEditing} 

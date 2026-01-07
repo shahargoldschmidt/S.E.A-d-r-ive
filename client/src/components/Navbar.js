@@ -20,7 +20,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
     
     const searchRef = useRef(null);
 
-    
+    /* Fetch user details from session on component mount */
     useEffect(() => {
         const fetchUserData = async () => {
             const userId = sessionStorage.getItem('userId');
@@ -36,7 +36,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
         fetchUserData();
     }, []);
 
-    
+    /* Debounced search logic to minimize API calls while typing */
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (query.length > 0) {
@@ -45,8 +45,11 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
                 try {
                     const data = await searchFiles(query);
                     setResults(data);
-                } catch (error) { console.error("Search error", error); } 
-                finally { setIsSearching(false); }
+                } catch (error) { 
+                    console.error("Search error", error); 
+                } finally { 
+                    setIsSearching(false); 
+                }
             } else {
                 setResults([]);
                 setShowSearchDropdown(false);
@@ -55,6 +58,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
         return () => clearTimeout(timer);
     }, [query]);
 
+    /* Close search dropdown when clicking outside the search component */
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -71,6 +75,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
         navigate('/login');
     };
 
+    /* Dynamic avatar rendering: Profile pic -> Initial -> Default Icon */
     const renderAvatar = () => {
         if (user.image) return <img src={user.image} alt="Profile" className="nav-avatar-img" />;
         if (user.name && user.name !== 'Guest') return <div className="nav-avatar-initial">{user.name.charAt(0).toUpperCase()}</div>;
@@ -79,7 +84,6 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
 
     const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('he-IL');
     const formatSize = (bytes) => bytes ? (bytes/1024).toFixed(1) + ' KB' : '';
-
 
     const getFileIcon = (type) => {
         if (type === 'folder') return <Icons.Folder size={18} color="#ffb703" />; 
@@ -111,6 +115,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
                             onFocus={() => query.length > 0 && setShowSearchDropdown(true)}
                         />
 
+                        {/* Search results dropdown menu */}
                         {showSearchDropdown && (
                             <div className="search-dropdown">
                                 {isSearching && (
@@ -151,6 +156,7 @@ const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
                             {renderAvatar()}
                         </div>
                         
+                        {/* User profile dropdown menu */}
                         {showProfileMenu && (
                             <>
                                 <div style={{position: 'fixed', inset: 0, zIndex: 2999}} onClick={() => setShowProfileMenu(false)} />

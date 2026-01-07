@@ -5,6 +5,7 @@ import '../styles/modal.css';
 const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
     const [folderName, setFolderName] = useState('');
 
+    /* Return null if modal should not be displayed */
     if (!isOpen) return null;
 
     const handleSubmit = () => {
@@ -17,6 +18,7 @@ const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
+            {/* stopPropagation ensures clicks inside the modal don't trigger the overlay's onClose */}
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>Create New Folder</h3>
                 
@@ -30,12 +32,10 @@ const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
                     onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 />
 
-                {/* כפתור יחיד ורחב */}
                 <div className="modal-actions">
                     <button className="btn-primary" onClick={handleSubmit}>
                         Create
                     </button>
-                    {/* Added a cancel button for better UX consistency across modals */}
                     <button className="btn-cancel" onClick={onClose}>
                         Cancel
                     </button>

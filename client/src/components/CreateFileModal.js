@@ -5,11 +5,13 @@ import '../styles/modal.css';
 const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
     const [fileName, setFileName] = useState('');
     const [content, setContent] = useState('');
-    // If the modal is not open, do not render anything
+
+    /* Prevent rendering if the modal is hidden */
     if (!isOpen) return null;
 
     const handleSubmit = () => {
         if (fileName.trim()) {
+            /* Default to .txt extension if none is provided by the user */
             const finalName = fileName.includes('.') ? fileName : `${fileName}.txt`;
             onCreate(finalName, content);
             setFileName('');
@@ -18,6 +20,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
         }
     };
 
+    /* Allow submission via Enter key while ignoring Shift+Enter for new lines */
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -27,6 +30,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
+            {/* stopPropagation prevents closing the modal when clicking inside the content area */}
             <div className="modal-content" style={{width: '550px'}} onClick={(e) => e.stopPropagation()}>
                 <h3>Create New File</h3>
 
@@ -42,7 +46,6 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
                             autoFocus
                         />
                     </div>
-
                 </div>
 
                 <label style={{marginBottom:'6px', display:'block', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Content</label>
