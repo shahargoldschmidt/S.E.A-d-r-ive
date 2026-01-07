@@ -217,7 +217,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         } catch (error) { alert(error.message); } 
     };
     const handleDownload = async (file) => {
-    /* If it's a folder, recursively download all its children */
+    /* Recursive download for folders */
     if (file.type === 'folder') {
         const fullFolder = await getFileById(file.id);
         if (fullFolder.children) {
@@ -226,36 +226,44 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         return;
     }
 
-    /* Logic to trigger a browser download for files/images */
-    const element = document.createElement("a");
-    let blob;
-    
-    if (file.type === 'image') {
-        /* Convert Base64 back to Blob for images */
-        const byteCharacters = atob(file.content);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        blob = new Blob([byteArray], { type: 'image/png' }); // Or correct mime type
-    } else {
-        /* Safe Blob for text files including Hebrew support */
-        blob = new Blob([file.content || ''], { type: 'text/plain;charset=utf-8' });
+    if (!file.content) {
+        alert("File content is missing and cannot be downloaded.");
+        return;
     }
 
+    let blob;
+    try {
+        if (file.type === 'image') {
+            /* Convert Base64 string to Binary Data safely */
+            const byteCharacters = atob(file.content.trim());
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            blob = new Blob([byteArray], { type: 'image/png' });
+        } else {
+            /* Handle text files with proper UTF-8 encoding */
+            blob = new Blob([file.content], { type: 'text/plain;charset=utf-8' });
+        }
+    } catch (e) {
+        console.error("Download encoding error:", e);
+        /* Fallback: treat as plain text if Base64 decoding fails */
+        blob = new Blob([file.content], { type: 'text/plain;charset=utf-8' });
+    }
+
+    /* Trigger the browser download */
     const url = URL.createObjectURL(blob);
-    element.setAttribute("href", url);
-    element.setAttribute("download", file.name);
-    
-    element.style.display = "none";
+    const element = document.createElement("a");
+    element.href = url;
+    element.download = file.name;
     document.body.appendChild(element);
     element.click();
     
-    /* Cleanup memory */
+    /* Cleanup */
     document.body.removeChild(element);
     URL.revokeObjectURL(url);
-    };
+};
 
     /* Handle file uploads, converting binary data to Base64 for images or raw text for files */
     const handleUpload = async (fileObj) => { 
