@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchFiles, getUser } from '../services/api'; 
 import ProfileModal from './ProfileModal'; 
-import { Icons } from '../utils/Icons'; 
 import '../styles/navbar.css';
 import AppLogo from '../assets/Logo.PNG';
+import { Icons } from '../utils/Icons'; 
 
 const Navbar = ({ toggleTheme, isDarkMode, onFileClick }) => {
     const [user, setUser] = useState({ name: 'Guest', email: '', image: '' });
