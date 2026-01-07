@@ -27,7 +27,11 @@ const FileEditor = ({
     const isImage = file.type === 'image' || /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(file.name);
 
     useEffect(() => {
-        setTitle(file.name || 'Untitled');
+        const cleanName = (file.name && file.name.includes('.'))
+            ? file.name.substring(0, file.name.lastIndexOf('.'))
+            : (file.name || 'Untitled');
+        
+        setTitle(cleanName);
         setContent(file.content || '');
         setImageLoadError(false);
         setIsReplacingImage(false);
@@ -59,12 +63,21 @@ const FileEditor = ({
     };
 
     const handleSave = () => {
-        if (contentRef.current) {
-            const newContent = contentRef.current.innerHTML;
-            setContent(newContent); 
-            onSave(file.id, { name: title, content: newContent });
-            setIsEditing(false);
+    if (contentRef.current) {
+        const newContent = contentRef.current.innerHTML;
+        
+        // הגנה על הסיומת בעת שמירה מהעורך
+        const originalExtension = file.name.includes('.') ? file.name.split('.').pop() : '';
+        let finalTitle = title;
+        
+        if (originalExtension && !title.toLowerCase().endsWith('.' + originalExtension.toLowerCase())) {
+            finalTitle = `${title}.${originalExtension}`;
         }
+
+        setContent(newContent); 
+        onSave(file.id, { name: finalTitle, content: newContent });
+        setIsEditing(false);
+    }
     };
 
     /* Handle image replacement by converting the new file to base64 */

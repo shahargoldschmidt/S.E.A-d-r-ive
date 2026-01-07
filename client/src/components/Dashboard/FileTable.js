@@ -11,13 +11,18 @@ const FileTable = ({ files, starredIds, handleItemClick, handleToggleStar, getFi
             <tbody>
                 {files.map(file => {
                     const isStarred = starredIds.has(file.id);
+    
+                    const displayName = file.name.includes('.') 
+                        ? file.name.substring(0, file.name.lastIndexOf('.')) 
+                        : file.name;
+
                     return (
                         <tr key={file.id} onClick={() => handleItemClick(file)} style={{ cursor: 'pointer' }}>
                             <td className="file-name-cell">
                                 <span className="file-icon">
                                     {file.type === 'folder' ? <Icons.Folder size={30} /> : file.type === 'image' ? <Icons.Image size={30} /> : <Icons.File size={30} />}
                                 </span>
-                                {file.name}
+                                {displayName}
                             </td>
                             <td>{file.owner || 'Me'}</td>
                             <td>{formatDate(file.createdAt)}</td>

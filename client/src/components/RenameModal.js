@@ -16,15 +16,27 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
 
     const handleSubmit = () => {
     if (!newName.trim()) {
-        setError('Please enter a valid name'); /* */
+        setError('Please enter a valid name');
         return;
     }
-    if (newName === currentFile.name) {
+
+    const originalExtension = currentFile.name.includes('.') 
+        ? currentFile.name.split('.').pop() 
+        : '';
+
+    let finalName = newName;
+    
+    if (originalExtension && !newName.toLowerCase().endsWith('.' + originalExtension.toLowerCase())) {
+        finalName = `${newName}.${originalExtension}`;
+    }
+
+    if (finalName === currentFile.name) {
         onClose();
         return;
     }
-    setError(''); /* */
-    onRename(currentFile.id, newName);
+
+    setError('');
+    onRename(currentFile.id, finalName);
     onClose();
     };
 

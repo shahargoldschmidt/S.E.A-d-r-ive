@@ -196,11 +196,19 @@ const displayFiles = (() => {
     };
 
     const handleRenameFile = async (fileId, newName) => { 
-        try { 
-            await updateFile(fileId, { name: newName }); 
-            loadFiles();
-            setActiveModal(null); 
-        } catch (error) { setGlobalError("Rename failed: " + error.message) } 
+    try { 
+        const originalFile = files.find(f => f.id === fileId);
+        const originalExtension = originalFile?.name.includes('.') ? originalFile.name.split('.').pop() : '';
+        
+        let finalName = newName;
+        if (originalExtension && !newName.toLowerCase().endsWith('.' + originalExtension.toLowerCase())) {
+            finalName = `${newName}.${originalExtension}`;
+        }
+
+        await updateFile(fileId, { name: finalName }); 
+        loadFiles();
+        setActiveModal(null); 
+    } catch (error) { setGlobalError("Rename failed: " + error.message) } 
     };
 
     const handleCreateFolder = async (name) => { 
