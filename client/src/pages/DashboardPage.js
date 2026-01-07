@@ -118,38 +118,38 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         setFolderStack([]); 
         setSelectedFile(null);
     };
+    /* --- Simple File Filtering Logic (No Inheritance) --- */
 
-    const isInsideContainer = (file, allFiles, idSet) => {
-        let currentParentId = file.parentId;
+const displayFiles = (() => {
+    // Items that were explicitly moved to trash
+    const inTrash = files.filter(f => trashedIds.has(f.id)); 
     
-         while (currentParentId) {
-             if (idSet.has(currentParentId)) return true;
-        
-        // Find the parent object to continue upward traversal
-        const parent = allFiles.find(f => f.id === currentParentId);
-        currentParentId = parent ? parent.parentId : null;
-         }
-      return false;
-    };
+    // Items that are active (not in trash)
+    const notInTrash = files.filter(f => !trashedIds.has(f.id));
 
-        
+    switch (activeTab) {
+        case 'Trash': 
+            return inTrash;
 
-    const displayFiles = (() => {
-        const inTrash = files.filter(f => 
-            trashedIds.has(f.id) || isInsideContainer(f, files, trashedIds));
-        // Filter active items that are not in the trash (directly or inherited)
-        const notInTrash = files.filter(f => 
-            !trashedIds.has(f.id) && !isInsideContainer(f, files, trashedIds));
-        switch (activeTab) {
-            case 'Trash': return inTrash;
-            case 'Starred': return notInTrash.filter(f => 
-                starredIds.has(f.id) || isInsideContainer(f, files, starredIds));
-            case 'My Storage': return notInTrash.filter(f => f.owner === currentUser?.email);
-            case 'Shared With Me': return notInTrash.filter(f => f.owner !== currentUser?.email);
-            case 'Recent': return notInTrash.filter(f => isToday(f.createdAt));
-            default: return notInTrash;
-        }
-    })();
+        case 'Starred': 
+            // Only items that you personally clicked the star on
+            return notInTrash.filter(f => starredIds.has(f.id));
+
+        case 'My Storage': 
+            return notInTrash.filter(f => f.owner === currentUser?.email);
+
+        case 'Shared With Me': 
+            return notInTrash.filter(f => f.owner !== currentUser?.email);
+
+        case 'Recent': 
+            return notInTrash.filter(f => isToday(f.createdAt));
+
+        case 'Home':
+        default: 
+            // Shows only items belonging to the current directory
+            return notInTrash.filter(f => f.parentId === (currentFolder?.id || null));
+    }
+})(); //
 
     /* --- File Operations --- */
     const handleSoftDelete = (fileId) => { 
