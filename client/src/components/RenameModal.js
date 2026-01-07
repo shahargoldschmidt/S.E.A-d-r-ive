@@ -5,6 +5,7 @@ import { Icons } from '../utils/Icons';
 
 const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     const [newName, setNewName] = useState('');
+    const [error, setError] = useState('');
 
     /* Populate the input field with the current name when the modal opens */
     useEffect(() => {
@@ -14,13 +15,17 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
     }, [isOpen, currentFile]);
 
     const handleSubmit = () => {
-        /* Only trigger rename if the name has changed and is not empty */
-        if (newName.trim() && newName !== currentFile.name) {
-            onRename(currentFile.id, newName);
-            onClose();
-        } else {
-            onClose();
-        }
+    if (!newName.trim()) {
+        setError('Please enter a valid name'); /* */
+        return;
+    }
+    if (newName === currentFile.name) {
+        onClose();
+        return;
+    }
+    setError(''); /* */
+    onRename(currentFile.id, newName);
+    onClose();
     };
 
     if (!isOpen) return null;
@@ -30,7 +35,7 @@ const RenameModal = ({ isOpen, onClose, onRename, currentFile }) => {
             {/* stopPropagation prevents modal closure when clicking inside the content box */}
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3><Icons.Rename/> Rename</h3>
-                
+                {error && <div className="error-bubble">{error}</div>}
                 <label style={{marginBottom:'8px', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>New Name</label>
                 <input 
                     type="text" 

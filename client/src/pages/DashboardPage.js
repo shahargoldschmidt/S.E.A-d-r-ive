@@ -29,6 +29,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const fileInputRef = useRef(null);
     const [currentFolder, setCurrentFolder] = useState(null);
     const [folderStack, setFolderStack] = useState([]);
+    const [globalError, setGlobalError] = useState('');
 
     /* Sync Starred and Trashed items with sessionStorage for persistence */
     const [starredIds, setStarredIds] = useState(() => {
@@ -165,7 +166,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                 await deleteFileApi(fileId); 
                 setTrashedIds(prev => { const n = new Set(prev); n.delete(fileId); return n; }); 
                 loadFiles(); 
-            } catch (error) { alert("Error: " + error.message); } 
+            } catch (error) { setGlobalError(error.message) } 
         } 
     };
 
@@ -191,7 +192,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         try { 
             await updateFile(fileToMove.id, { parentId: targetFolderId }); 
             setActiveModal(null); setFileToMove(null); setSelectedFile(null); loadFiles(); 
-        } catch (e) { alert(e.message); } 
+        } catch (e) { setGlobalError("Move failed: " + e.message) } 
     };
 
     const handleRenameFile = async (fileId, newName) => { 
@@ -200,7 +201,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
             setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f)); 
             if (selectedFile && selectedFile.id === fileId) setSelectedFile(prev => ({ ...prev, name: newName })); 
             setActiveModal(null); 
-        } catch (error) { alert("Failed: " + error.message); } 
+        } catch (error) { setGlobalError("Rename failed: " + error.message) } 
     };
 
     const handleCreateFolder = async (folderName) => { 
@@ -362,6 +363,12 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                                 Swimming to surface...
                             </h3>
                         </div>
+                    )}
+                    {globalError && (
+                    <div className="error-bubble" style={{ maxWidth: '500px', margin: '0 auto 20px', position: 'relative' }}>
+                        {globalError}
+                   <button onClick={() => setGlobalError('')} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontWeight: 'bold' }}>✕</button>
+                 </div>
                     )}
 
                     {selectedFile ? (

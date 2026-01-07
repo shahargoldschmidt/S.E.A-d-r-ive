@@ -5,20 +5,26 @@ import '../styles/modal.css';
 const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
     const [fileName, setFileName] = useState('');
     const [content, setContent] = useState('');
+    const [error, setError] = useState('');
 
     /* Prevent rendering if the modal is hidden */
     if (!isOpen) return null;
 
-    const handleSubmit = () => {
-        if (fileName.trim()) {
-            /* Default to .txt extension if none is provided by the user */
-            const finalName = fileName.includes('.') ? fileName : `${fileName}.txt`;
-            onCreate(finalName, content);
-            setFileName('');
-            setContent('');
-            onClose();
-        }
-    };
+   const handleSubmit = () => {
+    /*Validate - Show error and stop if empty */
+    if (!fileName.trim()) {
+        setError('Please enter a file name');
+        return;
+    }
+    setError(''); /* Reset error state */
+    /* Default to .txt extension if none is provided by the user */
+    const finalName = fileName.includes('.') ? fileName : `${fileName}.txt`;
+    
+    onCreate(finalName, content);
+    setFileName('');
+    setContent('');
+    onClose();
+};
 
     /* Allow submission via Enter key while ignoring Shift+Enter for new lines */
     const handleKeyDown = (e) => {
@@ -33,6 +39,7 @@ const CreateFileModal = ({ isOpen, onClose, onCreate }) => {
             {/* stopPropagation prevents closing the modal when clicking inside the content area */}
             <div className="modal-content" style={{width: '550px'}} onClick={(e) => e.stopPropagation()}>
                 <h3>Create New File</h3>
+                {error && <div className="error-bubble">{error}</div>}
 
                 <div style={{display:'flex', gap:'15px', width: '100%'}}>
                     <div style={{flex: 1}}>

@@ -4,16 +4,20 @@ import '../styles/modal.css';
 
 const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
     const [folderName, setFolderName] = useState('');
+    const [error, setError] = useState('');
 
     /* Return null if modal should not be displayed */
     if (!isOpen) return null;
 
     const handleSubmit = () => {
-        if (folderName.trim()) {
-            onCreate(folderName);
-            setFolderName('');
-            onClose();
-        }
+    if (!folderName.trim()) {
+        setError('Please enter a folder name'); /* */
+        return;
+    }
+    setError(''); /* */
+    onCreate(folderName);
+    setFolderName('');
+    onClose();
     };
 
     return (
@@ -21,6 +25,7 @@ const CreateFolderModal = ({ isOpen, onClose, onCreate }) => {
             {/* stopPropagation ensures clicks inside the modal don't trigger the overlay's onClose */}
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>Create New Folder</h3>
+                {error && <div className="error-bubble">{error}</div>}
                 
                 <label style={{marginBottom:'8px', fontWeight:'600', color:'#64748b', fontSize:'0.9rem'}}>Name</label>
                 <input 
