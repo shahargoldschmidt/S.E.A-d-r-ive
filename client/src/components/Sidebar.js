@@ -13,6 +13,7 @@ const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileMod
     const menuItems = [
         { id: 'Home', icon: <Icons.Home />, label: 'Home' },
         { id: 'My Storage', icon: <Icons.Storage />, label: 'My Storage' },
+        { id: 'Recent', icon: <Icons.Clock />, label: 'Recent' },
         { id: 'Shared With Me', icon: <Icons.Shared />, label: 'Shared With Me' },
         { id: 'Starred', icon: <Icons.Starred />, label: 'Starred' },
         { id: 'Trash', icon: <Icons.Trash />, label: 'Trash' }

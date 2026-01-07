@@ -125,6 +125,14 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         setSelectedFile(null);
     };
 
+    const isToday = (dateStr) => {
+    const fileDate = new Date(dateStr);
+    const today = new Date();
+    return fileDate.getDate() === today.getDate() &&
+           fileDate.getMonth() === today.getMonth() &&
+           fileDate.getFullYear() === today.getFullYear();
+}
+
     /* Filter files based on the active navigation tab (Trash, Starred, etc.) */
     const getFilteredFiles = () => {
         const notInTrash = files.filter(f => !trashedIds.has(f.id));
@@ -135,6 +143,8 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
             case 'My Storage': return notInTrash.filter(f => f.owner === currentUser.email || String(f.owner) === String(currentUser.id));
             case 'Shared With Me': return notInTrash.filter(f => !(f.owner === currentUser.email || String(f.owner) === String(currentUser.id)));
             case 'Home': default: return notInTrash;
+            case 'Recent': return notInTrash.filter(f => isToday(f.createdAt));
+            
         }
     };
     const displayFiles = getFilteredFiles();
