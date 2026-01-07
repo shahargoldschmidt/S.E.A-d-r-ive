@@ -222,6 +222,70 @@ const displayFiles = (() => {
         isImage ? reader.readAsDataURL(fileObj) : reader.readAsText(fileObj);
     };
 
+/**
+ * Original Simple Download Handler
+ * Downloads file content as a basic Blob.
+ */
+ /**
+ * Professional File & Folder Downloader
+ * Handles recursive folder downloads and safe Base64 decoding for images.
+ */
+const handleDownload = async (file) => {
+    let fileToProcess = file;
+
+    try {
+        // 1. Fetch full data if content is missing (Optimization for list views)
+        if (!file.content && file.type !== 'folder') {
+            fileToProcess = await getFileById(file.id);
+        }
+
+        // 2. Recursive download for folders
+        if (fileToProcess.type === 'folder') {
+            const fullFolder = await getFileById(fileToProcess.id);
+            if (fullFolder.children && fullFolder.children.length > 0) {
+                // Recursive call for each child in the folder
+                fullFolder.children.forEach(child => handleDownload(child));
+            }
+            return;
+        }
+
+        // 3. Guard Clause: Check if content is still missing after fetch
+        if (!fileToProcess.content) {
+            alert("File content is missing and cannot be downloaded.");
+            return;
+        }
+
+        let blob;
+        // 4. Content Processing based on File Type
+        if (fileToProcess.type === 'image') {
+            /* Safely convert Base64 string to Binary Data */
+            const byteCharacters = atob(fileToProcess.content.trim());
+            const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+            const byteArray = new Uint8Array(byteNumbers);
+            blob = new Blob([byteArray], { type: 'image/png' });
+        } else {
+            /* Standard text processing with UTF-8 encoding */
+            blob = new Blob([fileToProcess.content], { type: 'text/plain;charset=utf-8' });
+        }
+
+        // 5. Trigger Browser Download via virtual link
+        const url = URL.createObjectURL(blob);
+        const element = document.createElement("a");
+        element.href = url;
+        element.download = fileToProcess.name;
+        document.body.appendChild(element);
+        element.click();
+        
+        // 6. Cleanup to prevent memory leaks
+        document.body.removeChild(element);
+        URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("Download Error:", error);
+        alert("An error occurred during the download process.");
+    }
+};
+
     const getFileActions = (file, isInsideEditor = false) => {
         const role = getUserRole(file);
         const isInTrash = activeTab === 'Trash';
@@ -231,7 +295,7 @@ const displayFiles = (() => {
         ];
 
         const actions = [
-            { label: 'Download', icon: <Icons.Download size={18} />, onClick: () => {/* handleDownload(file) */} }
+            { label: 'Download', icon: <Icons.Download size={18} />, onClick: () => handleDownload(file) }
         ];
         if (!isInsideEditor) actions.push({ label: 'View / Edit', icon: <Icons.Eye size={18} />, onClick: () => handleItemClick(file) });
         if (role === 'ADMIN' || role === 'EDITOR') {
