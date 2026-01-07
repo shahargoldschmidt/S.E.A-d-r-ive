@@ -28,8 +28,6 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
     const [fileToManagePerms, setFileToManagePerms] = useState(null); 
     const [fileToMove, setFileToMove] = useState(null);
     const [fileToRename, setFileToRename] = useState(null);
-
-    const fileInputRef = useRef(null);
     const [currentFolder, setCurrentFolder] = useState(null);
     const [folderStack, setFolderStack] = useState([]);
     const [globalError, setGlobalError] = useState('');
@@ -237,6 +235,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                     onOpenFolderModal={() => setActiveModal('folder')}
                     onOpenTextFileModal={() => setActiveModal('textFile')}
                     onUploadFile={handleUpload}
+                    onUploadPhoto={handleUpload}
                 />
                 
                 <main className="main-content">
@@ -259,10 +258,23 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
                         />
                     ) : (
                         <>
-                            <div className="content-header">
-                                {currentFolder && <button onClick={handleBack} className="back-circle-btn">←</button>}
-                                <h2 className="content-title">{currentFolder ? currentFolder.name : activeTab}</h2>
-                            </div>
+                            <div className="content-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+    {currentFolder && (
+        <button onClick={handleBack} className="back-circle-btn" title="Go Back">
+            <Icons.BackArrow size={20} />
+        </button>
+    )}
+    <h2 className="content-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {currentFolder ? (
+            <>
+                <Icons.Folder size={32} style={{ opacity: 0.9 }} />
+                {currentFolder.name}
+            </>
+        ) : (
+            activeTab
+        )}
+    </h2>
+</div>
                             
                             <FileTable 
                                 files={displayFiles}
