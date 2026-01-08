@@ -23,7 +23,7 @@ const ProfileModal = ({ user, onClose }) => {
                         )}
                     </div>
                     
-                    <h2 style={{margin: '10px 0', color: '#0f3460'}}>{user.name}</h2>
+                    <h2 style={{margin: '10px 0'}}>{user.name}</h2>
                 </div>
 
                 <div className="profile-details-list">
