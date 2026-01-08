@@ -318,6 +318,38 @@
 .dark-mode .logout-item { background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; }
 .dark-mode .logout-item:hover { background: rgba(239, 68, 68, 0.2); }
 
+/* Fix for the Profile Dropdown visibility in Dark Mode */
+.dark-mode .profile-dropdown {
+    background: rgba(30, 41, 59, 0.95); /* Darker background with transparency */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .profile-header-dropdown {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .dropdown-item {
+    color: #e2e8f0; /* Light text for readability */
+}
+
+.dark-mode .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #4facfe;
+}
+
+/* Fix for white text appearing inside the dropdown header */
+.dark-mode .profile-header-dropdown h3, 
+.dark-mode .profile-header-dropdown p {
+    color: white;
+}
+
+/* Fix for the Profile Modal title color */
+.dark-mode .profile-modal-glass .profile-name {
+    color: white !important;
+}
+
 .nav-logo-img {
     height: 80px; 
     width: auto;   
