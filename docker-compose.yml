@@ -33,6 +33,26 @@ services:
       - CPP_SERVER_HOST=cpp_server
       - CPP_SERVER_PORT=5555
 
+  # השירות החדש של הלקוח (React)
+  react_client:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    container_name: react_client_container
+    ports:
+      - "3001:3000" # האתר יהיה זמין בכתובת localhost:3001
+    networks:
+      - ex3_net
+    depends_on:
+      - node_server # הלקוח מחכה שהשרת יעלה קודם
+    stdin_open: true # נדרש עבור פרויקטים של React בדוקר
+    tty: true   
+
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://localhost:3000/api
+      - WDS_SOCKET_PORT=0 
+
 networks:
   ex3_net:
     driver: bridge

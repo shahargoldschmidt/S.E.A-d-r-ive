@@ -2,8 +2,9 @@
   "name": "full-project",
   "version": "1.0.0",
   "scripts": {
+    "start:full": "docker-compose up --build -d && timeout /t 5 && start http://localhost:3001",
     "start:backend": "docker-compose up --build",
-    "start:client": "cd client && npm start",
+    "stop": "docker-compose down",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
   }
 }
