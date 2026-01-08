@@ -5,52 +5,58 @@ const userService = require('../services/userService');
 const crypto = require('crypto');
 
 
-//  Get root items the user has premission to  root level
-const getFiles = async (userId) => {
+/* fileService.js */
+
+// Fetch files: supports global fetch (all=true) or root-level only (all=false)
+const getFiles = async (userId, all = false) => {
     const allFiles = await fileModel.getFiles();
     const user = await userService.getUser(userId);
-    const userEmail = user.email;
-
-    const accessibleIds = new Set();
     const accessibleFiles = [];
     
     for (const file of allFiles) {
-        let hasAccess = false;
-        
-        const isOwner = String(file.owner) === String(userId) || file.owner === userEmail;
-        if (isOwner) {
-            hasAccess = true;
-        } else {
-            hasAccess = await permissionService.hasPermission(userId, file.id, 'READ');
-        }
+        // Check if user is the owner or has explicit READ permission
+        const isOwner = String(file.owner) === String(userId) || file.owner === user.email;
+        const hasAccess = isOwner || await permissionService.hasPermission(userId, file.id, 'READ');
 
         if (hasAccess) {
-            accessibleIds.add(file.id); 
-            accessibleFiles.push(file);   
-        }
-    }
-
-    const resultList = [];
-
-    for (const file of accessibleFiles) { 
-        const isOwner = String(file.owner) === String(userId) || file.owner === userEmail;
-        let shouldInclude = false;
-
-        if (isOwner) {
-            if (file.parentId === null) shouldInclude = true;
-        } else {
-            const isParentAccessible = file.parentId && accessibleIds.has(file.parentId);
-            
-            if (!isParentAccessible) shouldInclude = true;
-        }
-
-        if (shouldInclude) {
             const perms = await permissionService.getPermissions(file.id);
-            resultList.push({ ...file, permissions: perms });
+            accessibleFiles.push({ ...file, permissions: perms });
         }
     }
 
-    return resultList;
+    // If 'all' is true, return everything accessible (for Starred/Trash/Shared)
+    if (all) return accessibleFiles; 
+    
+    // Otherwise, return only root-level items (for Home tab)
+    return accessibleFiles.filter(file => file.parentId === null); 
+};
+
+// Fetch folder content with individual permission checks for each child
+const getFileData = async (userId, fileId) => {
+    const meta = await fileModel.getById(fileId);
+    if (!meta) return null;
+
+    if (meta.type === 'folder') {
+        const all = await fileModel.getFiles();
+        const children = all.filter(f => f.parentId === fileId);
+        const accessibleChildren = [];
+
+        for (const child of children) {
+            const user = await userService.getUser(userId);
+            // Verify access for each child specifically
+            const hasAccess = (String(child.owner) === String(userId) || child.owner === user.email) || 
+                              await permissionService.hasPermission(userId, child.id, 'READ');
+            
+            if (hasAccess) {
+                const perms = await permissionService.getPermissions(child.id);
+                accessibleChildren.push({ ...child, permissions: perms });
+            }
+        }
+        return { ...meta, children: accessibleChildren };
+    }
+    
+    const content = await fileModel.getTcpContent(fileId);
+    return { ...meta, content };
 };
 
  // Validate parent folder and initialize permissions.
@@ -71,31 +77,6 @@ const createFile = async (userId, fileData) => {
     const newItem = await fileModel.create(email, fileId, fileData);
     await permissionService.createPermission(newItem.id, userId, 'ADMIN'); //add admin permission for owner
     return newItem;
-};
-
-// Fetch metadata Recursive children (folders) or Content (files).
-const getFileData = async (fileId) => {
-    const meta = await fileModel.getById(fileId);
-    if (!meta) return null;
-
-    const selfPermissions = await permissionService.getPermissions(fileId);
-    const metaWithPerms = { ...meta, permissions: selfPermissions };
-
-    if (meta.type === 'folder') { //if folder get all its children from first level
-        const all = await fileModel.getFiles();
-        const children = all.filter(f => f.parentId === fileId);
-        
-        const childrenWithPermissions = await Promise.all(children.map(async (child) => {
-            const perms = await permissionService.getPermissions(child.id);
-                return { ...child, permissions: perms };
-        }));
-                
-        return { ...metaWithPerms, children: childrenWithPermissions };  
-    }
-
-    //else get content of file
-    const content = await fileModel.getTcpContent(fileId);
-    return { ...meta, content };
 };
 
 

@@ -53,21 +53,62 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         loadUser();
     }, []);
 
-    /* --- Data Loading --- */
-    const loadFiles = async () => {
-        try {
-            let data = [];
-            if (currentFolder) {
-                const folderData = await getFileById(currentFolder.id);
-                if (folderData && folderData.children) data = folderData.children;
-            } else {
-                data = await fetchFiles();
-            }
-            setFiles(data);
-        } catch (error) {
-            console.error("Failed to load files", error);
+    /* DashboardPage.js */
+
+// Determine when to fetch the entire file tree vs root items
+const loadFiles = async () => {
+    try {
+        let data = [];
+        if (currentFolder) {
+            const folderData = await getFileById(currentFolder.id);
+            if (folderData && folderData.children) data = folderData.children;
+        } else {
+            // Fetch all accessible files for global tabs
+            const showAll = ['Starred', 'Trash', 'Shared With Me'].includes(activeTab);
+            data = await fetchFiles(showAll);
         }
-    };
+        setFiles(data);
+    } catch (error) {
+        console.error("Failed to load files", error);
+    }
+};
+
+// Check if an item or any of its ancestors are currently in the trash
+const isEffectivelyTrashed = (file) => {
+    if (trashedIds.has(file.id)) return true;
+    if (file.parentId) {
+        const parent = files.find(f => f.id === file.parentId);
+        if (parent) return isEffectivelyTrashed(parent);
+    }
+    return false;
+};
+
+// Final UI filtering logic based on the active tab
+const displayFiles = (() => {
+    // If inside a folder, show all loaded children (server already handled permissions)
+    if (currentFolder) return files; 
+
+    if (activeTab === 'Trash') {
+        // Only show items explicitly moved to trash in the root trash view
+        return files.filter(f => trashedIds.has(f.id));
+    }
+
+    // Filter out items that are effectively in the trash for active tabs
+    const activeFiles = files.filter(f => !isEffectivelyTrashed(f));
+
+    switch (activeTab) {
+        case 'Starred': 
+            return activeFiles.filter(f => starredIds.has(f.id));
+
+        case 'Shared With Me': 
+            return activeFiles.filter(f => f.owner !== currentUser?.email);
+
+        case 'Home':
+        default: 
+            // Server already filters for Root items when activeTab is Home
+            return activeFiles;
+    }
+})();
 
     useEffect(() => { loadFiles(); }, [currentFolder, activeTab]);
 
@@ -118,41 +159,6 @@ const DashboardPage = ({ toggleTheme, isDarkMode }) => {
         setFolderStack([]); 
         setSelectedFile(null);
     };
-    /* --- Simple File Filtering Logic (No Inheritance) --- */
-const displayFiles = (() => {
-        const isInTrash = (f) => trashedIds.has(f.id);
-        const isStarred = (f) => starredIds.has(f.id);
-
-        if (currentFolder) {
-            const isFolderTrashed = trashedIds.has(currentFolder.id);
-            return files.filter(f => {
-                if (f.parentId !== currentFolder.id) return false;
-                return isFolderTrashed || !isInTrash(f);
-            });
-        }
-
-        switch (activeTab) {
-            case 'Trash':
-                return files.filter(f => isInTrash(f));
-
-            case 'Starred':
-                return files.filter(f => isStarred(f) && !isInTrash(f));
-
-            case 'Shared With Me':
-                return files.filter(f => f.owner !== currentUser?.email && !isInTrash(f));
-
-            case 'Recent':
-                return files.filter(f => isToday(f.createdAt) && !isInTrash(f));
-
-            case 'My Storage':
-                return files.filter(f => f.owner === currentUser?.email && f.parentId === null && !isInTrash(f));
-
-            case 'Home':
-            default:
-                return files.filter(f => f.parentId === null && !isInTrash(f));
-        }
-    })();
-
     /* --- File Operations --- */
     const handleSoftDelete = (fileId) => { 
         setTrashedIds(prev => { const n = new Set(prev); n.add(fileId); return n; }); 

@@ -93,9 +93,11 @@ export const getUser = async (userId) => {
 
 /* --- FILE MANAGEMENT FUNCTIONS --- */
 
-export const fetchFiles = async () => {
+export const fetchFiles = async (showAll = false) => {
     try {
-        const response = await fetch(`${API_URL}/files`, {
+        // Append query parameter if showAll is requested
+        const url = showAll ? `${API_URL}/files?all=true` : `${API_URL}/files`;
+        const response = await fetch(url, {
             method: 'GET',
             headers: getAuthHeaders()
         });
