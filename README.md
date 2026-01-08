@@ -27,11 +27,11 @@ A fast search engine to find files by name or content, with a built-in text edit
 Sharing & Organization Tools
 Easily rename, move between folders, star important items, or manage the Trash to restore or permanently delete files.
 Advanced access control (Admin, Editor, Viewer) allows you to share files with other users via email.
-![WhatsApp Image 2026-01-07 at 15 46 14](https://github.com/user-attachments/assets/eb3d5b3e-7bc8-424f-994a-1fb24c4a7ecc)
-![WhatsApp Image 2026-01-07 at 15 46 14 (1)](https://github.com/user-attachments/assets/8dcaf33d-8a3e-495a-b3cb-243f7db7d548)
-![WhatsApp Image 2026-01-07 at 15 46 13 (1)](https://github.com/user-attachments/assets/5060b7cd-567c-467c-b8ce-945697b7f9ae)
-![WhatsApp Image 2026-01-07 at 15 46 13 (2)](https://github.com/user-attachments/assets/0943bca4-9361-487a-b783-a71f4a4dde6c)
-![WhatsApp Image 2026-01-07 at 15 46 13 (3)](https://github.com/user-attachments/assets/9fbd6597-4d20-415f-b5c5-3a7711071d93)
+![WhatsApp Image 2026-01-07 at 15 46 13 (1)](https://github.com/user-attachments/assets/e8ab74c5-7556-4e78-b379-c74d46afb028)
+![WhatsApp Image 2026-01-07 at 15 46 13 (3)](https://github.com/user-attachments/assets/7ff38488-d2e1-4ee2-baeb-5583160c4d59)
+![WhatsApp Image 2026-01-07 at 15 46 13 (2)](https://github.com/user-attachments/assets/d5237688-2efb-4253-9951-3588a7dd2a4d)
+![WhatsApp Image 2026-01-07 at 15 46 14](https://github.com/user-attachments/assets/25483448-d7d4-4d43-9773-cc56083ce9dc)
+![WhatsApp Image 2026-01-07 at 15 46 14 (1)](https://github.com/user-attachments/assets/4c0a126d-0c88-4118-b716-a98241035312)
 
 
 Experience the interface in your preferred style with full Dark Mode and Light Mode support.
