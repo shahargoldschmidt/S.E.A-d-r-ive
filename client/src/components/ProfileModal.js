@@ -1,19 +1,19 @@
 /* client/src/components/ProfileModal.js */
 import React from 'react';
-import '../styles/navbar.css'; // משתמשים באותו קובץ עיצוב
+import '../styles/navbar.css'; 
 
 const ProfileModal = ({ user, onClose }) => {
     if (!user) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            {/* לחיצה בתוך החלון לא תסגור אותו */}
+            {/* stopPropagation prevents closing the modal when clicking inside the content area */}
             <div className="profile-modal-glass" onClick={e => e.stopPropagation()}>
                 <button className="close-modal-btn" onClick={onClose}>✕</button>
                 
                 <div className="profile-header">
                     <div className="profile-avatar-large">
-                        {/* אם יש תמונה נציג אותה, אחרת אות ראשונה */}
+                        {/* Render user image if available, otherwise show name initial */}
                         {user.image ? (
                             <img src={user.image} alt="Profile" />
                         ) : (
@@ -23,8 +23,7 @@ const ProfileModal = ({ user, onClose }) => {
                         )}
                     </div>
                     
-                    <h2 style={{margin: '10px 0', color: '#0f3460'}}>{user.name}</h2>
-                    <div className="profile-badge">Explorer 🌊</div> {/* סתם תוספת חמודה */}
+                    <h2 style={{margin: '10px 0'}}>{user.name}</h2>
                 </div>
 
                 <div className="profile-details-list">

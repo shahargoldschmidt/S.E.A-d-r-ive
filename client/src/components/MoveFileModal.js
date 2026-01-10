@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { fetchFiles } from '../services/api';
 import '../styles/modal.css';
+import { Icons } from '../utils/Icons';
 
 const MoveFileModal = ({ isOpen, onClose, onMove, currentFile }) => {
     const [folders, setFolders] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    /* Fetch available folders whenever the modal is opened */
     useEffect(() => {
         if (isOpen) loadFolders();
     }, [isOpen]);
@@ -15,25 +17,31 @@ const MoveFileModal = ({ isOpen, onClose, onMove, currentFile }) => {
         setIsLoading(true);
         try {
             const allFiles = await fetchFiles();
+            /* Filter to show only folders and exclude the current folder itself from the list */
             const validFolders = allFiles.filter(f => 
                 f.type === 'folder' && f.id !== currentFile?.id
             );
             setFolders(validFolders);
-        } catch (error) { console.error(error); } 
-        finally { setIsLoading(false); }
+        } catch (error) { 
+            console.error(error); 
+        } finally { 
+            setIsLoading(false); 
+        }
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
+            {/* stopPropagation prevents the modal from closing when clicking on the content area */}
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h3>📂 Move to...</h3>
+                <h3><Icons.Folder/>  Move to...</h3>
                 <p style={{marginBottom: '20px', opacity: 0.8, fontSize:'1.05rem'}}>
                     Item: <strong>{currentFile?.name}</strong>
                 </p>
 
                 <div className="move-options">
+                    {/* Option to move the item to the root directory */}
                     <div className="folder-item" onClick={() => onMove(null)}>
                         <span style={{fontSize:'1.6rem'}}>🏠</span>
                         <span style={{fontWeight:'600'}}>Home (Root)</span>

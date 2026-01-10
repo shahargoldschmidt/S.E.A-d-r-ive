@@ -1,6 +1,6 @@
 /* client/src/styles/auth.css */
 
-/* --- Container Setup --- */
+/* Full-screen layout container for authentication pages */
 .auth-container {
     height: 100vh;
     width: 100vw;
@@ -10,7 +10,7 @@
     overflow: hidden; 
 }
 
-/* --- Theme Toggle Button --- */
+/* Floating Theme Toggle Switch */
 .theme-toggle-btn {
   position: fixed;
   top: 30px;
@@ -41,15 +41,12 @@
     border: none;
 }
 
-/* --- Glass Card Design (חזרנו לגודל המקורי והמרשים) --- */
+/* Glassmorphism card container for forms */
 .glass-card {
   position: relative;
   width: 90%;          
-  
-  /* חזרנו לגודל המקורי */
   max-width: 500px;    
   padding: 40px;       
-  
   border-radius: 30px; 
   text-align: center;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
@@ -58,14 +55,14 @@
   backdrop-filter: blur(25px);
 }
 
-/* === Dark Mode === */
+/* Dark mode aesthetic for the authentication card */
 .dark-mode .glass-card {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* === Light Mode === */
+/* Light mode aesthetic for the authentication card */
 .light-mode .glass-card {
   background: rgba(253, 250, 240, 0.98); 
   color: #003366; 
@@ -73,9 +70,9 @@
   box-shadow: 0 10px 40px rgba(0, 51, 102, 0.15); 
 }
 
-/* --- Typography --- */
+/* Typography and Brand Identity */
 .sea-logo {
-  font-size: 3.5rem; /* לוגו גדול כמו במקור */
+  font-size: 3.5rem;
   margin-bottom: 10px;
   filter: drop-shadow(0 0 10px rgba(0, 168, 255, 0.6));
 }
@@ -107,10 +104,10 @@
     text-shadow: 0 0 10px rgba(79, 195, 247, 0.4); 
 }
 
-/* --- Inputs (חזרנו לגודל נוח ומרווח) --- */
+/* Themed Input styling */
 .sea-input {
   width: 100%;
-  padding: 16px 24px; /* ריפוד מפנק כמו במקור */
+  padding: 16px 24px;
   margin-bottom: 18px; 
   border-radius: 50px;
   border: none;
@@ -141,10 +138,10 @@
   box-shadow: 0 0 15px rgba(0, 168, 255, 0.4);
 }
 
-/* --- Primary Button --- */
+/* Primary Action Button */
 .btn-primary {
   width: 100%;
-  padding: 18px; /* כפתור גדול */
+  padding: 18px; 
   margin-top: 15px;
   border-radius: 50px;
   border: none;
@@ -169,7 +166,7 @@
   transform: none;
 }
 
-/* --- Links --- */
+/* Footer links styling */
 .auth-footer {
   margin-top: 25px;
   font-size: 1rem;
@@ -184,8 +181,7 @@
 
 .link-text:hover { color: #00a8ff; }
 
-/* --- Validation Box (The Magic Trick) --- */
-/* כאן אנחנו חוסכים את המקום - סידור בשתי עמודות */
+/* Password Validation Box with 2-column grid layout */
 .validation-box {
     text-align: left;
     margin-top: 5px;
@@ -193,18 +189,16 @@
     padding: 10px 15px;
     background: rgba(0,0,0,0.05);
     border-radius: 15px;
-    
-    /* הגדרת גריד של 2 עמודות */
     display: grid;
     grid-template-columns: 1fr 1fr; 
     gap: 8px 10px; 
 }
 
-/* --- זה החלק החדש שעושה את הקסם --- */
+/* Header within the validation grid spans full width */
 .validation-box > *:first-child {
-    grid-column: 1 / -1; /* גורם לכותרת לתפוס את כל הרוחב (שורה נפרדת) */
+    grid-column: 1 / -1; 
     width: 100%;
-    margin-bottom: 5px; /* רווח קטן בין הכותרת לקריטריונים */
+    margin-bottom: 5px; 
     font-weight: bold;
 }
 
@@ -243,7 +237,7 @@
 .light-mode .validation-item.valid { color: #2e7d32; }
 .validation-item.invalid { opacity: 0.7; }
 
-/* --- Image Upload & Blue Bubble Button --- */
+/* Profile Image Upload Component */
 .image-upload-wrapper {
     display: flex;
     flex-direction: column;
@@ -253,7 +247,7 @@
 }
 
 .image-preview-circle {
-    width: 100px; /* עיגול גדול ויפה */
+    width: 100px; 
     height: 100px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
@@ -274,13 +268,12 @@
     object-fit: cover; 
 }
 
-/* Blue Bubble Button (X) */
+/* Remove button bubble for profile photo */
 .remove-image-btn {
     position: absolute;
     top: 0;
     right: 50%; 
-    margin-right: -60px; /* התאמה לגודל העיגול החדש */
-    
+    margin-right: -60px; 
     background: #00a8ff; 
     color: white;
     border: 2px solid white; 
@@ -293,7 +286,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
     box-shadow: 0 0 10px rgba(0, 168, 255, 0.6);
     transition: all 0.2s;
     z-index: 20;
@@ -318,14 +310,14 @@
     box-shadow: 0 0 20px rgba(79, 195, 247, 0.4);
 }
 
-/* Avatar Letter */
+/* Placeholder letter avatar */
 .letter-avatar {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.5rem; /* אות גדולה */
+    font-size: 2.5rem; 
     font-weight: bold;
     transition: all 0.4s ease;
 }
@@ -348,17 +340,16 @@
     transform: scale(0.95); 
 }
 
-/* עוטף את שדה הסיסמה כדי שנוכל למקם את העין בפנים */
+/* Wrapper for password input and toggle icon visibility */
 .password-wrapper {
     position: relative;
     width: 100%;
-    margin-bottom: 18px; /* שומר על הרווח המקורי של sea-input */
+    margin-bottom: 18px; 
 }
 
-/* ביטול הרווח של האינפוט עצמו כשהוא בתוך הראפר (כדי שלא יהיה רווח כפול) */
 .password-wrapper .sea-input {
     margin-bottom: 0;
-    padding-right: 45px; /* מפנה מקום לאייקון מצד ימין */
+    padding-right: 45px; 
 }
 
 .password-toggle-icon {
@@ -366,28 +357,93 @@
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    
-    /* הגדרות חדשות לאייקון */
     background: none;
     border: none;
     cursor: pointer;
-    opacity: 0.5; /* צבע אפור עדין */
+    opacity: 0.5; 
     transition: opacity 0.3s;
     z-index: 10;
-    
-    /* יישור מושלם לאייקון ה-SVG */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    color: #003366; /* צבע האייקון (כחול כהה) */
+    color: #003366; 
 }
 
-/* שיראו טוב גם במצב חשוך */
 .dark-mode .password-toggle-icon {
     color: rgba(255, 255, 255, 0.7);
 }
 
 .password-toggle-icon:hover {
     opacity: 1;
+}
+
+/* Secondary profile section styles */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar-preview {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.1);
+  border: 3px solid #00acc1; 
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.avatar-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 172, 193, 0.5);
+}
+
+.camera-icon {
+  font-size: 2rem;
+  opacity: 0.5;
+  color: inherit;
+}
+
+.upload-label {
+  font-size: 0.8rem;
+  color: #00acc1;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Form error notification styling */
+.error-bubble {
+  background-color: rgba(255, 82, 82, 0.15);
+  color: #ff5252;
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Navigation brand logo styling */
+.nav-logo-img {
+    height: 80px; 
+    width: auto;   
+    margin-right: 15px; 
+    object-fit: contain;
+    max-height: 100%; 
 }

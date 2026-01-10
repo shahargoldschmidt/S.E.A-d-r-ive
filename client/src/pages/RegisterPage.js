@@ -3,25 +3,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/api';
 import PasswordCriteria from '../components/PasswordCriteria';
+import { Icons } from '../utils/Icons';
 import '../styles/auth.css';
 
 const RegisterPage = ({ toggleTheme, isDarkMode }) => {
-    // ... (כל הסטייטים והלוגיקה נשארים אותו דבר בדיוק) ...
     const [formData, setFormData] = useState({
         name: '', email: '', password: '', confirmPassword: '', image: '' 
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    
-    // --- שאר המשתנים והפונקציות שלך (handleImageChange וכו') נשארים אותו דבר ---
     const [imagePreview, setImagePreview] = useState(null);
     const [passwordCriteria, setPasswordCriteria] = useState({ length: false, upper: false, lower: false, number: false, special: false });
     const [passwordsMatch, setPasswordsMatch] = useState(null);
     const [isFormValid, setIsFormValid] = useState(false);
     const [error, setError] = useState('');
+    
     const fileInputRef = useRef(null); 
     const navigate = useNavigate();
 
+    /* Handle profile image selection and convert to Base64 for storage */
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -31,57 +31,82 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
             reader.readAsDataURL(file);
         }
     };
-    const handleRemoveImage = (e) => { e.stopPropagation(); setImagePreview(null); setFormData(prev => ({ ...prev, image: '' })); if (fileInputRef.current) fileInputRef.current.value = ""; };
+
+    const handleRemoveImage = (e) => { 
+        e.stopPropagation(); 
+        setImagePreview(null); 
+        setFormData(prev => ({ ...prev, image: '' })); 
+        if (fileInputRef.current) fileInputRef.current.value = ""; 
+    };
+
     const triggerFileInput = () => fileInputRef.current.click();
-    const getInitial = () => { if (formData.name && formData.name.trim() !== '') return formData.name.trim().charAt(0).toUpperCase(); return "👤"; };
+
+    /* Generate fallback avatar initial based on the entered name */
+    const getInitial = () => { 
+        if (formData.name && formData.name.trim() !== '') return formData.name.trim().charAt(0).toUpperCase(); 
+        return "👤"; 
+    };
+
+    /* Effect to monitor form validity and password matching */
     useEffect(() => {
         const allCriteriaMet = Object.values(passwordCriteria).every(Boolean);
         const match = formData.password === formData.confirmPassword && formData.password !== '';
         if (formData.confirmPassword) setPasswordsMatch(match);
         setIsFormValid(allCriteriaMet && match && formData.name && formData.email);
     }, [formData, passwordCriteria]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        
+        /* Validate password strength in real-time */
         if (name === 'password') {
             setPasswordCriteria({
-                length: value.length >= 8, upper: /[A-Z]/.test(value), lower: /[a-z]/.test(value), number: /[0-9]/.test(value), special: /[!@#$%^&*(),.?":{}|<>]/.test(value)
+                length: value.length >= 8, 
+                upper: /[A-Z]/.test(value), 
+                lower: /[a-z]/.test(value), 
+                number: /[0-9]/.test(value), 
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(value)
             });
         }
     };
 
-    // === אייקונים (SVG) ===
-    // עין פתוחה
-    const EyeIcon = (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-    );
-    // עין סגורה (עם קו)
-    const EyeOffIcon = (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07-2.3 2.3"></path>
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-        </svg>
-    );
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        registerUser(formData)
+            .then(() => navigate('/login'))
+            .catch(err => setError(err.message));
+    };
 
     return (
         <div className="auth-container"> 
-            <button className="theme-toggle-btn" onClick={toggleTheme}> {isDarkMode ? '☀️' : '🌙'} </button>
+            <button className="theme-toggle-btn" onClick={toggleTheme}> 
+                {isDarkMode ? '☀️' : '🌙'} 
+            </button>
 
             <div className="glass-card">
                 <h2 className="app-title" style={{fontSize: '1.5rem', marginBottom: '5px'}}>Join The Crew</h2>
                 <p className="subtitle" style={{marginBottom: '20px'}}>Create your secure profile</p>
                 {error && <div className="error-bubble">{error}</div>}
                 
-                <form onSubmit={(e) => { e.preventDefault(); registerUser(formData).then(() => navigate('/login')).catch(err => setError(err.message)); }}>
+                <form onSubmit={handleSubmit}>
                     
+                    {/* Profile Picture Upload Section */}
                     <div className="image-upload-wrapper">
                         <div className="image-preview-circle clickable-circle" onClick={triggerFileInput}>
-                            {imagePreview ? <img src={imagePreview} alt="Profile" /> : <div className="letter-avatar">{getInitial()}</div>}
+                            {imagePreview ? (
+                                <img src={imagePreview} alt="Profile" />
+                            ) : (
+                                <div className="letter-avatar">{getInitial()}</div>
+                            )}
                         </div>
-                        {imagePreview && <button type="button" className="remove-image-btn" onClick={handleRemoveImage}>✕</button>}
+                        
+                        {imagePreview && (
+                            <button type="button" className="remove-image-btn" onClick={handleRemoveImage}>
+                                <Icons.Close size={14} />
+                            </button>
+                        )}
+                        
                         <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
                         <p style={{fontSize: '0.75rem', marginTop: '5px', opacity: 0.7}}>Click to add photo</p>
                     </div>
@@ -89,7 +114,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                     <input className="sea-input" name="name" type="text" onChange={handleChange} required placeholder="Full Name" />
                     <input className="sea-input" name="email" type="email" onChange={handleChange} required placeholder="Email Address" />
                     
-                    {/* --- סיסמה עם אייקון SVG --- */}
+                    {/* Password Entry with visibility toggle */}
                     <div className="password-wrapper">
                         <input 
                             className="sea-input" name="password" 
@@ -98,13 +123,13 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                             style={{ borderColor: formData.password && !Object.values(passwordCriteria).every(Boolean) ? '#ff5252' : 'transparent', borderWidth: '2px', borderStyle: 'solid' }}
                         />
                         <button type="button" className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? EyeOffIcon : EyeIcon}
+                            {showPassword ? <Icons.EyeOff size={20} /> : <Icons.Eye size={20} />}
                         </button>
                     </div>
 
                     {formData.password && <PasswordCriteria criteria={passwordCriteria} />}
 
-                    {/* --- אימות סיסמה עם אייקון SVG --- */}
+                    {/* Confirm Password with visual feedback for matching status */}
                     <div className="password-wrapper">
                         <input 
                             className="sea-input" name="confirmPassword" 
@@ -113,7 +138,7 @@ const RegisterPage = ({ toggleTheme, isDarkMode }) => {
                             style={{ borderColor: passwordsMatch === false ? '#ff5252' : (passwordsMatch === true ? '#2e7d32' : 'transparent'), borderWidth: '2px', borderStyle: 'solid' }}
                         />
                         <button type="button" className="password-toggle-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            {showConfirmPassword ? EyeOffIcon : EyeIcon}
+                            {showConfirmPassword ? <Icons.EyeOff size={20} /> : <Icons.Eye size={20} />}
                         </button>
                     </div>
                     

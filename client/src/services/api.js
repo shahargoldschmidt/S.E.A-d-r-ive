@@ -2,18 +2,19 @@
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
 
-// helper function for header with token 
+/* Helper function to generate authorization headers using the stored session token */
 const getAuthHeaders = () => {
-    const token = sessionStorage.getItem('token'); // שימוש ב-sessionStorage
+    const token = sessionStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : '' 
     };
 };
 
-// --- Helper for consistent Error Handling & Auto-Logout ---
+/* Centralized response handler for consistent error management and session expiration */
 const handleResponse = async (response) => {
     if (!response.ok) {
+        /* Auto-logout if the session is no longer valid */
         if (response.status === 401 || response.status === 403) {
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('userId');
@@ -26,7 +27,7 @@ const handleResponse = async (response) => {
     return response;
 };
 
-// --- AUTH FUNCTIONS ---
+/* --- AUTHENTICATION FUNCTIONS --- */
 
 export const loginUser = async (email, password) => {
     try {
@@ -43,7 +44,7 @@ export const loginUser = async (email, password) => {
 
         const data = await response.json();
         
-        // שמירה ב-sessionStorage
+        /* Store authentication data in sessionStorage for session persistence */
         if (data.token) sessionStorage.setItem('token', data.token);
         if (data.userId) sessionStorage.setItem('userId', data.userId);
         
@@ -90,11 +91,13 @@ export const getUser = async (userId) => {
     }
 };
 
-// --- FILE FUNCTIONS ---
+/* --- FILE MANAGEMENT FUNCTIONS --- */
 
-export const fetchFiles = async () => {
+export const fetchFiles = async (showAll = false) => {
     try {
-        const response = await fetch(`${API_URL}/files`, {
+        // Append query parameter if showAll is requested
+        const url = showAll ? `${API_URL}/files?all=true` : `${API_URL}/files`;
+        const response = await fetch(url, {
             method: 'GET',
             headers: getAuthHeaders()
         });
@@ -160,14 +163,14 @@ export const searchFiles = async (query) => {
     }
 };
 
-// הוספת הרשאה לקובץ (שולחים מייל, השרת מטפל בשאר)
+/* --- PERMISSIONS MANAGEMENT --- */
+
 export const addPermission = async (fileId, email, type) => {
     try {
-        // אנחנו פונים לאותו נתיב בדיוק שהיה לך קודם
         const response = await fetch(`${API_URL}/files/${fileId}/permissions`, {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({ email, type }) // שולחים את המייל והסוג
+            body: JSON.stringify({ email, type })
         });
 
         await handleResponse(response);
@@ -176,10 +179,9 @@ export const addPermission = async (fileId, email, type) => {
         throw error;
     }
 };
-// עדכון הרשאה קיימת (שינוי סוג הרשאה)
+
 export const updatePermission = async (fileId, permissionId, newType) => {
     try {
-        // שים לב: הנתיב בשרת שלך הוא /api/files/:id/permissions/:pId
         const response = await fetch(`${API_URL}/files/${fileId}/permissions/${permissionId}`, {
             method: 'PATCH',
             headers: getAuthHeaders(),
@@ -187,7 +189,9 @@ export const updatePermission = async (fileId, permissionId, newType) => {
         });
         await handleResponse(response);
         return await response.json();
-    } catch (error) { throw error; }
+    } catch (error) { 
+        throw error; 
+    }
 };
 
 export const getPermissions = async (fileId) => {
@@ -211,7 +215,7 @@ export const removePermission = async (fileId, permissionId) => {
             headers: getAuthHeaders()
         });
         
-        // 204 No Content זה הצלחה
+        /* 204 No Content signifies a successful deletion */
         if (response.status === 204) return true;
 
         await handleResponse(response);

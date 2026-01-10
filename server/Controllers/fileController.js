@@ -1,10 +1,24 @@
 const fileService = require('../services/fileService');
 
-// get all root items user has a access too
+
+
 const getFiles = async (req, res) => {
     try {
-        const files = await fileService.getFiles(req.userId);
+        // Extract 'all' parameter from query string (e.g., /api/files?all=true)
+        const showAll = req.query.all === 'true'; 
+        const files = await fileService.getFiles(req.userId, showAll);
         res.status(200).json(files);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+};
+
+const getFileData = async (req, res) => {
+    try {
+        // Pass req.userId to ensure child-level permission filtering
+        const file = await fileService.getFileData(req.userId, req.params.id);
+        if (!file) return res.status(404).json({ error: "File or Folder not found" });
+        res.status(200).json(file);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -25,16 +39,7 @@ const createFile = async (req, res) => {
         res.status(status).json({ error: e.message });
     }
 };
-// get a specific file data by id 
-const getFileData = async (req, res) => {
-    try {
-        const file = await fileService.getFileData(req.params.id);
-        if (!file) return res.status(404).json({ error: "File or Folder not found" });
-        res.status(200).json(file);
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
-};
+
 //delete a specific file
 const deleteFile = async (req, res) => {
     try {

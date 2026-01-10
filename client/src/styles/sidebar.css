@@ -7,7 +7,7 @@
     flex-direction: column;
 }
 
-/* --- כפתור New Dive --- */
+/* --- "New Dive" Action Button Section --- */
 .new-dive-wrapper {
     position: relative;
     display: inline-block;
@@ -15,11 +15,14 @@
 }
 
 .new-dive-btn {
-    display: flex; align-items: center; gap: 15px;
+    display: flex; 
+    align-items: center; 
+    gap: 15px;
     padding: 18px 28px;
     border-radius: 20px;
     border: none;
-    font-size: 1.15rem; font-weight: 700;
+    font-size: 1.15rem; 
+    font-weight: 700;
     cursor: pointer;
     margin-bottom: 28px;
     margin-top: 10px;
@@ -31,7 +34,7 @@
 .dark-mode .new-dive-btn { background: #4facfe; color: white; box-shadow: 0 0 15px rgba(79, 172, 254, 0.4); }
 .new-dive-btn:hover { transform: scale(1.02); }
 
-/* --- תפריט נפתח של New Dive --- */
+/* --- Dropdown Menu for creating new items --- */
 .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -70,11 +73,13 @@
 .dropdown-item:hover { background: rgba(0,0,0,0.05); }
 .dark-mode .dropdown-item:hover { background: rgba(255,255,255,0.1); }
 
-/* --- פריטי תפריט (רשימה) --- */
+/* --- Sidebar Navigation Menu Items --- */
 .sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
 
 .menu-item {
-    display: flex; align-items: center; gap: 18px;
+    display: flex; 
+    align-items: center; 
+    gap: 18px;
     padding: 14px 24px;
     border-radius: 50px;
     cursor: pointer;
@@ -87,7 +92,13 @@
 .menu-icon-svg { width: 26px; height: 26px; fill: currentColor; opacity: 0.8; }
 
 .menu-item:hover { background: rgba(128, 128, 128, 0.1); }
+
+/* Highlighting the currently active navigation item */
 .menu-item.active { font-weight: 700; }
 .light-mode .menu-item.active { background: #dbeafe; color: #001d35; }
 .dark-mode .menu-item.active { background: rgba(79, 172, 254, 0.3); color: #4facfe; }
-.light-mode .menu-item.active .menu-icon-svg, .dark-mode .menu-item.active .menu-icon-svg { opacity: 1; }
+
+.light-mode .menu-item.active .menu-icon-svg, 
+.dark-mode .menu-item.active .menu-icon-svg { 
+    opacity: 1; 
+}

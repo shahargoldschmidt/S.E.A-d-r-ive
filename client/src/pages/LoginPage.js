@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/api'; 
+import AppLogo from '../assets/Logo.PNG';
 
-// מקבלים את הפונקציות לשינוי ערכת הנושא כ-props
+
 const LoginPage = ({ toggleTheme, isDarkMode }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,6 +13,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
     
     const navigate = useNavigate();
 
+    /* Handle form submission and user authentication */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -19,6 +21,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
         try {
             await loginUser(email, password);
+            /* Redirect to dashboard upon successful login */
             navigate('/dashboard'); 
         } catch (err) {
             setError(err.message); 
@@ -29,7 +32,6 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
    return (
     <>
-        {/* הוצאנו את הכפתור מחוץ ל-glass-card כדי שיהיה חופשי להיצמד לפינה */}
         <button 
             className="theme-toggle-btn" 
             onClick={toggleTheme} 
@@ -40,7 +42,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
 
         <div className="glass-card">
             <div className="login-header">
-                <div className="sea-logo">🌊</div>
+                <img src={AppLogo} alt="Logo" style={{ width: '150px', marginBottom: '0px' }} />
                 <h2 className="app-title">S.E.A. D(R)IVE</h2>
                 <p className="subtitle">Sail to Success</p>
             </div>
@@ -64,6 +66,7 @@ const LoginPage = ({ toggleTheme, isDarkMode }) => {
                     placeholder="Password"
                 />
 
+                {/* Disable button during API call to prevent multiple submissions */}
                 <button 
                     type="submit" 
                     className="btn-primary" 

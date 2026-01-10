@@ -1,41 +1,56 @@
 /* client/src/styles/global.css */
 
 /* =========================================
-   1. GLOBAL VARIABLES
+   1. GLOBAL VARIABLES & DESIGN TOKENS
    ========================================= */
 :root {
-  /* --- מצב יום: שמש + ים --- */
-  /* שכבה 1 (עליונה): אור שמש לבן/צהבהב מלמעלה (Radial Gradient) */
-  /* שכבה 2 (תחתונה): הים הכחול (Linear Gradient) */
-  --color-deep-navy: 
-    radial-gradient(circle at 50% -10%, rgba(255, 255, 240, 0.8) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 70%),
-    linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%); 
+  /* Default Light Mode Palette */
   
-  --color-ocean-blue: #00acc1;   
-  --color-cream-card: rgba(253, 250, 240, 0.95); 
-  --color-text-dark: #004d40;    
-  --color-text-light: #ffffff;
+  /* Background gradients and solids */
+  --color-deep-navy: radial-gradient(circle at 50% -10%, rgba(255, 255, 240, 0.8) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 70%),
+                     linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+  --color-deep-navy-solid: #052e4a; 
+  
+  /* Accent colors for buttons and highlights */
+  --color-ocean-blue: #00acc1;
+  --color-ocean-blue-hover: #0097e6;
+  
+  /* Surface colors for cards and inputs */
+  --color-cream-card: rgba(253, 250, 240, 0.95);
+  --color-cream-card-solid: #fbf9f2;
   --color-input-bg: rgba(255, 255, 255, 0.9);
+  
+  /* Text colors */
+  --color-text-dark: #374151;
+  --color-text-light: #ffffff;
+  
+  /* Visual effects and elevations */
   --glass-blur: blur(10px);
+  --shadow-soft: 0 4px 15px rgba(0,0,0,0.08);
+  --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================
-   2. DARK MODE OVERRIDES
+   2. DARK MODE THEME OVERRIDES
    ========================================= */
 .dark-mode {
-  /* --- מצב לילה: ירח + ים עמוק --- */
-  /* הילה עדינה מאוד וכהה מלמעלה */
+  /* Overriding variables for a midnight aesthetic */
   --color-deep-navy: radial-gradient(circle at 50% -20%, #1c3a4a 0%, #0f2027 50%, #000000 100%);
+  --color-deep-navy-solid: #000000;
   
-  --color-cream-card: rgba(255, 255, 255, 0.05); 
-  --color-ocean-blue: #00e5ff;   
-  --color-text-dark: #e0f7fa;    
+  --color-ocean-blue: #00e5ff;
+  --color-ocean-blue-hover: #4facfe;
+  
+  --color-cream-card: rgba(255, 255, 255, 0.05);
+  --color-cream-card-solid: #102a43;
   --color-input-bg: rgba(0, 0, 0, 0.2);
+  
+  --color-text-dark: #e0f7fa; 
   --glass-blur: blur(15px);
 }
 
 /* =========================================
-   3. BASIC RESET & LAYOUT
+   3. BASIC RESET & CORE LAYOUT
    ========================================= */
 * {
   box-sizing: border-box;
@@ -47,6 +62,11 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
   margin: 0;
+  color: var(--color-text-dark);
+}
+
+.dark-mode body {
+    color: var(--color-text-light);
 }
 
 .app-container {
@@ -61,20 +81,23 @@ body {
   overflow: hidden; 
 }
 
-/* --- אנימציית גלים --- */
+/* =========================================
+   4. DECORATIVE BACKGROUND ANIMATIONS
+   ========================================= */
+
+/* Moving wave animation in the background */
 @keyframes moveWave {
     0% { background-position-x: 0; }
     100% { background-position-x: 1440px; } 
 }
 
-/* --- אנימציית בועות --- */
+/* Bubble floating animation for light mode */
 @keyframes floatUp {
     0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
     20% { opacity: 0.6; }
     100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
 }
 
-/* --- הגלים (Sine Wave - עגולים וחלקים) --- */
 .wave-background {
   position: absolute;
   bottom: 0;
@@ -90,7 +113,6 @@ body {
   animation: moveWave 12s linear infinite;
 }
 
-/* --- עיצוב הבועות --- */
 .bubble {
     position: absolute;
     bottom: -50px;
@@ -98,12 +120,72 @@ body {
     border-radius: 50%;
     pointer-events: none;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    /* ברירת מחדל: מוסתר */
     display: none; 
 }
 
-/* הבועות מופיעות רק במצב יום */
 .light-mode .bubble {
     display: block;
     animation: floatUp 8s infinite linear;
+}
+
+/* =========================================
+   5. GLOBAL UI COMPONENTS
+   ========================================= */
+
+/* Standard primary button style used across the application */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 50px;
+  border: none;
+  background: var(--color-ocean-blue);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary:hover {
+  background: var(--color-ocean-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-primary:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Reusable themed input field */
+.sea-input {
+  width: 100%;
+  padding: 12px 20px;
+  margin-bottom: 15px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background-color: var(--color-input-bg);
+  color: var(--color-text-dark); 
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.sea-input:focus {
+  border-color: var(--color-ocean-blue);
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 172, 193, 0.3);
+}
+
+/* Contextual input overrides for dark mode */
+.dark-mode .sea-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .sea-input:focus {
+    background-color: rgba(0, 0, 0, 0.3);
 }

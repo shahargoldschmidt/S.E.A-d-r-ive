@@ -2,8 +2,8 @@
   "name": "full-project",
   "version": "1.0.0",
   "scripts": {
-    "start:backend": "docker-compose up --build",
-    "start:client": "cd client && npm start",
+    "stop": "docker-compose down",
+    "start:full": "docker-compose up --build -d && node -e \"setTimeout(() => { const cmd = process.platform === 'win32' ? 'start http://localhost:3001' : 'xdg-open http://localhost:3001'; require('child_process').exec(cmd); }, 5000)\"",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
   }
 }
