@@ -1,7 +1,7 @@
 **S.E.A. D(R)IVE** is an intuitive cloud storage and file management system designed for seamless data organization.
 The name S.E.A. represents the project's creators: Shahar, Eliran, and Adi.
 
-Getting Started:
+Getting Started: The correct branch is Ex 4 - main branch
 To start the project on Windows or Linux, ensure Docker is running and execute **npm run start:full** in the root directory. The application opens at http://localhost:3001; if it's blank, wait up to a minute for the container to initialize or refresh the page.
 
 Key Features:
