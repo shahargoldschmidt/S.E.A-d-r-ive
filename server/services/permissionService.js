@@ -1,7 +1,7 @@
 /* server/services/permissionService.js */
 const permissionModel = require('../models/permissionModel');
 const fileModel = require('../models/fileModel');
-const userModel = require('../models/userModel'); // חובה לייבא כדי להמיר ID לאימייל
+const userModel = require('../models/userModel');
 
 const ROLE_PERMISSIONS = {
     'VIEWER': ['READ'],
