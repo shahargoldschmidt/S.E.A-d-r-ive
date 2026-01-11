@@ -21,10 +21,7 @@ const createPermission = async (req, res) => {
     try {
         const fileId = req.params.id;
         
-        // 2. שינוי: אנחנו מצפים לקבל 'email' במקום 'userId'
         const { email, type } = req.body; 
-
-        // ולידציה בסיסית
         if (!email || !type) {
             return res.status(400).json({ error: "Target email and permission type are required" });
         }
@@ -33,25 +30,22 @@ const createPermission = async (req, res) => {
             return res.status(400).json({ error: "Invalid permission type. Use 'VIEWER', 'EDITOR' or 'ADMIN'" });
         }
 
-        // 3. מציאת המשתמש לפי האימייל (שימוש בפונקציה שכבר קיימת אצלך!)
         const user = await userModel.getByEmail(email);
 
         if (!user) {
             return res.status(404).json({ error: `User with email ${email} not found` });
         }
 
-        const userId = user.id; // <--- הנה ה-ID שהיינו צריכים!
+        const userId = user.id; 
 
         console.log(`[PermissionController] Granting '${type}' to user ${userId} (${email}) on item ${fileId}`);
 
-        // 4. שליחת ה-userId (שמצאנו כרגע) לשירות שיוצר את ההרשאה
         const newPermission = await permissionService.createPermission(fileId, userId, type);
         
         res.status(201).json(newPermission);
 
     } catch (error) {
         console.error(`[PermissionController] Error: ${error.message}`);
-        // טיפול בשגיאה אם למשתמש כבר יש הרשאה
         res.status(error.message.includes("already has") ? 409 : 500).json({ error: error.message });
     }
 };
