@@ -9,7 +9,6 @@ const ROLE_PERMISSIONS = {
     'ADMIN': ['READ', 'WRITE', 'DELETE', 'MANAGE']
 };
 
-// פונקציית העזר לבדיקת הרשאות (תוקנה הבעיה שזורקת את הבעלים)
 const hasPermission = async (userId, fileId, actionType) => {
     let currentFileId = fileId;
 
@@ -17,18 +16,15 @@ const hasPermission = async (userId, fileId, actionType) => {
         const file = await fileModel.getById(currentFileId);
         if (!file) throw Object.assign(new Error("File not found"), { name: "NOT_FOUND" });
 
-        // 1. תיקון קריטי: המרה ל-String כדי למנוע באגים של מספר מול טקסט
         const fileOwner = String(file.owner);
         const currentUserId = String(userId);
 
-        // אם המשתמש הוא הבעלים (בדיקה מול אימייל או מול ID)
         if (fileOwner === currentUserId || file.owner === userId) { 
             return true;
         }
 
         const permissions = await permissionModel.getPermissions(currentFileId);
         
-        // 2. חיפוש ההרשאה עם המרה ל-String
         const userPerm = permissions.find(p => String(p.userId) === currentUserId); 
 
         if (userPerm) { 
@@ -42,7 +38,6 @@ const hasPermission = async (userId, fileId, actionType) => {
     return false;
 };
 
-// הוספת הרשאה
 const createPermission = async (fileId, targetUserId, type) => {
     const item = await fileModel.getById(fileId);
     if (!item) throw new Error("File or Folder not found");
@@ -55,7 +50,6 @@ const createPermission = async (fileId, targetUserId, type) => {
     return await permissionModel.createPermission(fileId, targetUserId, type);
 };
 
-// שליפת הרשאות (התיקון של השורה הריקה!)
 const getPermissions = async (fileId) => {
     let currentFileId = fileId;
     const allPermissions = [];
@@ -71,11 +65,9 @@ const getPermissions = async (fileId) => {
             const sUserId = String(perm.userId);
             if (!seenUsers.has(sUserId)) {
                 
-                // --- התיקון הגדול: הבאת האימייל של המשתמש ---
                 try {
                     const user = await userModel.getById(perm.userId);
                     if (user) {
-                        // אנחנו מחזירים אובייקט משודרג שיש בו גם email
                         allPermissions.push({ 
                             ...perm, 
                             email: user.email 
@@ -93,7 +85,6 @@ const getPermissions = async (fileId) => {
     return allPermissions;
 };
 
-// שאר הפונקציות ללא שינוי
 const updatePermission = async (pId, newType) => {
     return await permissionModel.updatePermission(pId, newType);
 };
