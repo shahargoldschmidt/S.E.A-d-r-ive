@@ -15,17 +15,12 @@ class TcpClientService {
             let responseData = ''; // Buffer for accumulating chunks
             let dataTimer = null;
 
-            // אופטימיזציה: ביטול עיכובים של המערכת (Nagle) כדי שהשליחה תהיה מיידית
             client.setNoDelay(true);
 
             // Connect to the C++ Server
-            // 1. התחברות לשרת
             client.connect(this.port, this.host, () => {
                 console.log(`[TCP] Connected. Starting to send ${command.length} bytes...`);
                 
-                // --- השינוי: שליחה ישירה במכה אחת (בלי Chunks ידניים) ---
-                // אנחנו נותנים ל-Node.js לנהל את הזרמת המידע.
-                // זה מונע מצב שהשרת C++ חושב שסיימנו באמצע בגלל הפסקה קטנה בין מנות.
                 const payload = command + '\n';
                 client.write(payload);
             });
@@ -34,21 +29,14 @@ class TcpClientService {
            client.on('data', (data) => {
                 responseData += data.toString();
 
-                // ניקוי הטיימר הקודם כדי שלא יכבה לנו את החיבור באמצע
                 if (dataTimer) clearTimeout(dataTimer);
 
-                // --- התיקון: בדיקה מיידית ---
-                // אם לפי הפרוטוקול סיימנו לקבל את כל המידע (למשל יש \n בסוף)
-                // אין סיבה לחכות אפילו מילישנייה נוספת!
                 if (_isResponseComplete(responseData)) {
                     console.log(`[TCP] Full response received (${responseData.length} bytes). Closing immediately.`);
                     client.end();
-                    return; // יציאה כדי לא להפעיל את הטיימר למטה
+                    return; 
                 }
 
-                // --- רשת ביטחון (Fallback) ---
-                // רק אם אנחנו לא בטוחים שזה הסוף (למשל באמצע תמונה גדולה),
-                // נפעיל טיימר שיסגור את החיבור אם יש "שקט" של 2 שניות.
                 dataTimer = setTimeout(() => {
                     console.log('[TCP] Silence detected, assuming end of stream.');
                     client.end();
