@@ -25,7 +25,7 @@ const getFiles = async (userId, all = false) => {
     }
 
     // If 'all' is true, return everything accessible (for Starred/Trash/Shared)
-    if (showAll) return accessibleFiles; 
+    if (all) return accessibleFiles; 
     
     // Otherwise, return only root-level items (for Home tab)
     return accessibleFiles.filter(file => file.parentId === null); 

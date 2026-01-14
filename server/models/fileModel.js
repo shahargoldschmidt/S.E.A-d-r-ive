@@ -36,7 +36,6 @@ const getById = async (fileId) => {
 const create = async (email, fileId, fileData) => {
     const isFile = fileData.type === 'file' || fileData.type === 'image';
     
-    // --- התיקון: שיניתי ל-let כדי שלא תהיה שגיאה ---
     let content = fileData.content || "";
     const isImage = fileData.type === 'image';
 
@@ -53,12 +52,12 @@ const create = async (email, fileId, fileData) => {
         createdAt: new Date().toISOString()
     });
 
-    const generatedId = newFile._id.toString();
-
+    const generatedId = newFile._id.toString(); 
 
     // add to tcp if its a file
     if (isFile) {
-        const command = `post ${fileId} ${content}`;
+        const command = `post ${generatedId} ${content}`; 
+        
         const response = await tcpClient.sendCommand(command);
         if (!response.includes("201")) {
             throw new Error(`TCP Storage Error: ${response}`);
@@ -77,7 +76,6 @@ const update = async (fileId, updates) => {
     // if there is a change in the content 
     if (updates.content !== undefined) {
         
-        // הוספתי את הניקוי גם כאן ליתר ביטחון (לא זורק שגיאה כי זה שדה באובייקט)
         const isImage = file.type === 'image';
         if (isImage) {
             updates.content = updates.content.replace(/[\n\r]/g, '');

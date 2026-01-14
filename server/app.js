@@ -16,7 +16,9 @@ const fileRoutes = require('./routes/fileRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 
 // Connection to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/myDriveDB', {
+const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/myDriveDB';
+
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {

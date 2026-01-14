@@ -1,7 +1,18 @@
 version: '3.8'
 
 services:
-  # The CPP Server
+  # 1. MongoDB Service (החדש!)
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27018:27017"
+    networks:
+      - ex3_net
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. C++ Server
   cpp_server:
     build:
       context: .
@@ -17,7 +28,7 @@ services:
       - MY_FILE_PATH=/app/data_files
       - THREAD_POOL_SIZE=10
 
-  # Node.js server
+  # 3. Node.js Server
   node_server:
     build:
       context: .
@@ -28,12 +39,15 @@ services:
     networks:
       - ex3_net
     depends_on:
-      - cpp_server # wait for the cpp server
+      - cpp_server 
+      - mongo # מחכים גם למונגו
     environment:
       - CPP_SERVER_HOST=cpp_server
       - CPP_SERVER_PORT=5555
+      # משתנה סביבה כדי שנדע לאן להתחבר
+      - MONGO_URI=mongodb://mongo:27017/myDriveDB
 
-  # react seever
+  # 4. React Client
   react_client:
     build:
       context: .
@@ -47,7 +61,6 @@ services:
       - node_server 
     stdin_open: true 
     tty: true   
-
     environment:
       - CHOKIDAR_USEPOLLING=true
       - REACT_APP_API_URL=http://localhost:3000/api
@@ -56,3 +69,6 @@ services:
 networks:
   ex3_net:
     driver: bridge
+
+volumes:
+  mongo_data:

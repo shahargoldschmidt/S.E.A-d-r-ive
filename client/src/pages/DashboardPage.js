@@ -103,6 +103,9 @@ const displayFiles = (() => {
         case 'Shared With Me': 
             return activeFiles.filter(f => f.owner !== currentUser?.email);
 
+        case 'My Storage':
+            return activeFiles.filter(f => f.owner === currentUser?.email)
+
         case 'Home':
         default: 
             // Server already filters for Root items when activeTab is Home
