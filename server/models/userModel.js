@@ -1,36 +1,48 @@
-// In-memory storage for users
-const usersStorage = new Map(); 
+/* server/models/userModel.js */
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    name: { type: String, default: "Anonymous" },
+    image: { type: String, default: "" },
+    createdAt: { type: Date, default: Date.now }
+}); 
+
+userSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id;
+    }
+});
+
+const User = mongoose.model('User', userSchema);
 
 // Returns the raw user object by ID.
 const getById = async (userId) => {
-    return usersStorage.get(userId) || null;
+    if (!mongoose.Types.ObjectId.isValid(userId)) return null;
+    return await User.findById(userId);
 };
 
 
 // The user have a email, and two users cant have the same email
 const getByEmail = async (email) => {
-    for (const user of usersStorage.values()) {
-        if (user.email === email) {
-            return user;
-        }
-    }
-    return null;
+    return await User.findOne({ email });
 };
 
 //Data Creation: Responsible for building the User - Assigns ID and default values before saving
 const createUser = async (userId, userData) => {
-    const newUser = {
-        id: userId,
+    const newUser = new User({
         username: userData.username,
         password: userData.password,
         email: userData.email,
         name: userData.name || "Anonymous",
-        image: userData.image || "",
-        createdAt: new Date().toISOString()
-    };
+        image: userData.image || ""
+    });
 
-    usersStorage.set(userId, newUser);
-    return newUser;
+    return await newUser.save();
 };
 
 module.exports = {

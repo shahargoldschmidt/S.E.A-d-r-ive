@@ -1,6 +1,7 @@
 // app.js
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 
@@ -14,6 +15,15 @@ const tokenRoutes = require('./routes/tokenRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const searchRoutes = require('./routes/searchRoutes');
 
+// Connection to MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/myDriveDB', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log("Connected to MongoDB");
+}).catch(err => {
+    console.error("Could not connect to MongoDB", err);
+});
 
 // Define Routes 
 // Connecting the specific paths to their routers

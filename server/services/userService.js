@@ -1,5 +1,5 @@
 const userModel = require('../models/userModel');
-const crypto = require('crypto'); 
+
 
 // Generates a unique ID and coordinates user creation
 const createUser = async (userData) => { 
@@ -11,13 +11,13 @@ const createUser = async (userData) => {
         throw new Error('Email already exists'); 
     }
 
-    const userId = crypto.randomUUID();
     
     // Delegate persistence to the Model 
-    const newUser = await userModel.createUser(userId, userData);
+    const newUser = await userModel.createUser(null, userData);
     
     // Redact the password from the returned object 
-    const { password, ...userWithoutPassword } = newUser;
+    const userObj = newUser.toJSON();
+    const { password, ...userWithoutPassword } = userObj;
     return userWithoutPassword;
 };
 
@@ -27,7 +27,8 @@ const getUser = async (userId) => {
     if (!user) return null;
 
     // Redact the password before returning user metadata
-    const { password, ...userWithoutPassword } = user;
+    const userObj = user.toJSON();
+    const { password, ...userWithoutPassword } = userObj;
     return userWithoutPassword;
 };
 
