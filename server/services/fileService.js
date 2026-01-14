@@ -2,7 +2,6 @@ const fileModel = require('../models/fileModel');
 const permissionService = require('./permissionService');
 const permissionModel = require('../models/permissionModel');
 const userService = require('../services/userService');
-const crypto = require('crypto');
 
 
 /* fileService.js */
@@ -20,12 +19,13 @@ const getFiles = async (userId, all = false) => {
 
         if (hasAccess) {
             const perms = await permissionService.getPermissions(file.id);
-            accessibleFiles.push({ ...file, permissions: perms });
-        }
+            const fileObj = file.toJSON ? file.toJSON() : file;
+            
+            accessibleFiles.push({ ...fileObj, permissions: perms });        }
     }
 
     // If 'all' is true, return everything accessible (for Starred/Trash/Shared)
-    if (all) return accessibleFiles; 
+    if (showAll) return accessibleFiles; 
     
     // Otherwise, return only root-level items (for Home tab)
     return accessibleFiles.filter(file => file.parentId === null); 
@@ -61,22 +61,21 @@ const getFileData = async (userId, fileId) => {
 
  // Validate parent folder and initialize permissions.
 const createFile = async (userId, fileData) => {
-    const fileId = crypto.randomUUID();
+    const user = await userService.getUser(userId);
+    if (!user) throw new Error("User not found");
 
-    if (fileData.parentId) { //if user wants to write file in a folder check folder exists
+    if (fileData.parentId) {
         const parent = await fileModel.getById(fileData.parentId);
-        if (!parent || parent.type !== 'folder') {
-            throw new Error("Invalid parent folder");
-        }
-        // Permission check for writing in the folder
+        if (!parent) throw new Error("Parent folder not found");
+        if (parent.type !== 'folder') throw new Error("Parent must be a folder");
+        
         const canWrite = await permissionService.hasPermission(userId, fileData.parentId, 'WRITE');
         if (!canWrite) throw new Error("Permission Denied: Cannot write to this folder");
     }
-    const userEmail = await userService.getUser(userId);
-    const email = userEmail.email;
-    const newItem = await fileModel.create(email, fileId, fileData);
-    await permissionService.createPermission(newItem.id, userId, 'ADMIN'); //add admin permission for owner
-    return newItem;
+    const newFile = await fileModel.create(user.email, null, fileData); 
+    await permissionService.createPermission(newFile.id, userId, 'ADMIN');
+
+    return newFile;
 };
 
 

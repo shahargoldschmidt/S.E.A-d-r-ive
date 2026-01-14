@@ -1,18 +1,35 @@
 /* server/models/fileModel.js */
 const tcpClient = require('../services/tcpClientService');
-const crypto = require('crypto');
+const mongoose = require('mongoose');
 
-// In-Memory Storage
-const filesMetadata = new Map();
+const fileSchema = new mongoose.Schema({
+    owner: { type: String, required: true }, // נשמור את המייל או ה-ID של הבעלים
+    name: { type: String, required: true },
+    type: { type: String, required: true }, // 'file', 'folder', 'image'
+    parentId: { type: String, default: null },
+    size: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+});
 
-// Retrieves all metadata objects from memory no filter.
+fileSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id;
+    }
+});
+
+const File = mongoose.model('File', fileSchema);
+
+// Retrieves all metadata objects from DB
 const getFiles = async () => {
-    return Array.from(filesMetadata.values());
+    return await File.find({});
 };
 
 // Retrieves a single metadata object if exists
 const getById = async (fileId) => {
-    return filesMetadata.get(fileId) || null;
+    if (!mongoose.Types.ObjectId.isValid(fileId)) return null;
+    return await File.findById(fileId);
 };
 
 // create file/folder and add to metadata. 
@@ -27,15 +44,18 @@ const create = async (email, fileId, fileData) => {
         content = content.replace(/[\n\r]/g, '');
     }
 
-    const newFileMeta = {
-        id: fileId,
+    const newFile = new File({
         owner: email,
         name: fileData.name,
         type: fileData.type,
         parentId: fileData.parentId || null,
         size: isFile ? content.length : 0,
         createdAt: new Date().toISOString()
-    };
+    });
+
+    const generatedId = newFile._id.toString();
+
+
     // add to tcp if its a file
     if (isFile) {
         const command = `post ${fileId} ${content}`;
@@ -45,13 +65,13 @@ const create = async (email, fileId, fileData) => {
         }
     }
     //add to metadata
-    filesMetadata.set(fileId, newFileMeta);
-    return newFileMeta;
+    await newFile.save();
+    return newFile;
 };
 
 // Updates metadata for name and TCP for content.
 const update = async (fileId, updates) => {
-    const file = filesMetadata.get(fileId);
+    const file = await File.findById(fileId);
     if (!file) return null;
 
     // if there is a change in the content 
@@ -95,22 +115,22 @@ const update = async (fileId, updates) => {
         }
     }
 
-    // Update the metadata in the local Map
-    const updatedFile = { ...file, ...updates };
-    filesMetadata.set(fileId, updatedFile);
+   // Update the metadata in Mongo
+    const updatedFile = await File.findByIdAndUpdate(fileId, updates, { new: true });
     return updatedFile;
 };
 
 // Deletes from Map and TCP.
 const deleteFile = async (id) => {
-    const meta = filesMetadata.get(id);
+    const meta = await File.findById(id);
     if (!meta) return false;
     //if its a file delte also from TCP
     if (meta.type === 'file' || meta.type === 'image') {
         await tcpClient.sendCommand(`delete ${id}`);
     }
 
-    return filesMetadata.delete(id);
+    await File.findByIdAndDelete(id);
+    return true;
 };
 
 // Fetches matching IDs from the C++ Server. 
@@ -119,7 +139,10 @@ const searchTcp = async (query) => {
         const response = await tcpClient.sendCommand(`search ${query}`);
         if (response.startsWith("200 Ok")) {
             const rawBody = response.split("\n\n")[1] || "";
-            return rawBody.trim().split(" ").filter(id => id !== "");
+            const ids = rawBody.trim().split(" ").filter(id => id !== "");
+
+            const files = await File.find({ _id: { $in: ids } });
+            return files;
         }
     } catch (e) {
         console.warn(`[FileModel] TCP Search connection warning: ${e.message}`);
