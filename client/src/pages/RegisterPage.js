@@ -1,8 +1,9 @@
 /* client/src/pages/RegisterPage.js */
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, useWindowDimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, useWindowDimensions, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Feather } from '@expo/vector-icons';
+import { registerUser } from '../services/api'; 
 import AppWrapper from '../components/AppWrapper';
 import PasswordCriteria from '../components/PasswordCriteria';
 import { theme } from '../styles/theme';
@@ -16,21 +17,20 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
     const [passwordCriteria, setPasswordCriteria] = useState({ length: false, upper: false, lower: false, number: false, special: false });
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    // Logic to display first letter of name if no image is uploaded
-    const getInitial = () => {
-        if (!formData.name.trim()) return '👤';
-        return formData.name.trim().charAt(0).toUpperCase();
-    };
+    const getInitial = () => (!formData.name.trim() ? '👤' : formData.name.trim().charAt(0).toUpperCase());
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true, aspect: [1, 1], quality: 0.5, base64: true
-        });
-        if (!result.canceled) {
-            setFormData({ ...formData, image: `data:image/jpeg;base64,${result.assets[0].base64}` });
-        }
+    const getGlowStyle = () => {
+        if (!formData.confirmPassword) return styles.seaInput;
+        const isMatch = formData.password === formData.confirmPassword;
+        return [styles.seaInput, {
+            borderColor: isMatch ? '#4CAF50' : '#FF5252',
+            borderWidth: 2,
+            shadowColor: isMatch ? '#4CAF50' : '#FF5252',
+            shadowOpacity: 0.5, shadowRadius: 10, elevation: 5 
+        }];
     };
 
     const handlePasswordChange = (val) => {
@@ -44,26 +44,56 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
         });
     };
 
-    const getConfirmPasswordStyle = () => {
-    // If the confirm field is empty, keep it neutral
-    if (!formData.confirmPassword) return styles.seaInput;
-    
-    // Check if passwords match
-    const isMatch = formData.password === formData.confirmPassword;
-    
-    return [
-        styles.seaInput,
-        {
-            // Professional "Glow" using border and shadow
-            borderColor: isMatch ? '#4CAF50' : '#FF5252', // Green if match, Red if not
-            borderWidth: 2,
-            shadowColor: isMatch ? '#4CAF50' : '#FF5252',
-            shadowOpacity: 0.5,
-            shadowRadius: 10,
-            elevation: 5 // For Android glow effect
+    const handleRegister = async () => {
+        // Validation Hierarchy
+        setError('');
+
+        // 1. Mandatory Fields Check
+        if (!formData.name || !formData.email || !formData.password) {
+            setError("Please fill in all mandatory fields.");
+            return;
         }
-    ];
-};
+
+        // 2. Email Format Validation (Regex)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        // 3. Password Strength Validation (All criteria must be true)
+        const isStrong = Object.values(passwordCriteria).every(Boolean);
+        if (!isStrong) {
+            setError("Weak password! Please meet all security requirements.");
+            return;
+        }
+
+        // 4. Password Confirmation Check
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match!");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await registerUser(formData);
+            navigation.navigate('Login');
+        } catch (err) {
+            setError(err.message || "Registration failed");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true, aspect: [1, 1], quality: 0.5, base64: true
+        });
+        if (!result.canceled) {
+            setFormData({ ...formData, image: `data:image/jpeg;base64,${result.assets[0].base64}` });
+        }
+    };
 
     return (
         <AppWrapper isDarkMode={isDarkMode}>
@@ -77,53 +107,33 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
                         <Text style={[styles.appTitle, { color: isDarkMode ? '#fff' : theme.colors.deepNavy }]}>JOIN THE CREW</Text>
                         <Text style={styles.subtitle}>Create your secure profile</Text>
 
-                        {/* Profile Image Section with Initial support and Delete button */}
                         <View style={styles.imageUploadContainer}>
-                            <TouchableOpacity onPress={pickImage} style={styles.imageCircle} activeOpacity={0.8}>
+                            <TouchableOpacity onPress={pickImage} style={styles.imageCircle}>
                                 {formData.image ? (
                                     <Image source={{ uri: formData.image }} style={{ width: '100%', height: '100%' }} />
                                 ) : (
                                     <Text style={styles.initialsText}>{getInitial()}</Text>
                                 )}
                             </TouchableOpacity>
-                            {formData.image ? (
-                                <TouchableOpacity 
-                                    style={styles.removeImageBtn} 
-                                    onPress={() => setFormData({ ...formData, image: '' })}
-                                >
+                            {formData.image && (
+                                <TouchableOpacity style={styles.removeImageBtn} onPress={() => setFormData({ ...formData, image: '' })}>
                                     <Feather name="x" size={16} color="#fff" />
                                 </TouchableOpacity>
-                            ) : null}
-                            <Text style={{ fontSize: 11, marginTop: 5, color: theme.colors.oceanBlue }}>Click to add photo</Text>
+                            )}
+                            <Text style={{ fontSize: 12, marginTop: 8, color: theme.colors.oceanBlue, fontWeight: '600' }}>
+                                {formData.image ? "Replace photo" : "Click to add photo"}
+                            </Text>
                         </View>
-                        
 
-                        <TextInput 
-                            style={styles.seaInput} 
-                            placeholder="Full Name" 
-                            placeholderTextColor="#888"
-                            onChangeText={(v) => setFormData({ ...formData, name: v })} 
-                        />
+                        {error ? <Text style={{ color: theme.colors.error, marginBottom: 12, textAlign: 'center' }}>{error}</Text> : null}
+
+                        <TextInput style={styles.seaInput} placeholder="Full Name" placeholderTextColor="#888" onChangeText={(v) => setFormData({ ...formData, name: v })} />
                         <View style={{ height: 10 }} />
-                        <TextInput 
-                            style={styles.seaInput} 
-                            placeholder="Email Address" 
-                            keyboardType="email-address" 
-                            autoCapitalize="none" 
-                            placeholderTextColor="#888"
-                            onChangeText={(v) => setFormData({ ...formData, email: v })} 
-                        />
+                        <TextInput style={styles.seaInput} placeholder="Email Address" autoCapitalize="none" placeholderTextColor="#888" onChangeText={(v) => setFormData({ ...formData, email: v })} />
                         <View style={{ height: 10 }} />
 
-                        {/* Password Entry with real-time validation display */}
                         <View style={styles.inputWrapper}>
-                            <TextInput 
-                                style={styles.seaInput} 
-                                placeholder="Password" 
-                                placeholderTextColor="#888"
-                                secureTextEntry={!showPass} 
-                                onChangeText={handlePasswordChange} 
-                            />
+                            <TextInput style={styles.seaInput} placeholder="Password" secureTextEntry={!showPass} onChangeText={handlePasswordChange} placeholderTextColor="#888" />
                             <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPass(!showPass)}>
                                 <Feather name={showPass ? "eye" : "eye-off"} size={18} color="#888" />
                             </TouchableOpacity>
@@ -131,22 +141,15 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
 
                         {formData.password.length > 0 && <PasswordCriteria criteria={passwordCriteria} />}
 
-                        {/* Confirmation Password Input */}
                         <View style={styles.inputWrapper}>
-                            <TextInput 
-                                style={getConfirmPasswordStyle()}
-                                placeholder="Confirm Password" 
-                                placeholderTextColor="#888"
-                                secureTextEntry={!showConfirm} 
-                                onChangeText={(v) => setFormData({ ...formData, confirmPassword: v })} 
-                            />
+                            <TextInput style={getGlowStyle()} placeholder="Confirm Password" secureTextEntry={!showConfirm} onChangeText={(v) => setFormData({ ...formData, confirmPassword: v })} placeholderTextColor="#888" />
                             <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowConfirm(!showConfirm)}>
                                 <Feather name={showConfirm ? "eye" : "eye-off"} size={18} color="#888" />
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.btnPrimary} activeOpacity={0.8}>
-                            <Text style={styles.btnText}>Create Account</Text>
+                        <TouchableOpacity style={styles.btnPrimary} onPress={handleRegister} disabled={isLoading} activeOpacity={0.8}>
+                            {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Create Account</Text>}
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ marginTop: 15 }}>
