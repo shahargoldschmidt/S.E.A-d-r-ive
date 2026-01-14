@@ -1,58 +1,60 @@
-const crypto = require('crypto');
+/* server/models/permissionModel.js */
+const mongoose = require('mongoose');
 
-// In-Memory Storage for Permissions
-const permissionsStore = new Map();
+// MongoDB Storage for Permissions
+const permissionSchema = new mongoose.Schema({
+    fileId: { type: String, required: true }, // יכול להיות גם ObjectId אם הקבצים במונגו
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    type: { type: String, enum: ['VIEWER', 'EDITOR', 'ADMIN'], required: true }
+});
+
+permissionSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id;
+    }
+});
+
+const Permission = mongoose.model('Permission', permissionSchema);
 
 //get all premision for a file
 const getPermissions = async (fileId) => { 
-    const result = [];
-    for (const perm of permissionsStore.values()) {
-        if (perm.fileId === fileId) {
-            result.push(perm);
-        }
-    }
-    return result;
+    return await Permission.find({ fileId });
 };
 
 //create a premision and add to map
 const createPermission = async (fileId, userId, type) => {
-    const uniqueId = crypto.randomUUID();
+    const existing = await Permission.findOne({ fileId, userId });
+    if (existing) {
+        throw new Error("User already has permission for this file");
+    }
 
-    const newPermission = {
-        id: uniqueId,
-        fileId: fileId,
-        userId: userId,
-        type: type
-    };
+    const newPermission = new Permission({
+        fileId,
+        userId,
+        type
+    });
 
-    permissionsStore.set(uniqueId, newPermission);
-    return newPermission;
+    return await newPermission.save();
 };
 
 // Updates an existing permission level
 const updatePermission = async (pId, newType) => { 
-    const perm = permissionsStore.get(pId);
-    if (!perm) return null;
-    //change premision type
-    const updatedPerm = { ...perm, type: newType };
-    permissionsStore.set(pId, updatedPerm);
-    return updatedPerm;
+    if (!mongoose.Types.ObjectId.isValid(pId)) return null;
+    return await Permission.findByIdAndUpdate(pId, { type: newType }, { new: true });
 };
+
 // remove specific premision
 const deletePermission = async (pId) => { 
-    if (!permissionsStore.has(pId)) {
-        return false;
-    }
-    permissionsStore.delete(pId);
-    return true;
+    if (!mongoose.Types.ObjectId.isValid(pId)) return false;
+    const result = await Permission.findByIdAndDelete(pId);
+    return !!result;
 };
-// remove all the permisions for a file 
+
+// remove all the permissions for a file 
 const removeAllPermissionsForFile = async (fileId) => {
-    for (const [pId, perm] of permissionsStore.entries()) {
-        if (perm.fileId === fileId) {
-            permissionsStore.delete(pId);
-        }
-    }
+    await Permission.deleteMany({ fileId });
 };
 
 module.exports = {

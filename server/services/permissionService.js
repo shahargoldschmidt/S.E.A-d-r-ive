@@ -16,20 +16,16 @@ const hasPermission = async (userId, fileId, actionType) => {
         const file = await fileModel.getById(currentFileId);
         if (!file) throw Object.assign(new Error("File not found"), { name: "NOT_FOUND" });
 
-        const fileOwner = String(file.owner);
-        const currentUserId = String(userId);
-
-        if (fileOwner === currentUserId || file.owner === userId) { 
+        if (String(file.owner) === String(userId)) { 
             return true;
         }
 
         const permissions = await permissionModel.getPermissions(currentFileId);
         
-        const userPerm = permissions.find(p => String(p.userId) === currentUserId); 
+        const userPerm = permissions.find(p => String(p.userId) === String(userId));
 
-        if (userPerm) { 
-            const allowedActions = ROLE_PERMISSIONS[userPerm.type] || [];
-            if (allowedActions.includes(actionType)) { 
+        if (userPerm) {
+            if (checkPermissionLevel(userPerm.type, actionType)) {
                 return true;
             }
         }
@@ -38,11 +34,16 @@ const hasPermission = async (userId, fileId, actionType) => {
     return false;
 };
 
+const checkPermissionLevel = (userRole, actionType) => {
+    return ROLE_PERMISSIONS[userRole]?.includes(actionType);
+};
+
 const createPermission = async (fileId, targetUserId, type) => {
     const item = await fileModel.getById(fileId);
     if (!item) throw new Error("File or Folder not found");
     
     const currentPermissions = await permissionModel.getPermissions(fileId);
+    
     if (currentPermissions.find(p => String(p.userId) === String(targetUserId))) {
         throw new Error("User already has a permission for this item.");
     }
@@ -68,8 +69,10 @@ const getPermissions = async (fileId) => {
                 try {
                     const user = await userModel.getById(perm.userId);
                     if (user) {
+                        const permObj = perm.toJSON ? perm.toJSON() : perm;
+                        
                         allPermissions.push({ 
-                            ...perm, 
+                            ...permObj, 
                             email: user.email 
                         }); 
                         seenUsers.add(sUserId);
