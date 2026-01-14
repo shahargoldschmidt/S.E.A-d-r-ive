@@ -44,6 +44,27 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
         });
     };
 
+    const getConfirmPasswordStyle = () => {
+    // If the confirm field is empty, keep it neutral
+    if (!formData.confirmPassword) return styles.seaInput;
+    
+    // Check if passwords match
+    const isMatch = formData.password === formData.confirmPassword;
+    
+    return [
+        styles.seaInput,
+        {
+            // Professional "Glow" using border and shadow
+            borderColor: isMatch ? '#4CAF50' : '#FF5252', // Green if match, Red if not
+            borderWidth: 2,
+            shadowColor: isMatch ? '#4CAF50' : '#FF5252',
+            shadowOpacity: 0.5,
+            shadowRadius: 10,
+            elevation: 5 // For Android glow effect
+        }
+    ];
+};
+
     return (
         <AppWrapper isDarkMode={isDarkMode}>
             <TouchableOpacity style={styles.themeToggleBtn} onPress={toggleTheme}>
@@ -75,6 +96,7 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
                             ) : null}
                             <Text style={{ fontSize: 11, marginTop: 5, color: theme.colors.oceanBlue }}>Click to add photo</Text>
                         </View>
+                        
 
                         <TextInput 
                             style={styles.seaInput} 
@@ -112,7 +134,7 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
                         {/* Confirmation Password Input */}
                         <View style={styles.inputWrapper}>
                             <TextInput 
-                                style={styles.seaInput} 
+                                style={getConfirmPasswordStyle()}
                                 placeholder="Confirm Password" 
                                 placeholderTextColor="#888"
                                 secureTextEntry={!showConfirm} 
