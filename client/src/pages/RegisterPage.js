@@ -1,153 +1,142 @@
 /* client/src/pages/RegisterPage.js */
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../services/api';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, useWindowDimensions } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons';
+import AppWrapper from '../components/AppWrapper';
 import PasswordCriteria from '../components/PasswordCriteria';
-import { Icons } from '../utils/Icons';
-import '../styles/auth.css';
+import { theme } from '../styles/theme';
+import { getAuthStyles } from '../styles/authStyles';
 
-const RegisterPage = ({ toggleTheme, isDarkMode }) => {
-    const [formData, setFormData] = useState({
-        name: '', email: '', password: '', confirmPassword: '', image: '' 
-    });
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [imagePreview, setImagePreview] = useState(null);
+const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
+    const { width, height } = useWindowDimensions();
+    const styles = getAuthStyles(width, height);
+
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', image: '' });
     const [passwordCriteria, setPasswordCriteria] = useState({ length: false, upper: false, lower: false, number: false, special: false });
-    const [passwordsMatch, setPasswordsMatch] = useState(null);
-    const [isFormValid, setIsFormValid] = useState(false);
-    const [error, setError] = useState('');
-    
-    const fileInputRef = useRef(null); 
-    const navigate = useNavigate();
+    const [showPass, setShowPass] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
-    /* Handle profile image selection and convert to Base64 for storage */
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImagePreview(URL.createObjectURL(file));
-            const reader = new FileReader();
-            reader.onloadend = () => setFormData(prev => ({ ...prev, image: reader.result }));
-            reader.readAsDataURL(file);
+    // Logic to display first letter of name if no image is uploaded
+    const getInitial = () => {
+        if (!formData.name.trim()) return '👤';
+        return formData.name.trim().charAt(0).toUpperCase();
+    };
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true, aspect: [1, 1], quality: 0.5, base64: true
+        });
+        if (!result.canceled) {
+            setFormData({ ...formData, image: `data:image/jpeg;base64,${result.assets[0].base64}` });
         }
     };
 
-    const handleRemoveImage = (e) => { 
-        e.stopPropagation(); 
-        setImagePreview(null); 
-        setFormData(prev => ({ ...prev, image: '' })); 
-        if (fileInputRef.current) fileInputRef.current.value = ""; 
-    };
-
-    const triggerFileInput = () => fileInputRef.current.click();
-
-    /* Generate fallback avatar initial based on the entered name */
-    const getInitial = () => { 
-        if (formData.name && formData.name.trim() !== '') return formData.name.trim().charAt(0).toUpperCase(); 
-        return "👤"; 
-    };
-
-    /* Effect to monitor form validity and password matching */
-    useEffect(() => {
-        const allCriteriaMet = Object.values(passwordCriteria).every(Boolean);
-        const match = formData.password === formData.confirmPassword && formData.password !== '';
-        if (formData.confirmPassword) setPasswordsMatch(match);
-        setIsFormValid(allCriteriaMet && match && formData.name && formData.email);
-    }, [formData, passwordCriteria]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        
-        /* Validate password strength in real-time */
-        if (name === 'password') {
-            setPasswordCriteria({
-                length: value.length >= 8, 
-                upper: /[A-Z]/.test(value), 
-                lower: /[a-z]/.test(value), 
-                number: /[0-9]/.test(value), 
-                special: /[!@#$%^&*(),.?":{}|<>]/.test(value)
-            });
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        registerUser(formData)
-            .then(() => navigate('/login'))
-            .catch(err => setError(err.message));
+    const handlePasswordChange = (val) => {
+        setFormData({ ...formData, password: val });
+        setPasswordCriteria({
+            length: val.length >= 8,
+            upper: /[A-Z]/.test(val),
+            lower: /[a-z]/.test(val),
+            number: /[0-9]/.test(val),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+        });
     };
 
     return (
-        <div className="auth-container"> 
-            <button className="theme-toggle-btn" onClick={toggleTheme}> 
-                {isDarkMode ? '☀️' : '🌙'} 
-            </button>
+        <AppWrapper isDarkMode={isDarkMode}>
+            <TouchableOpacity style={styles.themeToggleBtn} onPress={toggleTheme}>
+                <Feather name={isDarkMode ? "sun" : "moon"} size={22} color="#fff" />
+            </TouchableOpacity>
 
-            <div className="glass-card">
-                <h2 className="app-title" style={{fontSize: '1.5rem', marginBottom: '5px'}}>Join The Crew</h2>
-                <p className="subtitle" style={{marginBottom: '20px'}}>Create your secure profile</p>
-                {error && <div className="error-bubble">{error}</div>}
-                
-                <form onSubmit={handleSubmit}>
-                    
-                    {/* Profile Picture Upload Section */}
-                    <div className="image-upload-wrapper">
-                        <div className="image-preview-circle clickable-circle" onClick={triggerFileInput}>
-                            {imagePreview ? (
-                                <img src={imagePreview} alt="Profile" />
-                            ) : (
-                                <div className="letter-avatar">{getInitial()}</div>
-                            )}
-                        </div>
-                        
-                        {imagePreview && (
-                            <button type="button" className="remove-image-btn" onClick={handleRemoveImage}>
-                                <Icons.Close size={14} />
-                            </button>
-                        )}
-                        
-                        <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
-                        <p style={{fontSize: '0.75rem', marginTop: '5px', opacity: 0.7}}>Click to add photo</p>
-                    </div>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+                    <View style={[styles.glassCard, { backgroundColor: isDarkMode ? theme.colors.darkCard : theme.colors.creamCard }]}>
+                        <Text style={[styles.appTitle, { color: isDarkMode ? '#fff' : theme.colors.deepNavy }]}>JOIN THE CREW</Text>
+                        <Text style={styles.subtitle}>Create your secure profile</Text>
 
-                    <input className="sea-input" name="name" type="text" onChange={handleChange} required placeholder="Full Name" />
-                    <input className="sea-input" name="email" type="email" onChange={handleChange} required placeholder="Email Address" />
-                    
-                    {/* Password Entry with visibility toggle */}
-                    <div className="password-wrapper">
-                        <input 
-                            className="sea-input" name="password" 
-                            type={showPassword ? "text" : "password"} 
-                            onChange={handleChange} required placeholder="Password"
-                            style={{ borderColor: formData.password && !Object.values(passwordCriteria).every(Boolean) ? '#ff5252' : 'transparent', borderWidth: '2px', borderStyle: 'solid' }}
+                        {/* Profile Image Section with Initial support and Delete button */}
+                        <View style={styles.imageUploadContainer}>
+                            <TouchableOpacity onPress={pickImage} style={styles.imageCircle} activeOpacity={0.8}>
+                                {formData.image ? (
+                                    <Image source={{ uri: formData.image }} style={{ width: '100%', height: '100%' }} />
+                                ) : (
+                                    <Text style={styles.initialsText}>{getInitial()}</Text>
+                                )}
+                            </TouchableOpacity>
+                            {formData.image ? (
+                                <TouchableOpacity 
+                                    style={styles.removeImageBtn} 
+                                    onPress={() => setFormData({ ...formData, image: '' })}
+                                >
+                                    <Feather name="x" size={16} color="#fff" />
+                                </TouchableOpacity>
+                            ) : null}
+                            <Text style={{ fontSize: 11, marginTop: 5, color: theme.colors.oceanBlue }}>Click to add photo</Text>
+                        </View>
+
+                        <TextInput 
+                            style={styles.seaInput} 
+                            placeholder="Full Name" 
+                            placeholderTextColor="#888"
+                            onChangeText={(v) => setFormData({ ...formData, name: v })} 
                         />
-                        <button type="button" className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <Icons.EyeOff size={20} /> : <Icons.Eye size={20} />}
-                        </button>
-                    </div>
-
-                    {formData.password && <PasswordCriteria criteria={passwordCriteria} />}
-
-                    {/* Confirm Password with visual feedback for matching status */}
-                    <div className="password-wrapper">
-                        <input 
-                            className="sea-input" name="confirmPassword" 
-                            type={showConfirmPassword ? "text" : "password"} 
-                            onChange={handleChange} required placeholder="Confirm Password"
-                            style={{ borderColor: passwordsMatch === false ? '#ff5252' : (passwordsMatch === true ? '#2e7d32' : 'transparent'), borderWidth: '2px', borderStyle: 'solid' }}
+                        <View style={{ height: 10 }} />
+                        <TextInput 
+                            style={styles.seaInput} 
+                            placeholder="Email Address" 
+                            keyboardType="email-address" 
+                            autoCapitalize="none" 
+                            placeholderTextColor="#888"
+                            onChangeText={(v) => setFormData({ ...formData, email: v })} 
                         />
-                        <button type="button" className="password-toggle-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            {showConfirmPassword ? <Icons.EyeOff size={20} /> : <Icons.Eye size={20} />}
-                        </button>
-                    </div>
-                    
-                    <button type="submit" className="btn-primary" disabled={!isFormValid} style={{ opacity: isFormValid ? 1 : 0.5 }}>Create Account</button>
-                </form>
-                
-                <div className="auth-footer">Already have an account? <span className="link-text" onClick={() => navigate('/login')}>Log In</span></div>
-            </div>
-        </div>
+                        <View style={{ height: 10 }} />
+
+                        {/* Password Entry with real-time validation display */}
+                        <View style={styles.inputWrapper}>
+                            <TextInput 
+                                style={styles.seaInput} 
+                                placeholder="Password" 
+                                placeholderTextColor="#888"
+                                secureTextEntry={!showPass} 
+                                onChangeText={handlePasswordChange} 
+                            />
+                            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPass(!showPass)}>
+                                <Feather name={showPass ? "eye" : "eye-off"} size={18} color="#888" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {formData.password.length > 0 && <PasswordCriteria criteria={passwordCriteria} />}
+
+                        {/* Confirmation Password Input */}
+                        <View style={styles.inputWrapper}>
+                            <TextInput 
+                                style={styles.seaInput} 
+                                placeholder="Confirm Password" 
+                                placeholderTextColor="#888"
+                                secureTextEntry={!showConfirm} 
+                                onChangeText={(v) => setFormData({ ...formData, confirmPassword: v })} 
+                            />
+                            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowConfirm(!showConfirm)}>
+                                <Feather name={showConfirm ? "eye" : "eye-off"} size={18} color="#888" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity style={styles.btnPrimary} activeOpacity={0.8}>
+                            <Text style={styles.btnText}>Create Account</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ marginTop: 15 }}>
+                            <Text style={{ color: isDarkMode ? '#fff' : '#444' }}>
+                                Already have an account? <Text style={{ color: theme.colors.oceanBlue, fontWeight: 'bold' }}>Log In</Text>
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </AppWrapper>
     );
 };
+
 export default RegisterPage;

@@ -1,6 +1,7 @@
 /* client/src/services/api.js */
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
+const API_URL = process.env.REACT_APP_API_URL || "http://192.168.1.141:3000/api";
 
 /* Helper function to generate authorization headers using the stored session token */
 const getAuthHeaders = () => {
@@ -45,8 +46,8 @@ export const loginUser = async (email, password) => {
         const data = await response.json();
         
         /* Store authentication data in sessionStorage for session persistence */
-        if (data.token) sessionStorage.setItem('token', data.token);
-        if (data.userId) sessionStorage.setItem('userId', data.userId);
+        if (data.token) AsyncStorage.setItem('token', data.token);
+        if (data.userId) AsyncStorage.setItem('userId', data.userId);
         
         return data; 
     } catch (error) {
