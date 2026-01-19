@@ -1,6 +1,6 @@
 /* client/src/components/CreateFolderModal.js */
 import React, { useState } from 'react';
-import { View, Text, Modal, TextInput, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, Modal, TextInput, TouchableOpacity, useWindowDimensions, Alert } from 'react-native';
 import { getModalStyles } from '../styles/modalStyles';
 import { getAuthStyles } from '../styles/authStyles';
 

@@ -8,7 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // 
 import LoginPage from './src/pages/LoginPage';
 import RegisterPage from './src/pages/RegisterPage';
-// import DashboardPage from './pages/DashboardPage'; 
+import DashboardPage from './src/pages/DashboardPage';
 
 const Stack = createStackNavigator();
 
@@ -31,11 +31,10 @@ export default function App() {
           {(props) => <RegisterPage {...props} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
         </Stack.Screen>
 
-        {/* מסך דאשבורד - מושבת כרגע
         <Stack.Screen name="Dashboard">
           {(props) => <DashboardPage {...props} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
         </Stack.Screen> 
-        */}
+
       </Stack.Navigator>
     </NavigationContainer>
   );

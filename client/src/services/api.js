@@ -1,7 +1,6 @@
 /* client/src/services/api.js */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = process.env.REACT_APP_API_URL || "http://192.168.1.141:3000/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 /* Helper function to generate authorization headers using the stored session token */
 const getAuthHeaders = async () => {

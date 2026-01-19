@@ -1,6 +1,6 @@
 /* client/src/components/Dashboard/FileList.js */
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { Icons } from '../../utils/Icons'; // Using our new Native Icons
 import { getFileListStyles } from '../../styles/fileListStyles';
 
