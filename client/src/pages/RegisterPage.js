@@ -8,6 +8,7 @@ import AppWrapper from '../components/AppWrapper';
 import PasswordCriteria from '../components/PasswordCriteria';
 import { theme } from '../styles/theme';
 import { getAuthStyles } from '../styles/authStyles';
+import ImagePickerSheet from '../components/ImagePickerSheet';
 
 const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
     const { width, height } = useWindowDimensions();
@@ -18,6 +19,7 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isSheetVisible, setIsSheetVisible] = useState(false); 
     const [error, setError] = useState('');
 
     const getInitial = () => (!formData.name.trim() ? '👤' : formData.name.trim().charAt(0).toUpperCase());
@@ -31,6 +33,14 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
             shadowColor: isMatch ? '#4CAF50' : '#FF5252',
             shadowOpacity: 0.5, shadowRadius: 10, elevation: 5 
         }];
+    };
+
+    const openPicker = () => {
+        setIsSheetVisible(true);
+    };
+
+    const handleImageResult = (base64Image) => {
+        setFormData({ ...formData, image: base64Image });
     };
 
     const handlePasswordChange = (val) => {
@@ -108,13 +118,13 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
                         <Text style={styles.subtitle}>Create your secure profile</Text>
 
                         <View style={styles.imageUploadContainer}>
-                            <TouchableOpacity onPress={pickImage} style={styles.imageCircle}>
-                                {formData.image ? (
-                                    <Image source={{ uri: formData.image }} style={{ width: '100%', height: '100%' }} />
-                                ) : (
-                                    <Text style={styles.initialsText}>{getInitial()}</Text>
-                                )}
-                            </TouchableOpacity>
+                           <TouchableOpacity onPress={openPicker} style={styles.imageCircle}>
+                    {formData.image ? (
+                        <Image source={{ uri: formData.image }} style={{ width: '100%', height: '100%' }} />
+                    ) : (
+                        <Text style={styles.initialsText}>{getInitial()}</Text>
+                    )}
+                </TouchableOpacity>
                             {formData.image && (
                                 <TouchableOpacity style={styles.removeImageBtn} onPress={() => setFormData({ ...formData, image: '' })}>
                                     <Feather name="x" size={16} color="#fff" />
@@ -160,6 +170,12 @@ const RegisterPage = ({ isDarkMode, toggleTheme, navigation }) => {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
+            <ImagePickerSheet 
+                isVisible={isSheetVisible}
+                onClose={() => setIsSheetVisible(false)}
+                onImagePicked={handleImageResult}
+                isDarkMode={isDarkMode}
+            />
         </AppWrapper>
     );
 };

@@ -5,7 +5,7 @@ const API_URL = process.env.REACT_APP_API_URL || "http://192.168.1.141:3000/api"
 
 /* Helper function to generate authorization headers using the stored session token */
 const getAuthHeaders = () => {
-    const token = sessionStorage.getItem('token');
+    const token = AsyncStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : '' 
@@ -17,8 +17,8 @@ const handleResponse = async (response) => {
     if (!response.ok) {
         /* Auto-logout if the session is no longer valid */
         if (response.status === 401 || response.status === 403) {
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('userId');
+            AsyncStorage.removeItem('token');
+            AsyncStorage.removeItem('userId');
             window.location.href = '/login'; 
             throw new Error('Session expired. Please login again.');
         }
@@ -45,7 +45,7 @@ export const loginUser = async (email, password) => {
 
         const data = await response.json();
         
-        /* Store authentication data in sessionStorage for session persistence */
+        /* Store authentication data in AsyncStorage for session persistence */
         if (data.token) AsyncStorage.setItem('token', data.token);
         if (data.userId) AsyncStorage.setItem('userId', data.userId);
         
@@ -76,7 +76,7 @@ export const registerUser = async (userData) => {
 
 export const getUser = async (userId) => {
     try {
-        const idToFetch = userId || sessionStorage.getItem('userId');
+        const idToFetch = userId || AsyncStorage.getItem('userId');
         if (!idToFetch) return null;
 
         const response = await fetch(`${API_URL}/users/${idToFetch}`, {
