@@ -1,19 +1,34 @@
 /* client/src/components/ProfileTab.js */
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Image, StyleSheet, Alert, useWindowDimensions, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../styles/theme';
 
 const ProfileTab = ({ isOpen, onClose, user, isDarkMode, navigation }) => {
-    
+    const { width, height } = useWindowDimensions();
+    const isLandscape = width > height;
+
     /**
-     * Clears local storage and redirects to the login screen.
+     * Professional Logout with Confirmation Alert
      */
-    const handleLogout = async () => {
-        await AsyncStorage.clear();
-        onClose();
-        navigation.replace('Login'); // Navigation logic from original Navbar
+    const handleLogout = () => {
+        Alert.alert(
+            "Logging Out",
+            "Are you sure you want to return to the shore?",
+            [
+                { text: "Stay Diving", style: "cancel" },
+                { 
+                    text: "Logout", 
+                    style: "destructive", 
+                    onPress: async () => {
+                        await AsyncStorage.clear(); // Clears token & userId
+                        onClose();
+                        navigation.replace('Login'); // Prevent going back to Dashboard
+                    } 
+                }
+            ]
+        );
     };
 
     return (
@@ -21,61 +36,53 @@ const ProfileTab = ({ isOpen, onClose, user, isDarkMode, navigation }) => {
             <View style={styles.modalOverlay}>
                 <View style={[
                     styles.tabContent, 
-                    { backgroundColor: isDarkMode ? theme.colors.darkBg : '#fff' }
+                    { 
+                        backgroundColor: isDarkMode ? theme.colors.darkBg : '#fff',
+                        height: isLandscape ? '90%' : '65%' // Adaptive height
+                    }
                 ]}>
-                    {/* Close Button at the top right corner */}
                     <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
                         <Feather name="x" size={24} color={isDarkMode ? '#fff' : '#000'} />
                     </TouchableOpacity>
 
-                    <Text style={[
-                        styles.title, 
-                        { color: isDarkMode ? '#fff' : theme.colors.deepNavy }
-                    ]}>
-                        My Profile
-                    </Text>
+                    <ScrollView contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
+                        <Text style={[styles.title, { color: isDarkMode ? '#fff' : theme.colors.deepNavy }]}>
+                            My Profile
+                        </Text>
 
-                    {/* Static Profile Image - No editing as requested */}
-                    <View style={styles.avatarWrapper}>
-                        {user.image ? (
-                            <Image source={{ uri: user.image }} style={styles.avatarLarge} />
-                        ) : (
-                            <View style={styles.placeholderLarge}>
-                                <Text style={styles.initialTextLarge}>
-                                    {user.name?.charAt(0).toUpperCase()}
+                        <View style={styles.avatarWrapper}>
+                            {user.image ? (
+                                <Image source={{ uri: user.image }} style={styles.avatarLarge} />
+                            ) : (
+                                <View style={styles.placeholderLarge}>
+                                    <Text style={styles.initialTextLarge}>
+                                        {user.name?.charAt(0).toUpperCase()}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+
+                        <View style={styles.infoContainer}>
+                            <View style={styles.infoItem}>
+                                <Text style={styles.label}>Full Name</Text>
+                                <Text style={[styles.value, { color: isDarkMode ? '#fff' : theme.colors.textDark }]}>
+                                    {user.name}
                                 </Text>
                             </View>
-                        )}
-                    </View>
-
-                    {/* User Details List - Static display */}
-                    <View style={styles.infoContainer}>
-                        <View style={styles.infoItem}>
-                            <Text style={styles.label}>Full Name</Text>
-                            <Text style={[
-                                styles.value, 
-                                { color: isDarkMode ? '#fff' : theme.colors.textDark }
-                            ]}>
-                                {user.name}
-                            </Text>
+                            
+                            <View style={styles.infoItem}>
+                                <Text style={styles.label}>Email Address</Text>
+                                <Text style={[styles.value, { color: isDarkMode ? '#fff' : theme.colors.textDark }]}>
+                                    {user.email}
+                                </Text>
+                            </View>
                         </View>
-                        
-                        <View style={styles.infoItem}>
-                            <Text style={styles.label}>Email Address</Text>
-                            <Text style={[
-                                styles.value, 
-                                { color: isDarkMode ? '#fff' : theme.colors.textDark }
-                            ]}>
-                                {user.email}
-                            </Text>
-                        </View>
-                    </View>
 
-                    {/* Red Logout Button */}
-                    <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-                        <Feather name="log-out" size={20} color="#fff" style={{ marginRight: 10 }} />
-                        <Text style={styles.logoutText}>Logout from S.E.A.</Text>
-                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                            <Feather name="log-out" size={20} color="#fff" style={{ marginRight: 10 }} />
+                            <Text style={styles.logoutText}>Logout from S.E.A.</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
                 </View>
             </View>
         </Modal>
