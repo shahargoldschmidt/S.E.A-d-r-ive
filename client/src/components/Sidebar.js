@@ -1,93 +1,150 @@
 /* client/src/components/Sidebar.js */
-import React, { useState, useRef } from 'react';
-import { Icons } from '../utils/Icons'; 
-import '../styles/sidebar.css';
+import React from 'react';
+import { 
+    View, 
+    Text, 
+    TouchableOpacity, 
+    Modal, 
+    Image, 
+    useWindowDimensions, 
+    Alert,
+    StyleSheet
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Icons } from '../utils/Icons'; // Using our unified icon system
+import { theme } from '../styles/theme';
+import { getNavbarStyles } from '../styles/navbarStyles';
+import AppLogo from '../assets/Logo.png';
 
-const Sidebar = ({ activeTab, setActiveTab, onOpenFolderModal, onOpenTextFileModal, onUploadFile, onUploadPhoto }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    
-    /* Refs to trigger hidden native file pickers */
-    const fileInputRef = useRef(null);
-    const photoInputRef = useRef(null);
+/**
+ * Sidebar Component for S.E.A. D(R)IVE Native.
+ * Provides navigation for 'Recent', 'Trash' and 'Logout' actions.
+ */
+const Sidebar = ({ isOpen, onClose, isDarkMode, navigation, activeTab, setActiveTab }) => {
+    const { width, height } = useWindowDimensions();
+    const styles = getNavbarStyles(width, height, isDarkMode);
 
-    const menuItems = [
-        { id: 'Home', icon: <Icons.Home />, label: 'Home' },
-        { id: 'My Storage', icon: <Icons.Storage />, label: 'My Storage' },
-        { id: 'Recent', icon: <Icons.Clock />, label: 'Recent' },
-        { id: 'Shared With Me', icon: <Icons.Shared />, label: 'Shared With Me' },
-        { id: 'Starred', icon: <Icons.Starred />, label: 'Starred' },
-        { id: 'Trash', icon: <Icons.Trash />, label: 'Trash' }
-    ];
+    // If the sidebar isn't triggered, don't render anything
+    if (!isOpen) return null;
 
-    const handleFileChange = (e, type) => {
-        if (e.target.files[0]) {
-            if (type === 'photo') onUploadPhoto(e.target.files[0]);
-            else onUploadFile(e.target.files[0]);
-        }
-        setIsDropdownOpen(false);
-        /* Clear input value to allow re-uploading the same file if needed */
-        e.target.value = ''; 
+    /**
+     * handleLogout: Clears user session and navigates to the login shore.
+     * Includes a confirmation alert for professional UX.
+     */
+    const handleLogout = () => {
+        Alert.alert(
+            "Logging Out",
+            "Are you sure you want to return to the shore?",
+            [
+                { text: "Stay Diving", style: "cancel" },
+                { 
+                    text: "Logout", 
+                    style: "destructive", 
+                    onPress: async () => {
+                        try {
+                            // Clear all dive data from storage
+                            await AsyncStorage.clear();
+                            onClose();
+                            // Redirect to login and reset navigation stack
+                            navigation.replace('Login'); 
+                        } catch (error) {
+                            console.error("Logout drift detected:", error);
+                        }
+                    } 
+                }
+            ]
+        );
+    };
+
+    /**
+     * handleNavigation: Updates the global active tab and closes the menu.
+     * Syncs with DashboardPage state.
+     */
+    const handleNavigation = (tabName) => {
+        setActiveTab(tabName);
+        onClose();
     };
 
     return (
-        <aside className="sidebar-container">
-            {/* Hidden file inputs triggered via Ref */}
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                style={{display: 'none'}} 
-                accept=".txt" 
-                onChange={(e) => handleFileChange(e, 'file')} 
-            />
-            <input 
-                type="file" 
-                ref={photoInputRef} 
-                accept="image/*" 
-                style={{display: 'none'}} 
-                onChange={(e) => handleFileChange(e, 'photo')} 
-            />
+        <Modal transparent visible={isOpen} animationType="fade">
+            <TouchableOpacity 
+                style={styles.sidebarOverlay} 
+                activeOpacity={1} 
+                onPress={onClose}
+            >
+                {/* Main Sidebar Container - Uses space-between to push logout to bottom */}
+                <View style={[styles.sidebarContent, { justifyContent: 'space-between' }]}>
+                    
+                    {/* Top Section: Branding and Main Navigation */}
+                    <View>
+                        {/* Branding Header */}
+                        <View style={styles.sidebarHeader}>
+                            <Image source={AppLogo} style={styles.sidebarLogo} resizeMode="contain" />
+                            <Text style={styles.sidebarTitle}>S.E.A. D(R)IVE</Text>
+                        </View>
 
-            <div className="new-dive-wrapper">
-                <button className="new-dive-btn" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                    <Icons.Plus size={24} /> <span>New Dive</span>
-                </button>
+                        {/* Recent Dives Tab: Filters files by recent activity */}
+                        <TouchableOpacity 
+                            style={[styles.sidebarItem, activeTab === 'Recent' && styles.activeItem]}
+                            onPress={() => handleNavigation('Recent')}
+                        >
+                            <Icons.Clock 
+                                size={22} 
+                                color={activeTab === 'Recent' ? theme.colors.oceanBlue : '#888'} 
+                            />
+                            <Text style={[
+                                styles.sidebarText, 
+                                activeTab === 'Recent' && { color: theme.colors.oceanBlue }
+                            ]}>
+                                Recent Dives
+                            </Text>
+                        </TouchableOpacity>
 
-                {/* Create/Upload dropdown menu */}
-                {isDropdownOpen && (
-                    <div className="dropdown-menu">
-                        <div className="dropdown-item" onClick={() => { onOpenFolderModal(); setIsDropdownOpen(false); }}>
-                            <Icons.Folder /> New Folder
-                        </div>
-                        
-                        <div className="dropdown-item" onClick={() => { onOpenTextFileModal(); setIsDropdownOpen(false); }}>
-                             <Icons.File /> New Text File
-                        </div>
+                        {/* Trash Bin Tab: Displays soft-deleted items */}
+                        <TouchableOpacity 
+                            style={[styles.sidebarItem, activeTab === 'Trash' && styles.activeItem]}
+                            onPress={() => handleNavigation('Trash')}
+                        >
+                            <Icons.Trash 
+                                size={22} 
+                                color={activeTab === 'Trash' ? theme.colors.error : '#888'} 
+                            />
+                            <Text style={[
+                                styles.sidebarText, 
+                                activeTab === 'Trash' && { color: theme.colors.error }
+                            ]}>
+                                Trash Bin
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        <div className="dropdown-item" onClick={() => { fileInputRef.current.click(); setIsDropdownOpen(false); }}>
-                            <Icons.UploadFile /> Upload File
-                        </div>
+                    {/* Bottom Section: Authentication & Exit */}
+                    <View style={localStyles.footerContainer}>
+                        <TouchableOpacity 
+                            style={styles.sidebarItem} 
+                            onPress={handleLogout}
+                        >
+                            <Icons.Logout size={22} color="#ff5252" />
+                            <Text style={[styles.sidebarText, { color: '#ff5252' }]}>
+                                Logout from S.E.A.
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        <div className="dropdown-item" onClick={() => { photoInputRef.current.click(); setIsDropdownOpen(false); }}>
-                            <Icons.UploadPhoto /> Upload Photo
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <nav className="sidebar-menu">
-                {menuItems.map((item) => (
-                    <div 
-                        key={item.id}
-                        className={`menu-item ${activeTab === item.id ? 'active' : ''}`}
-                        onClick={() => setActiveTab(item.id)}
-                    >
-                        {item.icon}
-                        <span>{item.label}</span>
-                    </div>
-                ))}
-            </nav>
-        </aside>
+                </View>
+            </TouchableOpacity>
+        </Modal>
     );
 };
+
+// Local specific styles for the footer area
+const localStyles = StyleSheet.create({
+    footerContainer: {
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0,0,0,0.05)',
+        paddingTop: 10,
+        marginBottom: 10
+    }
+});
 
 export default Sidebar;
