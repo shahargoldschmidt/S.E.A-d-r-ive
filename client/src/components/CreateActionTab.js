@@ -12,7 +12,7 @@ const CreateActionTab = ({ isOpen, onClose, onSelect, isDarkMode }) => {
     // Added IDs that match the activeModal states in DashboardPage
     const actions = [
         { id: 'folder', label: 'New Folder', icon: 'folder-plus', color: '#4facfe' },
-        { id: 'textFile', label: 'New Text', icon: 'file-text', color: '#00f2fe' },
+        { id: 'textFile', label: 'New File', icon: 'file-text', color: '#00f2fe' },
         { id: 'uploadFile', label: 'Upload File', icon: 'upload', color: '#00acc1' },
         { id: 'uploadPhoto', label: 'Upload Photo', icon: 'image', color: '#7b1fa2' }
     ];
