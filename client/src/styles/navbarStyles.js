@@ -8,7 +8,7 @@ export const getNavbarStyles = (width, height, isDarkMode) => {
 
     return StyleSheet.create({
         navContainer: {
-            height: 70,
+            height: isLandscape ? 60 : 70, // Slightly shorter bar in landscape to save vertical space
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: 15,
@@ -31,17 +31,18 @@ export const getNavbarStyles = (width, height, isDarkMode) => {
         },
         searchInput: { flex: 1, fontSize: 16, color: isDarkMode ? '#fff' : colors.textDark, paddingVertical: 0 },
         
-        // --- Search Results Aesthetic Dropdown ---
         searchDropdown: {
             position: 'absolute',
-            top: 52, left: 0, right: 0,
+            top: isLandscape ? 48 : 52, // Adjust top position slightly based on nav height
+            maxHeight: isLandscape ? 180 : 380, // Drastically reduce max height in landscape
+            // ---------------------------
+            left: 0, right: 0,
             backgroundColor: isDarkMode ? '#1e293b' : '#fff',
             borderRadius: 18,
             paddingVertical: 10,
-            elevation: 15, // Android shadow
-            shadowColor: '#000', // iOS shadow
+            elevation: 15, 
+            shadowColor: '#000', 
             shadowOpacity: 0.3, shadowRadius: 15,
-            maxHeight: 380,
         },
         searchResultItem: {
             flexDirection: 'row',
@@ -63,5 +64,14 @@ export const getNavbarStyles = (width, height, isDarkMode) => {
         avatarBtn: { width: 42, height: 42, borderRadius: 21, overflow: 'hidden', borderWidth: 2, borderColor: colors.oceanBlue },
         avatarImg: { width: '100%', height: '100%' },
         avatarInitial: { width: '100%', height: '100%', backgroundColor: colors.oceanBlue, justifyContent: 'center', alignItems: 'center' },
+    
+        sidebarOverlay: { position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 5000 },
+        sidebarContent: { width: 280, height: '100%', backgroundColor: isDarkMode ? colors.darkBg : '#fff', paddingTop: 50 },
+        sidebarHeader: { flexDirection: 'row', alignItems: 'center', padding: 20, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+        sidebarLogo: { width: 40, height: 40, marginRight: 10 },
+        sidebarTitle: { fontSize: 18, fontWeight: 'bold', color: colors.oceanBlue },
+        sidebarItem: { flexDirection: 'row', alignItems: 'center', padding: 18, gap: 15 },
+        sidebarText: { fontSize: 16, fontWeight: '500' },
+        activeItem: { backgroundColor: colors.oceanBlue + '20', borderTopRightRadius: 25, borderBottomRightRadius: 25 },
     });
 };

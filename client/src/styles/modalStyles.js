@@ -3,43 +3,48 @@ import { StyleSheet } from 'react-native';
 import { theme } from './theme';
 
 export const getModalStyles = (width, height, isDarkMode) => {
+    const isLandscape = width > height;
+
     return StyleSheet.create({
+        // Background overlay for the folder popup
         overlay: {
             flex: 1,
-            backgroundColor: 'rgba(0, 20, 40, 0.7)',
+            backgroundColor: 'rgba(0, 20, 40, 0.75)',
             justifyContent: 'center',
             alignItems: 'center',
         },
-        // Main card container for the folder popup
+        // Card style for the Folder Modal & Popups
         modalCard: {
-            width: '85%',
+            width: isLandscape ? '60%' : '85%', // Narrower in landscape so it doesn't stretch too much
             maxWidth: 450,
+            maxHeight: isLandscape ? '85%' : 'auto', // Prevent overflowing vertical screen space
+            alignSelf: 'center', // Keep centered when width changes
+            // ---------------------------
             padding: 30,
             borderRadius: 24,
-            backgroundColor: isDarkMode ? theme.colors.darkCard : theme.colors.creamCard,
+            backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
             elevation: 20,
             shadowColor: '#000',
             shadowOpacity: 0.25,
             shadowRadius: 15,
         },
-        // Specialized styling for the full-screen File creation view
-        fullViewContainer: {
-            flex: 1,
-            backgroundColor: isDarkMode ? theme.colors.darkBg : theme.colors.lightBg,
-        },
+        // Header styling for the full-screen File Tab
         header: {
             flexDirection: 'row',
             alignItems: 'center',
             padding: 20,
-            paddingTop: theme.safeSizes.statusBar + 10,
+            // Less top padding in landscape as status bar is often smaller or to the side
+            paddingTop: isLandscape ? 20 : 50, 
+            // ---------------------------
+            backgroundColor: isDarkMode ? 'rgba(15, 32, 39, 0.9)' : theme.colors.oceanBlue,
         },
-        title: {
-            fontSize: 22,
-            fontWeight: '800',
-            color: '#0ea5e9', 
-            marginBottom: 20,
-            textAlign: 'center',
+        headerTitle: {
+            color: '#fff',
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginLeft: 15,
         },
+        // Reusable input labels
         label: {
             fontSize: 13,
             fontWeight: '600',
@@ -48,11 +53,11 @@ export const getModalStyles = (width, height, isDarkMode) => {
             marginLeft: 5,
         },
         errorText: {
-            color: theme.colors.error,
+            color: '#ef4444',
             fontSize: 13,
             textAlign: 'center',
             marginBottom: 15,
-            fontWeight: '600',
+            fontWeight: '700',
         }
     });
 };
