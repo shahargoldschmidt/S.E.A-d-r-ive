@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. MongoDB Service (החדש!)
+  # 1. MongoDB Service
   mongo:
     image: mongo:latest
     container_name: mongo_db
@@ -40,11 +40,10 @@ services:
       - ex3_net
     depends_on:
       - cpp_server 
-      - mongo # מחכים גם למונגו
+      - mongo 
     environment:
       - CPP_SERVER_HOST=cpp_server
       - CPP_SERVER_PORT=5555
-      # משתנה סביבה כדי שנדע לאן להתחבר
       - MONGO_URI=mongodb://mongo:27017/myDriveDB
 
   # 4. React Client
