@@ -9,7 +9,8 @@ import Sidebar from './Sidebar';
 import ProfileTab from './ProfileTab';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
+/* Added activeTab, setActiveTab and onFileClick props for full sync */
+const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, onFileClick }) => {
     const { width, height } = useWindowDimensions();
     const styles = getNavbarStyles(width, height, isDarkMode);
     
@@ -20,15 +21,10 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
     const [showSidebar, setShowSidebar] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
 
-    /**
-     * Returns the complete icon component based on file type.
-     * Centralizing icon logic for cleaner JSX.
-     */
     const renderFileIcon = (type) => {
         let iconName = 'file-text';
         if (type?.toLowerCase() === 'folder') iconName = 'folder';
         if (type?.toLowerCase() === 'image') iconName = 'image';
-
         return (
             <View style={styles.resultIconWrapper}>
                 <Feather name={iconName} size={18} color={theme.colors.oceanBlue} />
@@ -47,7 +43,6 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
         fetchUser();
     }, []);
 
-    // Debounced search logic to prevent excessive API calls
     useEffect(() => {
         const delay = setTimeout(async () => {
             if (query.trim().length > 0) {
@@ -67,16 +62,21 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
         return () => clearTimeout(delay);
     }, [query]);
 
+    /* Function to handle selection from search results */
+    const handleResultSelect = (file) => {
+        setQuery(''); // Clear search
+        setResults([]);
+        onFileClick(file); // Trigger opening in Dashboard
+    };
+
     return (
         <View style={styles.navContainer}>
-            {/* LEFT: Mobile Sidebar Toggle */}
             <View style={styles.leftSection}>
                 <TouchableOpacity onPress={() => setShowSidebar(true)}>
                     <Feather name="menu" size={26} color={isDarkMode ? '#fff' : '#444'} />
                 </TouchableOpacity>
             </View>
 
-            {/* MIDDLE: Search Engine with Dropdown */}
             <View style={styles.middleSection}>
                 <View style={styles.searchWrapper}>
                     <Feather name="search" size={18} color="#888" style={{ marginRight: 8 }} />
@@ -94,7 +94,6 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
                     )}
                 </View>
                 
-                {/* Search Result Overlay Logic */}
                 {query.length > 0 && (
                     <View style={styles.searchDropdown}>
                         {isSearching ? (
@@ -103,10 +102,12 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
                             <Text style={styles.searchStatusText}>No treasures found 🦀</Text>
                         ) : (
                             results.map(file => (
-                                <TouchableOpacity key={file.id} style={styles.searchResultItem}>
-                                    {/* Component returned directly from function */}
+                                <TouchableOpacity 
+                                    key={file.id} 
+                                    style={styles.searchResultItem}
+                                    onPress={() => handleResultSelect(file)} /* Integrated onPress */
+                                >
                                     {renderFileIcon(file.type)}
-
                                     <View style={{ flex: 1 }}>
                                         <Text style={[styles.resultName, { color: isDarkMode ? '#fff' : theme.colors.textDark }]} numberOfLines={1}>
                                             {file.name}
@@ -115,11 +116,6 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
                                             {file.createdAt ? new Date(file.createdAt).toLocaleDateString() : 'Recent'} • {file.owner || 'Me'}
                                         </Text>
                                     </View>
-
-                                    {/* File size formatted from bytes to KB */}
-                                    <Text style={styles.resultSize}>
-                                        {file.size ? (file.size / 1024).toFixed(1) + ' KB' : ''}
-                                    </Text>
                                 </TouchableOpacity>
                             ))
                         )}
@@ -127,7 +123,6 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
                 )}
             </View>
 
-            {/* RIGHT: System Toggles & Profile Access */}
             <View style={styles.rightSection}>
                 <TouchableOpacity onPress={toggleTheme}>
                     <Feather name={isDarkMode ? "sun" : "moon"} size={22} color={isDarkMode ? "#FFD700" : "#444"} />
@@ -143,8 +138,23 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} isDarkMode={isDarkMode} />
-            <ProfileTab isOpen={showProfile} onClose={() => setShowProfile(false)} user={user} isDarkMode={isDarkMode} navigation={navigation} />
+            {/* Now passing all required sync props to Sidebar */}
+            <Sidebar 
+                isOpen={showSidebar} 
+                onClose={() => setShowSidebar(false)} 
+                isDarkMode={isDarkMode} 
+                navigation={navigation}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+            />
+            
+            <ProfileTab 
+                isOpen={showProfile} 
+                onClose={() => setShowProfile(false)} 
+                user={user} 
+                isDarkMode={isDarkMode} 
+                navigation={navigation} 
+            />
         </View>
     );
 };
