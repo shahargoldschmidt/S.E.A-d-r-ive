@@ -131,13 +131,13 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
 
     /* --- Core Handlers (Merged Functionality) --- */
     const handleItemClick = async (file) => {
-        const fileId = file._id || file.id;
+        const fileId = file.id || file._id;
         if (file.type === 'folder') {
             setFolderStack(prev => [...prev, currentFolder]);
             setCurrentFolder(file); 
         } else {
             const fullFile = await getFileById(fileId);
-            setSelectedFile(fullFile);
+            setSelectedFile({ ...fullFile, id: fileId });
             setActiveModal('editor');
         }
     };
