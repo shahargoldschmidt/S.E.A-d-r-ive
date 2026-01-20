@@ -64,8 +64,8 @@ services:
       - node_server
     environment:
       # תמיד תוודאי שזה ה-IP האמיתי שלך באותו רגע
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.7.9
-      - EXPO_PUBLIC_API_URL=http://192.168.7.9:3000/api
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.142
+      - EXPO_PUBLIC_API_URL=http://192.168.1.142:3000/api
     stdin_open: true
     tty: true
 
