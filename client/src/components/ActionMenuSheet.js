@@ -27,7 +27,7 @@ const ActionMenuSheet = ({ visible, onClose, actions, isDarkMode }) => {
                                 key={index} 
                                 style={styles.actionItem} 
                                 onPress={() => {
-                                    action.onClick();
+                                    action.onPress();
                                     onClose();
                                 }}
                             >
