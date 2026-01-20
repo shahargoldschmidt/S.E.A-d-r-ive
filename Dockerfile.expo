@@ -3,26 +3,32 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# מעתיקים רק את package.json (בלי ה-lock) כדי למנוע נעילה על גרסאות ישנות
+# Copy only package.json to avoid version locking from old lock files
 COPY client/package.json ./
 
-# 1. התקנה בסיסית + כל החבילות שהיו חסרות (הוספתי את image-picker)
+# 1. Install base dependencies and required Expo packages (including image-picker)
 RUN npm install && \
     npm install expo-sharing expo-file-system expo-document-picker expo-image-picker
 
-# 2. תיקון הגרסה כדי להעלים את האזהרה הצהובה בטלפון
+# 2. Pin react-native version to resolve version mismatch warnings on mobile devices
 RUN npm install react-native@0.81.5
 
-# 3. התקנת ngrok לחיבור יציב
+# 3. Install ngrok to support stable tunnel connections
 RUN npm install @expo/ngrok
 
-# העתקת שאר הקבצים
+# Copy the rest of the application source code
 COPY client/ .
 
+<<<<<<< HEAD
 # הגדרת משתני סביבה
 ENV REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.142" 
+=======
+# Environment variables configuration
+# Make sure this matches your current development machine's IP
+ENV REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.234" 
+>>>>>>> 9cf728771d620951e75a519e0792a9a7745153f2
 
 EXPOSE 8081 19000 19001 19002
 
-# 4. נשארים עם Tunnel כי זה מה שעבד לך בוודאות
+# 4. Use tunneling mode for guaranteed remote connectivity
 CMD ["npx", "expo", "start", "--tunnel", "-c"]
