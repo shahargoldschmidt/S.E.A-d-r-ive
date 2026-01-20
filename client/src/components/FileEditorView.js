@@ -15,7 +15,6 @@ const FileEditorView = ({
     onSave, 
     currentUser, 
     isDarkMode,
-    renderFileIcon 
 }) => {
     const { width, height } = useWindowDimensions();
     const styles = getEditorStyles(width, height, isDarkMode);
@@ -110,7 +109,7 @@ const FileEditorView = ({
                                     />
                                 ) : (
                                     <Text style={styles.fileTitle} numberOfLines={1}>
-                                       {getFileIcon(file.type, 22)}
+                                       {getFileIcon(file.type, 22)} {file.name}
                                     </Text>
                                 )}
                             </View>
