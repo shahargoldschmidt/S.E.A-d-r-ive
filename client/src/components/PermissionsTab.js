@@ -110,7 +110,7 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
                     <ScrollView keyboardShouldPersistTaps="handled">
                         {/* New Collaborator Entry */}
                         <View style={styles.inputSection}>
-                            <Text style={styles.label}>INVITE BY EMAIL</Text>
+                            <Text style={[styles.label, { color: '#ffffff' }]}>INVITE BY EMAIL</Text>
                             <TextInput 
                                 style={authStyles.seaInput}
                                 placeholder="Enter user email..."
@@ -140,7 +140,7 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
 
                         {/* Collaborator List */}
                         <View style={{ padding: 20 }}>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#64748b', marginBottom: 15 }}>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#e0e5eb', marginBottom: 15 }}>
                                 PEOPLE WITH ACCESS
                             </Text>
                             
