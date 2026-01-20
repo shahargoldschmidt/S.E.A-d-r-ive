@@ -6,6 +6,7 @@ import { getEditorStyles } from '../styles/editorStyles';
 import { theme } from '../styles/theme';
 import AppWrapper from './AppWrapper';
 import * as ImagePicker from 'expo-image-picker';
+import { getFileIcon } from '../utils/dashboardUtils';
 
 const FileEditorView = ({ 
     isOpen, 
@@ -109,7 +110,7 @@ const FileEditorView = ({
                                     />
                                 ) : (
                                     <Text style={styles.fileTitle} numberOfLines={1}>
-                                        {renderFileIcon(file.type)} {title}
+                                       {getFileIcon(file.type, 22)}
                                     </Text>
                                 )}
                             </View>

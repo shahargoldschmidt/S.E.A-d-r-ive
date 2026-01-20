@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { Icons } from '../../utils/Icons'; // Using our new Native Icons
 import { getFileListStyles } from '../../styles/fileListStyles';
+import { getFileIcon } from '../utils/dashboardUtils';
 
 const FileList = ({ 
     files, 
@@ -19,16 +20,6 @@ const FileList = ({
 
     const renderItem = ({ item }) => {
         const isStarred = starredIds.has(item.id);
-        
-        // --- Smart Icon Logic ---
-        const renderTypeIcon = () => {
-            const type = item.type?.toLowerCase();
-            const iconSize = width > height ? 22 : 28; // Smaller icons in landscape
-
-            if (type === 'folder') return <Icons.Folder size={iconSize} color="#0ea5e9" />;
-            if (type === 'image') return <Icons.Image size={iconSize} color="#4facfe" />;
-            return <Icons.FileText size={iconSize} color="#64748b" />; // Default for .txt or unknown
-        };
 
         return (
             <TouchableOpacity 
@@ -38,7 +29,7 @@ const FileList = ({
             >
                 {/* LEFT: Dynamic Icon based on File Type */}
                 <View style={styles.iconWrapper}>
-                    {renderTypeIcon()}
+                    {getFileIcon(item.type, width > height ? 22 : 28)}
                 </View>
 
                 {/* MIDDLE: File Name & Details */}

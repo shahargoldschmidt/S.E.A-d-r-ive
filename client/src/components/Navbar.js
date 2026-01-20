@@ -8,6 +8,7 @@ import { getNavbarStyles } from '../styles/navbarStyles';
 import Sidebar from './Sidebar';
 import ProfileTab from './ProfileTab';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getFileIcon } from '../utils/dashboardUtils';
 
 /* Added activeTab, setActiveTab and onFileClick props for full sync */
 const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, onFileClick }) => {
@@ -20,17 +21,6 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, 
     const [isSearching, setIsSearching] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
-
-    const renderFileIcon = (type) => {
-        let iconName = 'file-text';
-        if (type?.toLowerCase() === 'folder') iconName = 'folder';
-        if (type?.toLowerCase() === 'image') iconName = 'image';
-        return (
-            <View style={styles.resultIconWrapper}>
-                <Feather name={iconName} size={18} color={theme.colors.oceanBlue} />
-            </View>
-        );
-    };
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -107,7 +97,7 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, 
                                     style={styles.searchResultItem}
                                     onPress={() => handleResultSelect(file)} /* Integrated onPress */
                                 >
-                                    {renderFileIcon(file.type)}
+                                    {getFileIcon(file.type, 18)}
                                     <View style={{ flex: 1 }}>
                                         <Text style={[styles.resultName, { color: isDarkMode ? '#fff' : theme.colors.textDark }]} numberOfLines={1}>
                                             {file.name}
