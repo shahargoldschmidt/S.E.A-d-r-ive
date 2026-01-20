@@ -337,6 +337,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
                         file={selectedFile}
                         currentUser={currentUser}
                         isDarkMode={isDarkMode}
+                        onSave={async (id, updates) => { await updateFile(id, updates); loadFiles(); }}
                     />
                 </>
             )}

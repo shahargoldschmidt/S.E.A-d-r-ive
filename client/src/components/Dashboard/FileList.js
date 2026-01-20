@@ -70,7 +70,7 @@ const FileList = ({
         <FlatList
             data={files}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item, index) => (item.id || item._id || index).toString()}
             contentContainerStyle={styles.listContainer}
             // Optimization for orientation changes
             removeClippedSubviews={Platform.OS === 'android'}
