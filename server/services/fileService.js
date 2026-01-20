@@ -56,7 +56,8 @@ const getFileData = async (userId, fileId) => {
     }
     
     const content = await fileModel.getTcpContent(fileId);
-    return { ...meta, content };
+    const metaObj = meta.toJSON(); 
+    return { ...metaObj, content };
 };
 
  // Validate parent folder and initialize permissions.
@@ -134,8 +135,8 @@ const searchFiles = async (userId, query) => {
     for (const item of resultsMap.values()) {
         const hasAccess = await permissionService.hasPermission(userId, item.id, 'READ');
         if (hasAccess) {
-            const perms = await permissionService.getPermissions(item.id);
-            finalResults.push({ ...item, permissions: perms });
+            const itemObj = item.toJSON ? item.toJSON() : item; 
+            finalResults.push({ ...itemObj, permissions: perms });
         }
     }
     return finalResults;

@@ -34,7 +34,7 @@ const ActionMenuSheet = ({ visible, onClose, actions, isDarkMode }) => {
                                 {/* Using Feather component with action.iconName */}
                                 <View style={{ width: 24, alignItems: 'center' }}>
                                     <Feather 
-                                        name={action.iconName || 'file'} 
+                                        name={action.iconName || action.icon ||  'file'} 
                                         size={20} 
                                         color={action.danger ? '#e74c3c' : (isDarkMode ? '#fff' : '#444')} 
                                     />

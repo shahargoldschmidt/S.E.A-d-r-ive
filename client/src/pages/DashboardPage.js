@@ -178,11 +178,19 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
     const handleUploadAction = async (isImage) => {
         const result = isImage ? await FileManager.pickImage(false) : await FileManager.pickDocument();
     if (result && !result.canceled) {
+        const asset = result.assets ? result.assets[0] : result; 
+        const base64Data = asset.base64;
+
+        if (!base64Data) {
+            Alert.alert("Error", "Could not retrieve image data. Ensure base64 is enabled.");
+            return;
+        }
+
         try {
             await createFile({ 
-                name: result.name || `Dive_Image_${Date.now()}.jpg`, 
+                name: asset.fileName || result.name || `Dive_Image_${Date.now()}.jpg`, 
                 type: isImage ? 'image' : 'file', 
-                content: result.base64, 
+                content: base64Data,
                 parentId: currentFolder?.id 
             });
             loadFiles();
@@ -277,7 +285,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
             {/* --- Modals Management --- */}
             
             <ActionMenuSheet 
-                isVisible={activeModal === 'actionMenu'}
+                visible={activeModal === 'actionMenu'}
                 onClose={() => setActiveModal(null)}
                 file={selectedFile}
                 actions={selectedFile ? getFileActions(selectedFile) : []}

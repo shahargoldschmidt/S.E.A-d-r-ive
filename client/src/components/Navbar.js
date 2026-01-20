@@ -93,7 +93,7 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, 
                         ) : (
                             results.map(file => (
                                 <TouchableOpacity 
-                                    key={file._id || file.id} 
+                                    key={file.id} 
                                     style={styles.searchResultItem}
                                     onPress={() => handleResultSelect(file)} /* Integrated onPress */
                                 >
