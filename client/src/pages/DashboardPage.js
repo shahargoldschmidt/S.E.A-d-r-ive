@@ -112,7 +112,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
         const activeFiles = files.filter(f => !trashedIds.has(f.id));
         switch (activeTab) {
             case 'Starred': return activeFiles.filter(f => starredIds.has(f.id));
-            case 'Shared With Me': return activeFiles.filter(f => f.owner !== currentUser?.email);
+            case 'Shared With Me': return activeFiles.filter(f => f.owner !== currentUser?.email && f.userId !== currentUser?.id);
             default: return activeFiles;
         }
     })();
@@ -131,11 +131,12 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
 
     /* --- Core Handlers (Merged Functionality) --- */
     const handleItemClick = async (file) => {
+        const fileId = file._id || file.id;
         if (file.type === 'folder') {
             setFolderStack(prev => [...prev, currentFolder]);
             setCurrentFolder(file); 
         } else {
-            const fullFile = await getFileById(file.id);
+            const fullFile = await getFileById(fileId);
             setSelectedFile(fullFile);
             setActiveModal('editor');
         }
@@ -176,18 +177,18 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
     // Native Image/Doc Upload Logic
     const handleUploadAction = async (isImage) => {
         const result = isImage ? await FileManager.pickImage(false) : await FileManager.pickDocument();
-        if (result) {
-            try {
-                await createFile({ 
-                    name: result.name || `Upload_${Date.now()}`, 
-                    type: isImage ? 'image' : 'file', 
-                    content: result.base64, 
-                    parentId: currentFolder?.id 
-                });
-                loadFiles();
-            } catch (e) { Alert.alert("Error", "Upload failed"); }
-        }
-    };
+    if (result && !result.canceled) {
+        try {
+            await createFile({ 
+                name: result.name || `Dive_Image_${Date.now()}.jpg`, 
+                type: isImage ? 'image' : 'file', 
+                content: result.base64, 
+                parentId: currentFolder?.id 
+            });
+            loadFiles();
+        } catch (e) { Alert.alert("Error", "Upload failed"); }
+    }
+};
 
     // Context Menu Logic
     const getFileActions = (file) => {

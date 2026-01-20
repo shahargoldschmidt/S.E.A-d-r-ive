@@ -105,7 +105,7 @@ const searchFiles = async (userId, query) => {
     const all = await fileModel.getFiles();
 
     // name match by metadata
-    all.filter(f => f.name.includes(query)).forEach(f => resultsMap.set(f.id, f));
+    all.filter(f => String(f.name || "").includes(query)).forEach(f => resultsMap.set(f.id, f));
 
     // content match by TCP
     const tcpIds = await fileModel.searchTcp(query);
@@ -117,7 +117,7 @@ const searchFiles = async (userId, query) => {
         if (meta.type === 'image') continue;
         //edge case If the query is a substring of the ID 
         // might have matched by name and not content in TCP
-        if (id.includes(query)) {
+        if (String(id).includes(query)) {
             // fetch the actual content to verify the match
             const actualContent = await fileModel.getTcpContent(id);
             if (actualContent.includes(query)) { //only after match is verified add to map

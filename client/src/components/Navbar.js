@@ -93,13 +93,13 @@ const Navbar = ({ toggleTheme, isDarkMode, navigation, activeTab, setActiveTab, 
                         ) : (
                             results.map(file => (
                                 <TouchableOpacity 
-                                    key={file.id} 
+                                    key={file._id || file.id} 
                                     style={styles.searchResultItem}
                                     onPress={() => handleResultSelect(file)} /* Integrated onPress */
                                 >
                                     {getFileIcon(file.type, 18)}
                                     <View style={{ flex: 1 }}>
-                                        <Text style={[styles.resultName, { color: isDarkMode ? '#fff' : theme.colors.textDark }]} numberOfLines={1}>
+                                        <Text style={[styles.resultName, { color: isDarkMode ? '#fff' : '#334155' }]} numberOfLines={1}>
                                             {file.name}
                                         </Text>
                                         <Text style={styles.resultMeta}>

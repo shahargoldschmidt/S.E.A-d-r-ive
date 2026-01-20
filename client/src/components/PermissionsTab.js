@@ -7,6 +7,7 @@ import { getPermissionStyles } from '../styles/permissionStyles';
 import { getAuthStyles } from '../styles/authStyles';
 import { theme } from '../styles/theme';
 import AppWrapper from './AppWrapper';
+import { getFileIcon } from '../utils/dashboardUtils';
 
 const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileIcon }) => {
     const { width, height } = useWindowDimensions();
@@ -99,7 +100,7 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
                             <Feather name="arrow-left" size={28} color="#fff" />
                         </TouchableOpacity>
                         <View style={{ marginLeft: 10 }}>
-                            {renderFileIcon(file?.type)}
+                           {getFileIcon(file?.type, 22)}
                         </View>
                         <Text style={styles.headerTitle} numberOfLines={1}>
                             Manage Access: {file?.name}

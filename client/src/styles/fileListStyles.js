@@ -47,6 +47,14 @@ export const getFileListStyles = (width, height, isDarkMode) => {
             fontSize: 12,
             color: isDarkMode ? '#94a3b8' : '#64748b',
             marginTop: 2,
+        }, 
+        infoWrapper: {
+               flex: 1, 
+        },
+        rightActions: {
+            flexDirection: 'row',
+            alignItems: 'center',
+             gap: 10,
         }
     });
 };

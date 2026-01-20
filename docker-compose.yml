@@ -35,7 +35,7 @@ services:
       dockerfile: Dockerfile.node 
     container_name: node_server_container
     ports:
-      - "3000:3000"
+      - "8080:3000"
     networks:
       - ex3_net
     depends_on:
@@ -64,8 +64,8 @@ services:
       - node_server
     environment:
       # תמיד תוודאי שזה ה-IP האמיתי שלך באותו רגע
-      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.142
-      - EXPO_PUBLIC_API_URL=http://192.168.1.142:3000/api
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.225
+      - EXPO_PUBLIC_API_URL=http://192.168.1.225:8080/api
     stdin_open: true
     tty: true
 

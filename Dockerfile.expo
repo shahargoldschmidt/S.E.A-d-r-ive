@@ -19,14 +19,8 @@ RUN npm install @expo/ngrok
 # Copy the rest of the application source code
 COPY client/ .
 
-<<<<<<< HEAD
 # הגדרת משתני סביבה
-ENV REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.142" 
-=======
-# Environment variables configuration
-# Make sure this matches your current development machine's IP
-ENV REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.234" 
->>>>>>> 9cf728771d620951e75a519e0792a9a7745153f2
+ENV REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.225"
 
 EXPOSE 8081 19000 19001 19002
 

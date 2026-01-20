@@ -1,10 +1,11 @@
 /* client/src/components/CreateFileView.js */
 import React, { useState } from 'react';
-import { View, Text, Modal, TextInput, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, Modal, TextInput, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { getModalStyles } from '../styles/modalStyles';
 import { getAuthStyles } from '../styles/authStyles';
 import AppWrapper from './AppWrapper';
+
 
 const CreateFileView = ({ isOpen, onClose, onCreate, isDarkMode }) => {
     const { width, height } = useWindowDimensions();
@@ -41,6 +42,7 @@ const CreateFileView = ({ isOpen, onClose, onCreate, isDarkMode }) => {
     return (
         <Modal visible={isOpen} animationType="slide">
             <AppWrapper isDarkMode={isDarkMode}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView 
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
                     style={{ flex: 1 }}
@@ -94,6 +96,7 @@ const CreateFileView = ({ isOpen, onClose, onCreate, isDarkMode }) => {
                         </View>
                     </View>
                 </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>
             </AppWrapper>
         </Modal>
     );

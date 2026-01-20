@@ -17,8 +17,7 @@ const handleResponse = async (response) => {
         /* Auto-logout if the session is no longer valid */
         if (response.status === 401 || response.status === 403) {
             await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('userId');
-            window.location.href = '/login'; 
+            await AsyncStorage.removeItem('userId'); 
             throw new Error('Session expired. Please login again.');
         }
         const errorData = await response.json().catch(() => ({}));
