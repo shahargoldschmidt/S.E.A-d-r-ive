@@ -5,15 +5,19 @@ import { Feather } from '@expo/vector-icons';
 import { theme } from '../styles/theme';
 import { getTabStyles } from '../styles/tabStyles';
 
-const CreateActionTab = ({ isOpen, onClose, isDarkMode }) => {
+// Added onSelect prop to communicate the chosen action back to Dashboard
+const CreateActionTab = ({ isOpen, onClose, onSelect, isDarkMode }) => {
     const styles = getTabStyles(0, isDarkMode);
 
+    // Added IDs that match the activeModal states in DashboardPage
     const actions = [
-        { label: 'New Folder', icon: 'folder-plus', color: '#4facfe' },
-        { label: 'New Text', icon: 'file-text', color: '#00f2fe' },
-        { label: 'Upload File', icon: 'upload', color: '#00acc1' },
-        { label: 'Upload Photo', icon: 'image', color: '#7b1fa2' }
+        { id: 'folder', label: 'New Folder', icon: 'folder-plus', color: '#4facfe' },
+        { id: 'textFile', label: 'New File', icon: 'file-text', color: '#00f2fe' },
+        { id: 'uploadFile', label: 'Upload File', icon: 'upload', color: '#00acc1' },
+        { id: 'uploadPhoto', label: 'Upload Photo', icon: 'image', color: '#7b1fa2' }
     ];
+
+    if (!isOpen) return null;
 
     return (
         <Modal visible={isOpen} transparent animationType="slide">
@@ -26,7 +30,14 @@ const CreateActionTab = ({ isOpen, onClose, isDarkMode }) => {
                     
                     <View style={styles.actionGrid}>
                         {actions.map((item, idx) => (
-                            <TouchableOpacity key={idx} style={styles.actionItem} onPress={onClose}>
+                            <TouchableOpacity 
+                                key={idx} 
+                                style={styles.actionItem} 
+                                onPress={() => {
+                                    onSelect(item.id); // Triggers the corresponding modal in DashboardPage
+                                    onClose(); // Closes the action menu
+                                }}
+                            >
                                 <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: item.color + '20', justifyContent: 'center', alignItems: 'center' }}>
                                     <Feather name={item.icon} size={24} color={item.color} />
                                 </View>
