@@ -49,7 +49,8 @@ const getFileData = async (userId, fileId) => {
             
             if (hasAccess) {
                 const perms = await permissionService.getPermissions(child.id);
-                accessibleChildren.push({ ...child, permissions: perms });
+                const childObj = child.toJSON ? child.toJSON() : child; 
+                accessibleChildren.push({ ...childObj, permissions: perms });   
             }
         }
         return { ...meta, children: accessibleChildren };

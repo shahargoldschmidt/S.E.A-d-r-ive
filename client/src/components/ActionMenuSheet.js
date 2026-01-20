@@ -29,6 +29,9 @@ const ActionMenuSheet = ({ visible, onClose, actions, isDarkMode }) => {
                                 onPress={() => {
                                     action.onPress();
                                     onClose();
+                                    setTimeout(() => {
+                                        action.onPress();
+                                     }, 100);
                                 }}
                             >
                                 {/* Using Feather component with action.iconName */}
