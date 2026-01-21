@@ -1,15 +1,21 @@
 /* client/src/components/PermissionsTab.js */
 import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, ActivityIndicator, Alert } from 'react-native';
+import { 
+    View, Text, Modal, TextInput, TouchableOpacity, 
+    ScrollView, useWindowDimensions, ActivityIndicator, Alert 
+} from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { addPermission, updatePermission, getPermissions, removePermission } from '../services/api';
+import { 
+    addPermission, updatePermission, 
+    getPermissions, removePermission 
+} from '../services/api';
 import { getPermissionStyles } from '../styles/permissionStyles';
 import { getAuthStyles } from '../styles/authStyles';
 import { theme } from '../styles/theme';
 import AppWrapper from './AppWrapper';
 import { getFileIcon } from '../utils/dashboardUtils';
 
-const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileIcon }) => {
+const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode }) => {
     const { width, height } = useWindowDimensions();
     const styles = getPermissionStyles(width, height, isDarkMode);
     const authStyles = getAuthStyles(width, height);
@@ -42,7 +48,7 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
     };
 
     /**
-     * Handles adding a new user to the file depths
+     * Handles adding a new user to the file
      */
     const handleAddUser = async () => {
         if (!newUserEmail.trim()) return false;
@@ -53,7 +59,11 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
             const newPerm = await addPermission(file.id, newUserEmail, newUserRole);
             const updatedUser = { ...newPerm, email: newUserEmail, role: newUserRole };
             setCollaborators(prev => [...prev, updatedUser]);
-            onSave(file.id, { permissions: [...collaborators, updatedUser] });
+            
+            if (onSave) {
+                onSave(file.id, { permissions: [...collaborators, updatedUser] });
+            }
+            
             setNewUserEmail('');
             return true;
         } catch (err) {
@@ -74,6 +84,28 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
         }
     };
 
+    const handleUpdateRole = async (permissionId, newRole) => {
+        setIsLoading(true);
+        setErrorMsg('');
+        try {
+            await updatePermission(file.id, permissionId, newRole);
+            
+            const updatedCollabs = collaborators.map(c => 
+                c.id === permissionId ? { ...c, role: newRole, type: newRole } : c
+            );
+            setCollaborators(updatedCollabs);
+            
+            if (onSave) {
+                onSave(file.id, { permissions: updatedCollabs });
+            }
+        } catch (err) {
+            setErrorMsg('Failed to update permission level');
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleRemoveUser = (email) => {
         Alert.alert("Remove Access", `Are you sure you want to remove ${email}?`, [
             { text: "Cancel", style: "cancel" },
@@ -83,7 +115,12 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
                 try {
                     await removePermission(file.id, userPerm.id);
                     setCollaborators(prev => prev.filter(c => c.email !== email));
-                } catch (error) { setErrorMsg("Failed to remove user"); }
+                    if (onSave) {
+                        onSave(file.id, { permissions: collaborators.filter(c => c.email !== email) });
+                    }
+                } catch (error) { 
+                    setErrorMsg("Failed to remove user"); 
+                }
             }}
         ]);
     };
@@ -144,7 +181,9 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
                                 PEOPLE WITH ACCESS
                             </Text>
                             
-                            {isLoading ? <ActivityIndicator color={theme.colors.oceanBlue} /> : (
+                            {isLoading ? (
+                                <ActivityIndicator color={theme.colors.oceanBlue} />
+                            ) : (
                                 collaborators.map((user, index) => (
                                     <View key={user.id || index} style={styles.collabRow}>
                                         {/* User Avatar Initial */}
@@ -154,20 +193,49 @@ const PermissionsTab = ({ isOpen, onClose, onSave, file, isDarkMode, renderFileI
 
                                         <View style={styles.collabInfo}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={styles.collabEmail} numberOfLines={1}>{user.email}</Text>
+                                                <Text style={[styles.collabEmail, { color: '#ffffff' }]} numberOfLines={1}>
+                                                    {user.email}
+                                                </Text>
                                                 {user.email === file?.owner && (
                                                     <View style={{ backgroundColor: '#0ea5e920', paddingHorizontal: 6, borderRadius: 4, marginLeft: 8 }}>
                                                         <Text style={{ fontSize: 9, color: '#0ea5e9', fontWeight: 'bold' }}>OWNER</Text>
                                                     </View>
                                                 )}
                                             </View>
-                                            <Text style={styles.roleBadge}>{user.role || user.type || 'VIEWER'}</Text>
+                                            <View>
+                                                <Text style={[styles.roleBadge, { color: '#ffffff', fontWeight: 'bold', marginTop: 2 }]}>
+                                                    {user.role || user.type || 'VIEWER'}
+                                                </Text>
+                                            </View>
                                         </View>
 
                                         {user.email !== file?.owner && (
-                                            <TouchableOpacity onPress={() => handleRemoveUser(user.email)}>
-                                                <Feather name="x" size={20} color="#94a3b8" />
-                                            </TouchableOpacity>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                {/* Edit Role Button */}
+                                                <TouchableOpacity 
+                                                    style={{ padding: 12, marginRight: 5 }} 
+                                                    onPress={() => {
+                                                        Alert.alert(
+                                                            "Change Permissions",
+                                                            `Select new role for ${user.email}:`,
+                                                            roles.map(r => ({
+                                                                text: r,
+                                                                onPress: () => handleUpdateRole(user.id, r)
+                                                            })).concat([{ text: "Cancel", style: "cancel" }])
+                                                        );
+                                                    }}
+                                                >
+                                                    <Feather name="edit-2" size={20} color="#ffffff" />
+                                                </TouchableOpacity>
+
+                                                {/* Remove Access Button */}
+                                                <TouchableOpacity 
+                                                    style={{ padding: 12 }} 
+                                                    onPress={() => handleRemoveUser(user.email)}
+                                                >
+                                                    <Feather name="x" size={24} color="#ff4d4d" />
+                                                </TouchableOpacity>
+                                            </View>
                                         )}
                                     </View>
                                 ))

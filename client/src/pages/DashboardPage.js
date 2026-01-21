@@ -91,7 +91,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
                 data = folderData.children || [];
             } else {
                 // Global tab fetching logic
-                const showAll = ['Starred', 'Trash', 'Shared With Me'].includes(activeTab);
+                const showAll = ['Starred', 'Trash', 'Shared'].includes(activeTab);
                 data = await fetchFiles(showAll);
             }
             setFiles(data);
@@ -112,10 +112,7 @@ const DashboardPage = ({ toggleTheme, isDarkMode, navigation }) => {
         const activeFiles = files.filter(f => !trashedIds.has(f.id));
         switch (activeTab) {
             case 'Starred': return activeFiles.filter(f => starredIds.has(f.id));
-            case 'Shared With Me': return activeFiles.filter(f => {
-                const isOwner = f.owner === currentUser?.email || String(f.owner) === String(currentUser?.id || currentUser?._id);
-                return !isOwner;
-            });
+            case 'Shared': return activeFiles.filter(f => f.owner !== currentUser?.email && f.userId !== currentUser?.id);
             default: return activeFiles;
         }
     })();
