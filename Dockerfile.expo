@@ -19,10 +19,7 @@ RUN npm install @expo/ngrok
 # Copy the rest of the application source code
 COPY client/ .
 
-# הגדרת משתני סביבה
-ENV REACT_NATIVE_PACKAGER_HOSTNAME="172.17.8.20"
-
 EXPOSE 8081 19000 19001 19002
 
 # 4. Use tunneling mode for guaranteed remote connectivity
-CMD ["npx", "expo", "start", "--tunnel", "-c"]
+CMD echo "EXPO_PUBLIC_API_URL=http://${SERVER_IP}:8080/api" > .env && npx expo start --tunnel -c
