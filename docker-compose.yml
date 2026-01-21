@@ -47,11 +47,11 @@ services:
       - MONGO_URI=mongodb://mongo:27017/my_drive_db
       - PORT=3000
 
-  # 4. React Native Client (עכשיו משתמש ב-Dockerfile.expo)
+ # 4. React Native Client
   react_client:
     build:
       context: .
-      dockerfile: Dockerfile.expo  # <--- השינוי החשוב!
+      dockerfile: Dockerfile.expo
     container_name: react_client_container
     ports:
       - "8081:8081"
@@ -63,9 +63,7 @@ services:
     depends_on:
       - node_server
     environment:
-      # תמיד תוודאי שזה ה-IP האמיתי שלך באותו רגע
-      - REACT_NATIVE_PACKAGER_HOSTNAME=172.17.8.20
-      - EXPO_PUBLIC_API_URL=http://172.17.8.20:8080/api
+      - SERVER_IP=${DETECTED_IP}
     stdin_open: true
     tty: true
 
@@ -74,4 +72,4 @@ networks:
     driver: bridge
 
 volumes:
-  mongo_data:
+  mongo_data: {}
