@@ -37,6 +37,9 @@ Users can interact with their data through various actions available in the Cont
 ![move File](./images/move_file.jpeg)
 
 * **Status Toggles**: Users can "Star" important files for quick access or move unused items to the Trash.
+
+![Starred](./images/starred.jpeg)
+
 * **Permanent Deletion**: Items in the trash can be permanently removed, ensuring they are deleted from the MongoDB database.
 
 
