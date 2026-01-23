@@ -11,10 +11,10 @@ The registration system is designed to onboard new users while ensuring all prov
 * **Account Verification**: The system checks the MongoDB database to ensure the email address is unique; if an account already exists, the user is notified.
 
 ![Registration Screen](./images/reg_screen.jpeg)
-*Registration form with mandatory fields and image picker.*
+
 
 ![Validation Error](./images/reg_val_error.jpeg)
-*Visual feedback showing a password validation error.*
+
 
 ## 2. Login Process
 The login screen provides a secure entry point for existing users.
@@ -24,7 +24,6 @@ The login screen provides a secure entry point for existing users.
 * **Persistence**: Successful login generates a session, allowing the user to access their private cloud storage.
 
 ![Login Screen](./images/login_screen.jpeg)
-*The main login interface with the "Sail to Success" theme.*
+
 
 ![Login Error](./images/login_error.jpeg)
-*Visual warning for incorrect login credentials.*

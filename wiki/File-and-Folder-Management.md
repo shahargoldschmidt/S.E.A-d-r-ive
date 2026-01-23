@@ -9,7 +9,7 @@ The interface is optimized for mobile use, featuring a clean layout and intuitiv
 * **Folder Navigation (Stack Logic)**: Users can enter folders and sub-folders. The application maintains a "Folder Stack," allowing users to navigate deeper into their directories and return to previous levels using the back arrow.
 
 ![Dashboard View](./images/dashboard_main.jpeg)
-*Main dashboard displaying the user's file and folder hierarchy.*
+
 
 ## 2. File and Folder Operations
 Users can interact with their data through various actions available in the Context Menu:
@@ -20,10 +20,10 @@ Users can interact with their data through various actions available in the Cont
 * **Permanent Deletion**: Items in the trash can be permanently removed, ensuring they are deleted from the MongoDB database.
 
 ![Action Menu](./images/action_menu.jpeg)
-*Context menu showing options to Rename, Move, Star, and Delete.*
+
 
 ![Create Folder](./images/create_folder.jpeg)
-*Modal interface for naming and creating a new directory.*
+
 
 ## 3. Collaborative Permissions
 Files can be shared with other users through a robust permission system.
@@ -33,4 +33,3 @@ Files can be shared with other users through a robust permission system.
 * **Error Handling**: If a user attempts to add a collaborator who already has access, the UI provides a clear error notification.
 
 ![Permissions Management](./images/permissions_tab.jpeg)
-*Access management view for a specific file.*
