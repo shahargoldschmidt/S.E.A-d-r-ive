@@ -17,14 +17,28 @@ The interface is optimized for mobile use, featuring a clean layout and intuitiv
 Users can interact with their data through various actions available in the Context Menu:
 
 * **Creation**: Users can create new folders or upload documents and images directly from their mobile device.
+
+![Dashboard View](./images/dashboard_creating.jpeg)
+
+![File View](./images/file_create.jpeg)
+
+![File View](./images/file_view.jpeg)
+
 * **Modification**: File names can be updated (Rename), and files can be relocated within the directory structure (Move).
-* **Status Toggles**: Users can "Star" important files for quick access or move unused items to the Trash.
-* **Permanent Deletion**: Items in the trash can be permanently removed, ensuring they are deleted from the MongoDB database.
 
 ![Action Menu](./images/action_menu.jpeg)
 
 
 ![Create Folder](./images/create_folder.jpeg)
+
+![Rename Folder](./images/dashboard_rename.jpeg)
+
+* **Status Toggles**: Users can "Star" important files for quick access or move unused items to the Trash.
+* **Permanent Deletion**: Items in the trash can be permanently removed, ensuring they are deleted from the MongoDB database.
+
+
+![Delete](./images/deletion_1.jpeg)
+![Delete](./images/deletion.jpeg)
 
 
 ## 3. Collaborative Permissions
