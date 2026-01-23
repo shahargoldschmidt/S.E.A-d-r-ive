@@ -10,6 +10,8 @@ The interface is optimized for mobile use, featuring a clean layout and intuitiv
 
 ![Dashboard View](./images/dashboard_main.jpeg)
 
+![Dashboard View](./images/dashboard_with_all.jpeg)
+
 
 ## 2. File and Folder Operations
 Users can interact with their data through various actions available in the Context Menu:
