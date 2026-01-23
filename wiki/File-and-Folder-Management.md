@@ -73,7 +73,8 @@ The UI provides clear feedback based on the search outcome:
 
 ## 5. Logging out
  If a user wants to log out of the app there are 2 ways : one by hitting the profile icon which pops up his information and a logout button :
-![logout](./images/logout.jpeg)
+
+![logout from profile](./images/logut.jpeg)
 
 another way is through the side bar that opens with a log out button as well 
 
