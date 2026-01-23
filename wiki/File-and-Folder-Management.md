@@ -55,7 +55,7 @@ Files can be shared with other users through a robust permission system.
 
 The search feature in **S.E.A. D(R)IVE** allows users to quickly locate files and folders across their entire drive, ensuring a smooth and efficient user experience.
 
-## 1. Real-time Search Logic
+## 4. Real-time Search Logic
 To match the "Google Drive" feel, the search is designed to be intuitive:
 * **Query Processing**: As the user types in the search bar, the application sends requests to the Node.js backend.
 * **Database Filtering**: The server performs a regex-based search in the MongoDB database to find matches within the user's files and folders that they have permission to view.
@@ -68,8 +68,8 @@ The UI provides clear feedback based on the search outcome:
 ![Search Results](./images/searching.jpeg)
 
 
-
-* **Logging out**: If a user wants to log out of the app there are 2 ways : one by hitting the profile icon which pops up his information and a logout button :
+## 5. Logging out
+ If a user wants to log out of the app there are 2 ways : one by hitting the profile icon which pops up his information and a logout button :
 ![logout](./images/logout.jpeg)
 
 another way is through the side bar that opens with a log out button as well 
