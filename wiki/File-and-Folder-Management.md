@@ -24,14 +24,17 @@ Users can interact with their data through various actions available in the Cont
 
 ![File View](./images/file_view.jpeg)
 
-* **Modification**: File names can be updated (Rename), and files can be relocated within the directory structure (Move).
+![Create Folder](./images/create_folder.jpeg)
+
+* **Modification**: File and folder names can be updated (Rename), and files can be relocated within the directory structure (Move).
 
 ![Action Menu](./images/action_menu.jpeg)
 
-
-![Create Folder](./images/create_folder.jpeg)
+![Edit File](./images/edit_file.jpeg)
 
 ![Rename Folder](./images/dashboard_rename.jpeg)
+
+![move File](./images/move_file.jpeg)
 
 * **Status Toggles**: Users can "Star" important files for quick access or move unused items to the Trash.
 * **Permanent Deletion**: Items in the trash can be permanently removed, ensuring they are deleted from the MongoDB database.
@@ -49,3 +52,26 @@ Files can be shared with other users through a robust permission system.
 * **Error Handling**: If a user attempts to add a collaborator who already has access, the UI provides a clear error notification.
 
 ![Permissions Management](./images/permissions_tab.jpeg)
+
+The search feature in **S.E.A. D(R)IVE** allows users to quickly locate files and folders across their entire drive, ensuring a smooth and efficient user experience.
+
+## 1. Real-time Search Logic
+To match the "Google Drive" feel, the search is designed to be intuitive:
+* **Query Processing**: As the user types in the search bar, the application sends requests to the Node.js backend.
+* **Database Filtering**: The server performs a regex-based search in the MongoDB database to find matches within the user's files and folders that they have permission to view.
+* **Visual Results**: Matches are displayed in a dedicated results list, highlighting the names of the items found.
+
+The UI provides clear feedback based on the search outcome:
+* **Results Found**: If matches exist, they are displayed as a list. Clicking on a result will navigate the user directly to that file or folder's location.
+* **Empty State**: If no matches are found, the system displays a "No results found" message, ensuring the user is aware that the search completed successfully but found no data.
+
+![Search Results](./images/searching.jpeg)
+
+
+
+* **Logging out**: If a user wants to log out of the app there are 2 ways : one by hitting the profile icon which pops up his information and a logout button :
+![logout](./images/logout.jpeg)
+
+another way is through the side bar that opens with a log out button as well 
+
+![logout](./images/logout_2.jpeg)
