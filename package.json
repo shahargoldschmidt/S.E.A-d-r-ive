@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "stop": "docker-compose down",
-    "start:full": "node -e \"const ip = Object.values(require('os').networkInterfaces()).flat().find(i => i.family === 'IPv4' && !i.internal && !i.address.startsWith('172.') && !i.address.startsWith('127.'))?.address || 'localhost'; console.log('✅ Correct Auto-detected IP:', ip); require('child_process').execSync('docker-compose up --build -d', { stdio: 'inherit', env: { ...process.env, DETECTED_IP: ip } }); console.log('📱 Opening QR Code...'); require('child_process').execSync('docker logs -f react_client_container', { stdio: 'inherit' })\"",
+    "start:full": "node -e \"const os=require('os'); const nets=os.networkInterfaces(); const ip = Object.keys(nets).filter(n => !n.toLowerCase().includes('docker') && !n.toLowerCase().includes('vethernet') && !n.toLowerCase().includes('wsl') && !n.toLowerCase().includes('virtual')).map(n => nets[n].find(i => i.family==='IPv4' && !i.internal)).filter(Boolean).map(i => i.address).sort((a,b) => a.startsWith('192')?-1:1)[0] || 'localhost'; console.log('✅ Real Network IP:', ip); require('child_process').execSync('docker-compose up --build -d', { stdio: 'inherit', env: { ...process.env, DETECTED_IP: ip } }); console.log('📱 Opening QR Code...'); require('child_process').execSync('docker logs -f react_client_container', { stdio: 'inherit' })\"",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "dependencies": {
