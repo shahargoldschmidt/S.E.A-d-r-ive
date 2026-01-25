@@ -3,7 +3,20 @@
   "version": "1.0.0",
   "scripts": {
     "stop": "docker-compose down",
-    "start:full": "docker-compose up --build -d && node -e \"setTimeout(() => { const cmd = process.platform === 'win32' ? 'start http://localhost:3001' : 'xdg-open http://localhost:3001'; require('child_process').exec(cmd); }, 5000)\"",
+    "start:full": "node -e \"const os=require('os'); const nets=os.networkInterfaces(); const ip = Object.keys(nets).filter(n => !n.toLowerCase().includes('docker') && !n.toLowerCase().includes('vethernet') && !n.toLowerCase().includes('wsl') && !n.toLowerCase().includes('virtual')).map(n => nets[n].find(i => i.family==='IPv4' && !i.internal)).filter(Boolean).map(i => i.address).sort((a,b) => a.startsWith('192')?-1:1)[0] || 'localhost'; console.log('✅ Real Network IP:', ip); require('child_process').execSync('docker-compose up --build -d', { stdio: 'inherit', env: { ...process.env, DETECTED_IP: ip } }); console.log('📱 Opening QR Code...'); require('child_process').execSync('docker logs -f react_client_container', { stdio: 'inherit' })\"",
     "setup": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/native": "^7.1.27",
+    "@react-navigation/stack": "^7.6.14",
+    "expo": "^54.0.31",
+    "expo-image-picker": "^17.0.10",
+    "expo-sharing": "~13.0.3",
+    "expo-document-picker": "~13.0.3",
+    "react-native-gesture-handler": "^2.30.0",
+    "react-native-safe-area-context": "^5.6.2",
+    "react-native-screens": "^4.19.0"
   }
 }

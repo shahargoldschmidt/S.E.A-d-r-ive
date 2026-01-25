@@ -1,14 +1,20 @@
 /* client/src/components/MoveFileModal.js */
 import React, { useState, useEffect } from 'react';
+import { View, Text, Modal, TouchableOpacity, ScrollView, useWindowDimensions, ActivityIndicator } from 'react-native';
 import { fetchFiles } from '../services/api';
-import '../styles/modal.css';
-import { Icons } from '../utils/Icons';
+import { getModalStyles } from '../styles/modalStyles';
+import { getActionStyles } from '../styles/actionStyles';
+import { Feather } from '@expo/vector-icons';
 
-const MoveFileModal = ({ isOpen, onClose, onMove, currentFile }) => {
+const MoveFileModal = ({ isOpen, onClose, onMove, currentFile, isDarkMode }) => {
+    const { width, height } = useWindowDimensions();
+    const modalStyles = getModalStyles(width, height, isDarkMode);
+    const actionStyles = getActionStyles(isDarkMode);
+    
     const [folders, setFolders] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    /* Fetch available folders whenever the modal is opened */
+    // Fetch folder list when modal opens
     useEffect(() => {
         if (isOpen) loadFolders();
     }, [isOpen]);
@@ -17,7 +23,7 @@ const MoveFileModal = ({ isOpen, onClose, onMove, currentFile }) => {
         setIsLoading(true);
         try {
             const allFiles = await fetchFiles();
-            /* Filter to show only folders and exclude the current folder itself from the list */
+            // Filter only folders, excluding the item itself
             const validFolders = allFiles.filter(f => 
                 f.type === 'folder' && f.id !== currentFile?.id
             );
@@ -29,43 +35,52 @@ const MoveFileModal = ({ isOpen, onClose, onMove, currentFile }) => {
         }
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            {/* stopPropagation prevents the modal from closing when clicking on the content area */}
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h3><Icons.Folder/>  Move to...</h3>
-                <p style={{marginBottom: '20px', opacity: 0.8, fontSize:'1.05rem'}}>
-                    Item: <strong>{currentFile?.name}</strong>
-                </p>
-
-                <div className="move-options">
-                    {/* Option to move the item to the root directory */}
-                    <div className="folder-item" onClick={() => onMove(null)}>
-                        <span style={{fontSize:'1.6rem'}}>🏠</span>
-                        <span style={{fontWeight:'600'}}>Home (Root)</span>
-                    </div>
-
-                    {isLoading && <div style={{padding:'20px', textAlign:'center'}}>Loading...</div>}
-
-                    {folders.map(folder => (
-                        <div key={folder.id} className="folder-item" onClick={() => onMove(folder)}>
-                            <span style={{fontSize:'1.6rem'}}>📁</span>
-                            <span style={{fontWeight:'500'}}>{folder.name}</span>
-                        </div>
-                    ))}
+        <Modal visible={isOpen} transparent animationType="fade">
+            <View style={modalStyles.overlay}>
+                <View style={[modalStyles.modalCard, { height: '60%' }]}>
+                    <Text style={modalStyles.title}>Move to...</Text>
                     
-                    {!isLoading && folders.length === 0 && (
-                        <div style={{padding:'20px', textAlign:'center', opacity:0.6}}>No other folders found.</div>
-                    )}
-                </div>
+                    <Text style={{ marginBottom: 15, opacity: 0.7, color: isDarkMode ? '#fff' : '#000' }}>
+                        Item: <Text style={{ fontWeight: 'bold' }}>{currentFile?.name}</Text>
+                    </Text>
 
-                <button className="btn-cancel" onClick={onClose} style={{width:'100%'}}>
-                    Cancel
-                </button>
-            </div>
-        </div>
+                    <ScrollView style={actionStyles.folderList}>
+                        {/* Option for Root */}
+                        <TouchableOpacity 
+                            style={actionStyles.folderItem} 
+                            onPress={() => onMove(null)}
+                        >
+                            <Feather name="home" size={20} color="#0ea5e9" />
+                            <Text style={{ fontWeight: 'bold', color: isDarkMode ? '#fff' : '#333' }}>Home (Root)</Text>
+                        </TouchableOpacity>
+
+                        {isLoading ? (
+                            <ActivityIndicator size="small" color="#0ea5e9" style={{ marginTop: 20 }} />
+                        ) : (
+                            folders.map(folder => (
+                                <TouchableOpacity 
+                                    key={folder.id} 
+                                    style={actionStyles.folderItem} 
+                                    onPress={() => onMove(folder)}
+                                >
+                                    <Feather name="folder" size={20} color="#888" />
+                                    <Text style={{ color: isDarkMode ? '#fff' : '#333' }}>{folder.name}</Text>
+                                </TouchableOpacity>
+                            ))
+                        )}
+                    </ScrollView>
+
+                    <TouchableOpacity 
+                        style={[modalStyles.btnCancel, { marginTop: 20 }]} 
+                        onPress={onClose}
+                    >
+                        <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
     );
 };
+
 export default MoveFileModal;

@@ -2,7 +2,6 @@ const fileModel = require('../models/fileModel');
 const permissionService = require('./permissionService');
 const permissionModel = require('../models/permissionModel');
 const userService = require('../services/userService');
-const crypto = require('crypto');
 
 
 /* fileService.js */
@@ -20,8 +19,9 @@ const getFiles = async (userId, all = false) => {
 
         if (hasAccess) {
             const perms = await permissionService.getPermissions(file.id);
-            accessibleFiles.push({ ...file, permissions: perms });
-        }
+            const fileObj = file.toJSON ? file.toJSON() : file;
+            
+            accessibleFiles.push({ ...fileObj, permissions: perms });        }
     }
 
     // If 'all' is true, return everything accessible (for Starred/Trash/Shared)
@@ -32,6 +32,7 @@ const getFiles = async (userId, all = false) => {
 };
 
 // Fetch folder content with individual permission checks for each child
+
 const getFileData = async (userId, fileId) => {
     const meta = await fileModel.getById(fileId);
     if (!meta) return null;
@@ -43,40 +44,41 @@ const getFileData = async (userId, fileId) => {
 
         for (const child of children) {
             const user = await userService.getUser(userId);
-            // Verify access for each child specifically
             const hasAccess = (String(child.owner) === String(userId) || child.owner === user.email) || 
                               await permissionService.hasPermission(userId, child.id, 'READ');
             
             if (hasAccess) {
                 const perms = await permissionService.getPermissions(child.id);
-                accessibleChildren.push({ ...child, permissions: perms });
+                const childObj = child.toJSON ? child.toJSON() : child; 
+                accessibleChildren.push({ ...childObj, permissions: perms });   
             }
         }
-        return { ...meta, children: accessibleChildren };
+        const metaObj = meta.toJSON ? meta.toJSON() : meta;
+        return { ...metaObj, children: accessibleChildren };
     }
     
     const content = await fileModel.getTcpContent(fileId);
-    return { ...meta, content };
+    const metaObj = meta.toJSON(); 
+    return { ...metaObj, content };
 };
 
  // Validate parent folder and initialize permissions.
 const createFile = async (userId, fileData) => {
-    const fileId = crypto.randomUUID();
+    const user = await userService.getUser(userId);
+    if (!user) throw new Error("User not found");
 
-    if (fileData.parentId) { //if user wants to write file in a folder check folder exists
+    if (fileData.parentId) {
         const parent = await fileModel.getById(fileData.parentId);
-        if (!parent || parent.type !== 'folder') {
-            throw new Error("Invalid parent folder");
-        }
-        // Permission check for writing in the folder
+        if (!parent) throw new Error("Parent folder not found");
+        if (parent.type !== 'folder') throw new Error("Parent must be a folder");
+        
         const canWrite = await permissionService.hasPermission(userId, fileData.parentId, 'WRITE');
         if (!canWrite) throw new Error("Permission Denied: Cannot write to this folder");
     }
-    const userEmail = await userService.getUser(userId);
-    const email = userEmail.email;
-    const newItem = await fileModel.create(email, fileId, fileData);
-    await permissionService.createPermission(newItem.id, userId, 'ADMIN'); //add admin permission for owner
-    return newItem;
+    const newFile = await fileModel.create(user.email, null, fileData); 
+    await permissionService.createPermission(newFile.id, userId, 'ADMIN');
+
+    return newFile;
 };
 
 
@@ -103,45 +105,59 @@ const deleteFile = async (fileId) => {
  // Orchestrate multi-source search and permission filtering
 const searchFiles = async (userId, query) => {
     const resultsMap = new Map();
-    const all = await fileModel.getFiles();
+    // Fetch all files from the database to ensure global search depth
+    const allFiles = await fileModel.getFiles(); 
 
-    // name match by metadata
-    all.filter(f => f.name.includes(query)).forEach(f => resultsMap.set(f.id, f));
+    // 1. Search by Name (Metadata) - Case-insensitive for better UX
+    allFiles
+        .filter(f => String(f.name || "").toLowerCase().includes(query.toLowerCase()))
+        .forEach(f => resultsMap.set(String(f.id), f));
 
-    // content match by TCP
-    const tcpIds = await fileModel.searchTcp(query);
-    for (const id of tcpIds) { 
-        if (resultsMap.has(id)) continue; //If the file was already matched by name, skip
+    // 2. Search by Content via TCP Storage Server
+    // Note: fileModel.searchTcp already returns a list of File documents
+    const tcpResults = await fileModel.searchTcp(query); 
+    for (const fileObj of tcpResults) { 
+        const sid = String(fileObj.id);
+        
+        // Skip if the file was already matched by name to avoid duplicates
+        if (resultsMap.has(sid)) continue; 
 
-        const meta = await fileModel.getById(id);
-        if (!meta) continue;
-        if (meta.type === 'image') continue;
-        //edge case If the query is a substring of the ID 
-        // might have matched by name and not content in TCP
-        if (id.includes(query)) {
-            // fetch the actual content to verify the match
-            const actualContent = await fileModel.getTcpContent(id);
-            if (actualContent.includes(query)) { //only after match is verified add to map
-                resultsMap.set(id, meta);
+        // Skip images as they don't have searchable text content in this context
+        if (fileObj.type === 'image') continue;
+
+        // Verify content match if the query accidentally matched the File ID string
+        if (sid.includes(query)) {
+            const actualContent = await fileModel.getTcpContent(sid);
+            if (actualContent.includes(query)) {
+                resultsMap.set(sid, fileObj);
             }
         } else {
-            // If the query is in the ID, it must have been found in the content
-            resultsMap.set(id, meta);
+            // Found via TCP content index
+            resultsMap.set(sid, fileObj);
         }
     }
 
-    // Filter by permissions, only files with its premissions will show to user
+    // 3. Permission Filtering and Data Transformation
     const finalResults = [];
     for (const item of resultsMap.values()) {
+        // Only include files where the user has at least READ permission
         const hasAccess = await permissionService.hasPermission(userId, item.id, 'READ');
         if (hasAccess) {
             const perms = await permissionService.getPermissions(item.id);
-            finalResults.push({ ...item, permissions: perms });
+            
+            // Convert Mongoose Document to plain JSON to preserve the virtual 'id' field
+            // This prevents 'undefined' errors and duplicate keys in the React Native UI
+            const itemObj = item.toJSON ? item.toJSON() : item; 
+            
+            finalResults.push({ 
+                ...itemObj, 
+                permissions: perms 
+            });
         }
     }
+    
     return finalResults;
 };
-
 // Update folder only by name or file by name and content
 const updateFile = async (userId, fileId, updates) => {
     const file = await fileModel.getById(fileId); 

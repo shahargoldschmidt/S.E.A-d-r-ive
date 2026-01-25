@@ -1,0 +1,25 @@
+# Dockerfile.expo
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Copy only package.json to avoid version locking from old lock files
+COPY client/package.json ./
+
+# 1. Install base dependencies and required Expo packages (including image-picker)
+RUN npm install && \
+    npm install expo-sharing expo-file-system expo-document-picker expo-image-picker
+
+# 2. Pin react-native version to resolve version mismatch warnings on mobile devices
+RUN npm install react-native@0.81.5
+
+# 3. Install ngrok to support stable tunnel connections
+RUN npm install @expo/ngrok
+
+# Copy the rest of the application source code
+COPY client/ .
+
+EXPOSE 8081 19000 19001 19002
+
+# 4. Use tunneling mode for guaranteed remote connectivity
+CMD echo "EXPO_PUBLIC_API_URL=http://${SERVER_IP}:8080/api" > .env && npx expo start --tunnel -c

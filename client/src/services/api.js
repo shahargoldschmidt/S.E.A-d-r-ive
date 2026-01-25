@@ -1,10 +1,10 @@
 /* client/src/services/api.js */
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000/api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 /* Helper function to generate authorization headers using the stored session token */
-const getAuthHeaders = () => {
-    const token = sessionStorage.getItem('token');
+const getAuthHeaders = async () => {
+    const token = await AsyncStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : '' 
@@ -16,9 +16,8 @@ const handleResponse = async (response) => {
     if (!response.ok) {
         /* Auto-logout if the session is no longer valid */
         if (response.status === 401 || response.status === 403) {
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('userId');
-            window.location.href = '/login'; 
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('userId'); 
             throw new Error('Session expired. Please login again.');
         }
         const errorData = await response.json().catch(() => ({}));
@@ -44,9 +43,9 @@ export const loginUser = async (email, password) => {
 
         const data = await response.json();
         
-        /* Store authentication data in sessionStorage for session persistence */
-        if (data.token) sessionStorage.setItem('token', data.token);
-        if (data.userId) sessionStorage.setItem('userId', data.userId);
+        /* Store authentication data in AsyncStorage for session persistence */
+        if (data.token) await AsyncStorage.setItem('token', data.token);
+        if (data.userId) await AsyncStorage.setItem('userId', data.userId);
         
         return data; 
     } catch (error) {
@@ -75,12 +74,12 @@ export const registerUser = async (userData) => {
 
 export const getUser = async (userId) => {
     try {
-        const idToFetch = userId || sessionStorage.getItem('userId');
+        const idToFetch = userId || await AsyncStorage.getItem('userId');
         if (!idToFetch) return null;
 
         const response = await fetch(`${API_URL}/users/${idToFetch}`, {
             method: 'GET',
-            headers: getAuthHeaders() 
+            headers: await getAuthHeaders() 
         });
 
         await handleResponse(response);
@@ -99,7 +98,7 @@ export const fetchFiles = async (showAll = false) => {
         const url = showAll ? `${API_URL}/files?all=true` : `${API_URL}/files`;
         const response = await fetch(url, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: await getAuthHeaders()
         });
         await handleResponse(response); 
         return await response.json();
@@ -112,7 +111,7 @@ export const createFile = async (fileData) => {
     try {
         const response = await fetch(`${API_URL}/files`, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: await getAuthHeaders(),
             body: JSON.stringify(fileData)
         });
         await handleResponse(response);
@@ -126,7 +125,7 @@ export const getFileById = async (fileId) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: await getAuthHeaders()
         });
         await handleResponse(response);
         return await response.json(); 
@@ -139,7 +138,7 @@ export const updateFile = async (fileId, updates) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}`, {
             method: 'PATCH',
-            headers: getAuthHeaders(),
+            headers: await getAuthHeaders(),
             body: JSON.stringify(updates)
         });
         await handleResponse(response);
@@ -153,7 +152,7 @@ export const searchFiles = async (query) => {
     try {
         const response = await fetch(`${API_URL}/search/${encodeURIComponent(query)}`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: await getAuthHeaders()
         });
         await handleResponse(response);
         return await response.json();
@@ -169,7 +168,7 @@ export const addPermission = async (fileId, email, type) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}/permissions`, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: await getAuthHeaders(),
             body: JSON.stringify({ email, type })
         });
 
@@ -184,7 +183,7 @@ export const updatePermission = async (fileId, permissionId, newType) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}/permissions/${permissionId}`, {
             method: 'PATCH',
-            headers: getAuthHeaders(),
+            headers: await getAuthHeaders(),
             body: JSON.stringify({ type: newType })
         });
         await handleResponse(response);
@@ -198,7 +197,7 @@ export const getPermissions = async (fileId) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}/permissions`, {
             method: 'GET',
-            headers: getAuthHeaders()
+            headers: await getAuthHeaders()
         });
         await handleResponse(response);
         return await response.json();
@@ -212,7 +211,7 @@ export const removePermission = async (fileId, permissionId) => {
     try {
         const response = await fetch(`${API_URL}/files/${fileId}/permissions/${permissionId}`, {
             method: 'DELETE',
-            headers: getAuthHeaders()
+            headers: await getAuthHeaders()
         });
         
         /* 204 No Content signifies a successful deletion */
@@ -228,7 +227,7 @@ export const removePermission = async (fileId, permissionId) => {
 export const deleteFileApi = async (fileId) => {
     const response = await fetch(`${API_URL}/files/${fileId}`, {
         method: 'DELETE',
-        headers: getAuthHeaders()
+        headers: await getAuthHeaders()
     });
     
     if (!response.ok) {
