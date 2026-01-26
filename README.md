@@ -1,4 +1,4 @@
-S.E.A. D(R)IVE - Cloud Storage Solution
+## S.E.A. D(R)IVE - Cloud Storage Solution
 S.E.A. D(R)IVE is a comprehensive, cross-platform cloud storage solution inspired by the Google Drive experience. This project integrates a React Native mobile application, a React web client, a Node.js API gateway, and a C++ logic server.
 
  All development, commits, and updates for Exercise 5 are located in the ex-5 branch.
@@ -18,7 +18,8 @@ Frontend: A React Native (Expo) mobile app and a React web interface.
 ## Running the System:
 Ensure Docker Desktop is running.
 Run the automated startup script:
-npm run start:full
+
+"npm run start:full"
 
 This script handles IP configuration, builds the Docker containers, and launches all services.
 
