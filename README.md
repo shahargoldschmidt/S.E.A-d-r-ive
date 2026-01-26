@@ -24,7 +24,11 @@ Run the automated startup script:
 This script handles IP configuration, builds the Docker containers, and launches all services.
 
 ## Documentation (Wiki)
+
 For detailed guides and visual walkthroughs, please visit our Wiki directory:
+
 Installation & Running: Detailed setup, Docker commands, and troubleshooting.
+
 User Authentication: Details on secure registration, login, and input validation.
+
 File & Folder Management: Full guide on CRUD operations (Create, Rename, Move, Star, Delete), real-time search, and the permission system (Viewer/Editor/Admin).
