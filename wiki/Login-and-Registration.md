@@ -27,3 +27,8 @@ The login screen provides a secure entry point for existing users.
 
 
 ![Login Error](./images/login_error.jpeg)
+
+### Cross-Platform Access
+The authentication system is unified across all platforms. Users can also log in securely via the Web Interface using the same credentials, enjoying a synchronized experience between mobile and desktop.
+
+![Web Login Interface](./images/webLogin.png)
