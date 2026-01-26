@@ -35,7 +35,7 @@ services:
       dockerfile: Dockerfile.node 
     container_name: node_server_container
     ports:
-      - "8080:3000"
+      - "8080:3000" # Node moves to 8080 externally
     networks:
       - ex3_net
     depends_on:
@@ -47,8 +47,8 @@ services:
       - MONGO_URI=mongodb://mongo:27017/my_drive_db
       - PORT=3000
 
- # 4. React Native Client
-  react_client:
+  # 4. React Native Client (App)
+  react_native_client:
     build:
       context: .
       dockerfile: Dockerfile.expo
@@ -64,8 +64,30 @@ services:
       - node_server
     environment:
       - SERVER_IP=${DETECTED_IP}
+    dns:
+      - 8.8.8.8
     stdin_open: true
     tty: true
+
+  # 5. React Web Client (Old Website)
+  web_client:
+    build:
+      context: .
+      dockerfile: Dockerfile.react # Using your existing file name
+    container_name: web_client_container
+    ports:
+      - "3001:3000" # Website moves to 3001 externally
+    networks:
+      - ex3_net
+    depends_on:
+      - node_server
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      # This overrides your .env file automatically:
+      - REACT_APP_API_URL=http://localhost:8080/api 
+      - WDS_SOCKET_PORT=0
 
 networks:
   ex3_net:

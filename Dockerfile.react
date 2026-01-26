@@ -4,20 +4,19 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package files first to leverage Docker's caching mechanism
-COPY client/package*.json ./
-
+# Copy package files from the webclient folder
+COPY webclient/package*.json ./
 
 RUN npm install
 
-# Copy the rest of the application source code
-COPY client/ .
+# Copy the rest of the application source code from webclient
+COPY webclient/ .
 
 # Expose port 3000 for the React development server
 EXPOSE 3000
 
-
-# Set HOST to 0.0.0.0 to allow the server to be accessible from outside the container
+# Set HOST to 0.0.0.0 to allow access from outside
 ENV HOST=0.0.0.0
 ENV DANGEROUSLY_DISABLE_HOST_CHECK=true
+
 CMD ["npm", "start"]
