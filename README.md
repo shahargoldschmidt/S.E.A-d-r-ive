@@ -3,13 +3,6 @@ S.E.A. D(R)IVE is a comprehensive, cross-platform cloud storage solution inspire
 
  All development, commits, and updates for Exercise 5 are located in the ex-5-copy branch.
 
-## Work Methodology & Process
-In this exercise, we implemented professional industry standards for development:
-Agile & Scrum: We managed the project using JIRA, dividing the work into Epics, User Stories, and Tasks.
-Sprint Management: A Scrum Master was appointed, and status meetings were held at least twice a week to track progress.
-Git Flow: We worked strictly with Feature Branches. No code was merged directly to main without a Pull Request (PR) and a mandatory code review by all team members .
-JIRA-GitHub Integration: Tasks were linked to branches and monitored in real-time through statuses: In Progress, Code Review, and Done.
-
 ## System Architecture & Execution
 Backend: A Node.js server managing the API and a MongoDB database (via Mongoose) for persistent storage.
 Logic: A high-performance C++ server.
