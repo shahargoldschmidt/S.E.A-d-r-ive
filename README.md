@@ -1,26 +1,29 @@
-# S.E.A. D(R)IVE -
+## S.E.A. D(R)IVE - Cloud Storage Solution
+S.E.A. D(R)IVE is a comprehensive, cross-platform cloud storage solution inspired by the Google Drive experience. This project integrates a React Native mobile application, a React web client, a Node.js API gateway, and a C++ logic server.
 
-Welcome to the **S.E.A. D(R)IVE** repository. This project is a comprehensive cloud storage solution inspired by the mobile Google Drive experience.
+ All development, commits, and updates for Exercise 5 are located in the **ex---5---copy branch**
 
-**Project Location** - Please note that all work and updates for Exercise 5 are located in the **`ex-5`** branch.
+## System Architecture & Execution
+Backend: A Node.js server managing the API and a MongoDB database (via Mongoose) for persistent storage.
 
+Logic: A high-performance C++ server.
+
+Frontend: A React Native (Expo) mobile app and a React web interface.
+
+## Running the System:
+Ensure Docker Desktop is running.
+Run the automated startup script:
+
+"npm run start:full"
+
+This script handles IP configuration, builds the Docker containers, and launches all services.
 
 ## Documentation (Wiki)
 
-Detailed documentation, execution guides, and screenshots can be found in the **`wiki/`** directory.
+For detailed guides and visual walkthroughs, please visit our Wiki directory:
 
-### 1. [System Setup & Running](https://www.google.com/search?q=./wiki/Installation-and-Running.md)
+Installation & Running: Detailed setup, Docker commands, and troubleshooting.
 
-* Step-by-step instructions on how to compile and run the system using **Docker Compose**.
-* Instructions for stopping the system and preserving data.
+User Authentication: Details on secure registration, login, and input validation.
 
-### 2. [User Authentication](https://www.google.com/search?q=./wiki/Login-and-Registration.md)
-
-* Overview of the **Login** and **Registration** flows.
-
-### 3. [File and Folder Management](https://www.google.com/search?q=./wiki/File-and-Folder-Management.md)
-
-* Guide to the dashboard and folder navigation.
-* Documentation of CRUD operations: Create, Rename, Move, Star, and Delete.
-* Detailed explanation of the Collaborative Permissions system (Viewer, Editor, Admin).
-* Real-time search logic.
+File & Folder Management: Full guide on CRUD operations (Create, Rename, Move, Star, Delete), real-time search, and the permission system (Viewer/Editor/Admin).
