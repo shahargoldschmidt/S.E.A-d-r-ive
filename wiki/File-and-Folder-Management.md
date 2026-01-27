@@ -24,6 +24,10 @@ Users can interact with their data through various actions available in the Cont
 
 ![File View](./images/file_view.jpeg)
 
+**Cross-Platform Synchronization**:
+Files created or uploaded via the mobile app are immediately synced to the backend and become visible on the Web Client, allowing for seamless management across devices.
+![Web Dashboard View](./images/webDashboard.png)
+
 ![Create Folder](./images/create_folder.jpeg)
 
 * **Modification**: File and folder names can be updated (Rename), and files can be relocated within the directory structure (Move).

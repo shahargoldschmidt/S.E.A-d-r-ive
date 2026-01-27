@@ -1,5 +1,5 @@
 # System Setup & Execution Guide
-This guide describes the process of compiling and running the full S.E.A. D(R)IVE system. The system consists of a Node.js server, a C++ server, a MongoDB database, and a React Native (Expo) client.
+This guide describes the process of compiling and running the full S.E.A. D(R)IVE system. The system consists of a Node.js server, a C++ server, a MongoDB database, and a React Native (Expo) client, and React Web client.
 
 # 1. Prerequisites
 Before starting, ensure Docker Desktop is open and running in the background.
@@ -31,16 +31,21 @@ After the process completes, you should see that all 7 components (3 builds and 
 * cpp_server_container: C++ Logic server.
 * node_server_container: Main API gateway.
 * react_client_container: Expo development server.
+* web_client_container: React Web interface.
 
 ![EndConstruction](./images/EndOfConstruction.png)
 
-# 5. Connecting via Expo Go
+# 5. Accessing the Web Client
+To use the web interface, open your browser and navigate to:
+**http://localhost:3001**
+
+# 6. Connecting via Expo Go
 Once the containers are up, the terminal will automatically display a QR Code.
 Open the Expo Go app on your phone -> Scan the QR code.
 
 ![QR](./images/QRcode.png)
 
-# 6. Stopping the System
+# 7. Stopping the System
 
 To properly shut down the environment, follow these two steps:
 
@@ -50,7 +55,7 @@ To properly shut down the environment, follow these two steps:
 
 **What this does:**
 
-* Executes `docker-compose down` to stop all services (Node.js, C++, MongoDB, and Expo).
+* Executes `docker-compose down` to stop all services (Node.js, C++, MongoDB, Expo and Web Client).
 * Frees up system RAM and CPU resources.
 * **Data Persistence**: Your files and database records are **not deleted**. They remain safely stored in the `mongo_data` and `./data_files` volumes for the next time you start the app.
 
